@@ -12,6 +12,8 @@ const char* Animal_name[] = {
     "data/Sample/Animal/Pig.mv1",
     "data/Sample/Animal/lion.mv1",
     "data/Sample/Animal/Bear.mv1",
+    "data/Sample/Animal/Sheep.mv1",
+    "data/Sample/Animal/Duck.mv1",
 };
 
 namespace Game01 {
@@ -28,7 +30,7 @@ bool Animal::Init()
     SetTranslate({pos_x, 5.0f, pos_z});
     SetRotationAxisXYZ({0.0f, 180.0f, 0.0f});
 
-    int         num = GetRand(2);
+    int         num = GetRand(4);
     const char* str = Animal_name[num];
 
     //当たり判定の円の大きさ
@@ -52,6 +54,16 @@ bool Animal::Init()
         size   = 0.07f;
         radius = 7.0f;
         height = 17.0f;
+        break;
+    case 3:    //Sheep
+        size   = 0.15f;
+        radius = 6.0f;
+        height = 11.0f;
+        break;
+    case 4:    //Duck
+        size   = 0.15f;
+        radius = 6.0f;
+        height = 11.0f;
         break;
     }
 
