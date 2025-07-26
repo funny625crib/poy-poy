@@ -16,7 +16,7 @@ namespace Game01
 
 		// プレイヤー
 		SetName( "Player Rise" );
-		SetTranslate( { 0.0f, 5.0f, 0.0f } );
+		SetTranslate( { -87.0f, -6.0f, 47.0f } );
 
 		auto col = AddComponent<ComponentCollisionCapsule>();	 //
 		col->SetRadius( 4.53f );
