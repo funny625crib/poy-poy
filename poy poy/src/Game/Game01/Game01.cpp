@@ -2,6 +2,7 @@
 #include "Ground.h"
 #include "Camera.h"
 #include "Player_rise.h"
+#include "Player_sol.h"
 #include "Player_betty.h"
 #include "Player_abigail.h"
 
@@ -74,6 +75,7 @@ namespace Game01
 		Scene::Object::Create<Player_Rise>();
 		Scene::Object::Create<Player_Betty>();
 		Scene::Object::Create<Player_Abigail>();
+		Scene::Object::Create<Player_Sol>();
 
 		// カメラオブジェクト
 		Scene::Object::Create<Camera>();
