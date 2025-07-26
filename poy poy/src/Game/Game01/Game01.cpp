@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Player_rise.h"
 #include "Player_betty.h"
+#include "Player_abigail.h"
 
 namespace Game01
 {
@@ -72,6 +73,7 @@ namespace Game01
 		// プレイヤー
 		Scene::Object::Create<Player_Rise>();
 		Scene::Object::Create<Player_Betty>();
+		Scene::Object::Create<Player_Abigail>();
 
 		// カメラオブジェクト
 		Scene::Object::Create<Camera>();
