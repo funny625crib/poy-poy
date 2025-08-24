@@ -1,9 +1,11 @@
 ﻿#include "Player_sol.h"
+
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 #include <System/Component/ComponentCollisionCapsule.h>
 #include <System/Component/ComponentObjectController.h>
+
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>

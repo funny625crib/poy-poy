@@ -49,16 +49,19 @@ void SceneTestProc::InitSerialize()
     obj->SetProc("Update", []() { printfDx("Update!\n"); });
 
     // ABCという名前で、PreDrawのタイミングに処理追加
-    obj->SetProc("ABC", []() { printfDx("PreDraw!\n"); }, ProcTiming::PreDraw);
+    obj->SetProc(
+        "ABC", []() { printfDx("PreDraw!\n"); }, ProcTiming::PreDraw);
 
     // Testという名前で、Updateタイミングに追加 (優先付き)
-    obj->SetProc("Test", []() { printfDx("Test!\n"); }, ProcTiming::Update, ProcPriority::NORMAL);
+    obj->SetProc(
+        "Test", []() { printfDx("Test!\n"); }, ProcTiming::Update, ProcPriority::NORMAL);
 
     // ライトのタイミングでプロセスを発生 (今回追加した Lightタイミング )
     // ※ Light/HDR/Gbuffer/Shadow は、現在適当なタイミングで用意しています
     // Scene::Draw内の　プロセスシグナルの実行　にて実行
     // ※ 調整が必要となります
-    obj->SetProc("CDE", []() { printfDx("Light\n"); }, ProcTiming::Light, ProcPriority::NORMAL);
+    obj->SetProc(
+        "CDE", []() { printfDx("Light\n"); }, ProcTiming::Light, ProcPriority::NORMAL);
 
     // コンポーネントに処理をつける
     if(auto mdl = obj->GetComponent<ComponentModel>())
@@ -94,9 +97,11 @@ void SceneTestProc::Update()
 
         // 現在 Update(引数あり)と無しとでは名前共有ができていません。
         // 今後共有予定です。(LightタイミングのCDEは現在消しません)
-        obj->SetProc("Update3", []() { printfDx("Update3! (Update Priority::Normal)\n"); }, ProcTiming::Update, ProcPriority::NORMAL);
+        obj->SetProc(
+            "Update3", []() { printfDx("Update3! (Update Priority::Normal)\n"); }, ProcTiming::Update, ProcPriority::NORMAL);
 
-        obj->SetProc("Update4", []() { printfDx("Update4 (Update Priority::HIGHT)!\n"); }, ProcTiming::Update, ProcPriority::HIGH);
+        obj->SetProc(
+            "Update4", []() { printfDx("Update4 (Update Priority::HIGHT)!\n"); }, ProcTiming::Update, ProcPriority::HIGH);
 
         // ABCのプロセスを終了します (PreDrawのものを終了)
         obj->ResetProc("ABC");
@@ -127,9 +132,11 @@ void SceneTestProc::Update()
             up4 = ProcPriority::HIGH;
         }
 
-        obj->SetProc("Update3", [up3]() { printfDx("Update3! (Update %d)\n", (int)up3); }, ProcTiming::Update, up3);
+        obj->SetProc(
+            "Update3", [up3]() { printfDx("Update3! (Update %d)\n", (int)up3); }, ProcTiming::Update, up3);
 
-        obj->SetProc("Update4", [up4]() { printfDx("Update4 (Update %d)!\n", (int)up4); }, ProcTiming::Update, up4);
+        obj->SetProc(
+            "Update4", [up4]() { printfDx("Update4 (Update %d)!\n", (int)up4); }, ProcTiming::Update, up4);
     }
 }
 
