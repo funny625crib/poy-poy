@@ -1,14 +1,16 @@
 ﻿#include "Player_betty.h"
 #include "Animal.h"
+
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 #include <System/Component/ComponentCollisionCapsule.h>
 #include <System/Component/ComponentObjectController.h>
+#include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
-#include <System/Component/ComponentCollisionSphere.h>
+
 namespace Game01 {
 bool Player_Betty::Init()
 {
@@ -37,7 +39,7 @@ bool Player_Betty::Init()
     model->PlayAnimation("idle", true);
 
     AddComponent<ComponentGameCamera>();
-    // AddComponent<StateIdleWalk>();
+
     return true;
 }
 
@@ -71,14 +73,14 @@ void Player_Betty::OnHit(const ComponentCollision::HitInfo& hit_info)
 
     auto& obj     = Get_obj;                                              //一番近くのオブジェクトを取得
     auto  Get_col = Get_obj->GetComponent<ComponentCollisionSphere>();    //重力を帰るために必要
-    printfDx("HIT: %s\n", Get_obj->GetName().data());
+    printfDx("HIT: %s\npos", obj->GetName().data());
     auto hit_owner_name2 = hit_info.hit_collision_->GetOwner()->GetNameDefault();    //npcがあたっているものの名前を取得
     //printfDx("HIT: %s\n", hit_info.hit_collision_->GetOwner()->GetName().data());
     //地面に当たっているobjをIDLE状態にする
     if(hit_owner_name2 == "Ground") {
         for(auto obj_ : Scene::Object::GetArray<Animal>()) {
             if(Get_obj != obj_) {
-                //obj_->Cone_Mode = IDLE;
+                //  obj_->Cone_Mode = IDLE;
             }
         }
     }
@@ -122,20 +124,25 @@ void Player_Betty::OnHit(const ComponentCollision::HitInfo& hit_info)
         up_obj = true;
     }
     //THROWING状態のとき投げる処理
+    //for(auto obj_ : Scene::Object::GetArray<Animal>()) {
     if(_isholding == THROWING) {
         if(obj->Cone_Mode == THROWING) {
             obj->SetTranslate(GetTranslate() + float3{0, 18.0f, 0});
-            auto model = GetComponent<ComponentModel>();
-            auto dir   = -model->GetWorldMatrix().axisZ();
+            auto modelrot = GetComponent<ComponentModel>();
+
+            auto dir = -modelrot->GetWorldMatrix().axisZ();
             obj->SetDirectior(dir * 1.0f);
+
             if(Get_col) {
                 Get_col->UseGravity(true);
             }
             up_obj = false;
-
+            // printfDx("HIT: %s\n", obj_->GetName().data());
             _isholding = IDLE;
         }
     }
+
+    //}
     //up_obj==true状態のときnpcの頭上に置く
     if(up_obj == true) {
         for(auto obj_ : Scene::Object::GetArray<Animal>()) {

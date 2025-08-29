@@ -1,11 +1,13 @@
 ﻿#include "Player_sol.h"
 #include "Animal.h"
+
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 #include <System/Component/ComponentCollisionCapsule.h>
 #include <System/Component/ComponentObjectController.h>
 #include <System/Component/ComponentCollisionSphere.h>
+
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
@@ -36,7 +38,6 @@ bool Player_Sol::Init()
     });
     //model->SetScaleAxisXYZ( { 1, 1, 1 } );
     model->PlayAnimation("idle", true);
-    // AddComponent<StateIdleWalk>();
 
     AddComponent<ComponentGameCamera>();
 
@@ -46,13 +47,13 @@ bool Player_Sol::Init()
 void Player_Sol::Update()
 {
     Super::Update();
-    pos_npc_ = GetTranslate();
 
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Player_Sol::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
+    //コミット
 
     float     max_dir = 100.0f;     //一番遠くに距離のの初期値を置くを置く
     AnimalPtr Get_obj = nullptr;    //一番近くのオブジェクトの保管
