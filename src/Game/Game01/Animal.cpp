@@ -5,8 +5,7 @@
 #include <System/Component/ComponentCollisionCapsule.h>
 #include <System/Component/ComponentObjectController.h>
 #include <Game/Component/ComponentGameCamera.h>
-#include <Game/Component/State/StateIdleWalk.h>
-#include <Game/Component/State/StateJump.h>
+#include <Game/Component/State/AnimalStateIdleWalk.h>
 
 const char* Animal_name[] = {
     "data/Sample/Animal/Pig.mv1",
@@ -14,6 +13,11 @@ const char* Animal_name[] = {
     "data/Sample/Animal/Bear.mv1",
     "data/Sample/Animal/Sheep.mv1",
     "data/Sample/Animal/Duck.mv1",
+    "data/Sample/Animal/Antelope.mv1",
+    "data/Sample/Animal/Buffalo.mv1",
+    "data/Sample/Animal/Chick.mv1",
+    "data/Sample/Animal/Koala.mv1",
+    "data/Sample/Animal/Turkey.mv1",
 };
 
 namespace Game01 {
@@ -27,10 +31,10 @@ bool Animal::Init()
 
     // 動物
     SetName("Animal");
-    SetTranslate({pos_x, 10.0f, pos_z});
+    SetTranslate({pos_x, 5.0f, pos_z});
     SetRotationAxisXYZ({0.0f, 180.0f, 0.0f});
 
-    int         num = GetRand(4);
+    int         num = GetRand(9);
     const char* str = Animal_name[num];
 
     //当たり判定の円の大きさ
@@ -47,7 +51,7 @@ bool Animal::Init()
         break;
     case 1:    //Lion
         size   = 0.08f;
-        radius = 5.0f;
+        radius = 6.0f;
         height = 15.0f;
         break;
     case 2:    //Bear
@@ -65,6 +69,31 @@ bool Animal::Init()
         radius = 6.0f;
         height = 11.0f;
         break;
+    case 5:    //Antelope
+        size   = 0.07f;
+        radius = 7.0f;
+        height = 17.0f;
+        break;
+    case 6:    //Buffalo
+        size   = 0.15f;
+        radius = 7.0f;
+        height = 12.0f;
+        break;
+    case 7:    //Chick
+        size   = 0.15f;
+        radius = 6.0f;
+        height = 11.0f;
+        break;
+    case 8:    //Koala
+        size   = 0.07f;
+        radius = 6.0f;
+        height = 11.0f;
+        break;
+    case 9:    //Turkey
+        size   = 0.07f;
+        radius = 6.0f;
+        height = 11.0f;
+        break;
     }
 
     auto col = AddComponent<ComponentCollisionCapsule>();
@@ -75,15 +104,15 @@ bool Animal::Init()
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
     model->SetAnimation({
-        {"idle",          "data/Sample/Animal/abigail/Pig.mv1", 8, 1.0f},
-        {"walk", "data/Sample/Player/abigail/Anim/Walking.mv1", 0, 1.0f},
-        {"jump",    "data/Sample/Player/abigail/Anim/Jump.mv1", 0, 1.0f},
-        { "run",     "data/Sample/Player/abigail/Anim/Run.mv1", 0, 1.0f},
+        {"idle", Animal_name[num],  8, 1.0f},
+        {"walk", Animal_name[num], 17, 1.0f},
     });
-    //model->SetScaleAxisXYZ( { 1, 1, 1 } );
+
     model->PlayAnimation("idle", true);
 
     AddComponent<ComponentGameCamera>();
+
+    //AddComponent<AnimalStateIdleWalk>();
 
     return true;
 }
@@ -126,4 +155,5 @@ void Animal::SetDirectior(float3 dir)
 {
     direction_ = dir;
 }
+
 }    // namespace Game01

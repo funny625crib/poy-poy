@@ -9,6 +9,7 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
 #include <System/Component/ComponentCollisionSphere.h>
+#include <Game/Component/State/AbigailStateIdleWalk.h>
 
 namespace Game01 {
 bool Player_Abigail::Init()
@@ -38,7 +39,9 @@ bool Player_Abigail::Init()
     model->PlayAnimation("idle", true);
 
     AddComponent<ComponentGameCamera>();
-    //AddComponent<StateIdleWalk>();
+
+    AddComponent<AbigailStateIdleWalk>();
+
     return true;
 }
 

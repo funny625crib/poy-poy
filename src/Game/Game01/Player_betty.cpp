@@ -10,6 +10,7 @@
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
+#include <Game/Component/State/BettyStateIdleWalk.h>
 
 namespace Game01 {
 bool Player_Betty::Init()
@@ -39,6 +40,8 @@ bool Player_Betty::Init()
     model->PlayAnimation("idle", true);
 
     AddComponent<ComponentGameCamera>();
+
+    AddComponent<BettyStateIdleWalk>();
 
     return true;
 }
