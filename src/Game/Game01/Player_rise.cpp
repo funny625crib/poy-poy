@@ -135,13 +135,13 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
         }
     }
     //IDLE状態のときPキー押した時HOLDING状態にする
-    if(IsKeyOn(KEY_INPUT_P) && _isholding == IDLE) {
+    if(IsKeyOn(KEY_INPUT_Q) && _isholding == IDLE) {
         if(hit_owner_name2 == "Animal") {
             _isholding = HOLDING;
         }
     }
     //HOLDING状態のときOキー押した時THROWING状態にする
-    if(IsKeyOn(KEY_INPUT_O) && _isholding == HOLDING) {
+    if(IsKeyOn(KEY_INPUT_E) && _isholding == HOLDING) {
         _isholding = THROWING;
     }
     //IDLE状態のときオブジェクトを移動するのをやめさせる
@@ -152,7 +152,7 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
     if(_isholding == HOLDING) {
         if(obj->Cone_Mode == HOLDING) {
             if(Get_col) {
-                Get_col->UseGravity(false);
+                // Get_col->UseGravity(false);
             }
         }
         up_obj = true;
@@ -168,7 +168,7 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
             obj->SetDirectior(dir * 1.0f);
 
             if(Get_col) {
-                Get_col->UseGravity(true);
+                //Get_col->UseGravity(true);
             }
             up_obj = false;
             // printfDx("HIT: %s\n", obj_->GetName().data());

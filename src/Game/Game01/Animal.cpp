@@ -75,10 +75,10 @@ bool Animal::Init()
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
     model->SetAnimation({
-        {"idle", "data/Sample/Animal/abigail/Pig.mv1", 8, 1.0f},
- /*{"walk", "data/Sample/Player/abigail/Anim/Walking.mv1", 0, 1.0f},
-			{"jump",	  "data/Sample/Player/abigail/Anim/Jump.mv1", 0, 1.0f},
-			{ "run",	 "data/Sample/Player/abigail/Anim/Run.mv1", 0, 1.0f},*/
+        {"idle",          "data/Sample/Animal/abigail/Pig.mv1", 8, 1.0f},
+        {"walk", "data/Sample/Player/abigail/Anim/Walking.mv1", 0, 1.0f},
+        {"jump",    "data/Sample/Player/abigail/Anim/Jump.mv1", 0, 1.0f},
+        { "run",     "data/Sample/Player/abigail/Anim/Run.mv1", 0, 1.0f},
     });
     //model->SetScaleAxisXYZ( { 1, 1, 1 } );
     model->PlayAnimation("idle", true);
@@ -92,20 +92,34 @@ void Animal::Update()
 {
     Super::Update();
     AddTranslate(direction_ * 1.0f);
+    auto col = GetComponent<ComponentCollisionCapsule>();
+    //col->UseGravity(true);
+
+    if(Cone_Mode == HOLDING) {
+        col->UseGravity(false);
+    }
+    else if(Cone_Mode == THROWING) {
+        col->UseGravity(true);
+    }
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     AnimalPtr Get_obj        = nullptr;
     auto      hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
+    auto      col            = GetComponent<ComponentCollisionCapsule>();
 
     if(hit_owner_name == "Wall") {
         //  direction_ = 0;
     }
     if(hit_owner_name == "Ground") {
         direction_ = 0;
+        col->UseGravity(false);
         //地面に当たっているobjをIDLE状態にする
         Cone_Mode = IDLE;
+    }
+    else {
+        //col->UseGravity(true);
     }
 }
 void Animal::SetDirectior(float3 dir)
