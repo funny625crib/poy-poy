@@ -6,6 +6,7 @@
 #include "Player_sol.h"
 #include "Player_betty.h"
 #include "Player_abigail.h"
+#include <Game/Component/State/AnimalStateIdleWalk.h>
 
 namespace Game01 {
 #if 1    // 参考用
