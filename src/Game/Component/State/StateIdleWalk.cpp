@@ -1,5 +1,9 @@
 ﻿#pragma once
+#include <System/Component/ComponentModel.h>
 #include <Game/Component/State/StateIdleWalk.h>
+#include <Game/Game01/Skills/Acceleration.h>
+#include <Game/Game01/Skills/Ramming.h>
+#include <Game/Game01/Skills/Avoidance.h>
 #include <System/Component/ComponentSpringArm.h>
 #include <System/Component/ComponentModel.h>
 #include "StateJump.h"
@@ -69,6 +73,25 @@ void StateIdleWalk::Update()
             owner->RemoveComponent(shared_from_this());
             owner->AddComponent<StateRun>();
         }
+    }
+    else if(Input::IsKeyRepeat(KEY_INPUT_P))    //走る
+    {
+        if(Input::IsKeyRepeat(KEY_INPUT_W) || Input::IsKeyRepeat(KEY_INPUT_A) || Input::IsKeyRepeat(KEY_INPUT_S) ||
+           Input::IsKeyRepeat(KEY_INPUT_D))    //移動キー押している時だけ
+        {
+            owner->RemoveComponent(shared_from_this());
+            owner->AddComponent<Game01::Acceleration>();
+        }
+    }
+    else if(Input::IsKeyOn(KEY_INPUT_O))    //走る
+    {
+        owner->RemoveComponent(shared_from_this());
+        owner->AddComponent<Game01::Ramming>();
+    }
+    else if(Input::IsKeyOn(KEY_INPUT_I))    //走る
+    {
+        owner->RemoveComponent(shared_from_this());
+        owner->AddComponent<Game01::Ramming>();
     }
 }
 

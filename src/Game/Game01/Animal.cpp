@@ -27,7 +27,7 @@ bool Animal::Init()
 
     // 動物
     SetName("Animal");
-    SetTranslate({pos_x, 5.0f, pos_z});
+    SetTranslate({pos_x, 10.0f, pos_z});
     SetRotationAxisXYZ({0.0f, 180.0f, 0.0f});
 
     int         num = GetRand(4);
@@ -91,7 +91,39 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
+    AddTranslate(direction_ * 1.0f);
+    auto col = GetComponent<ComponentCollisionCapsule>();
+    //col->UseGravity(true);
 
+    if(Cone_Mode == HOLDING) {
+        col->UseGravity(false);
+    }
+    else if(Cone_Mode == THROWING) {
+        col->UseGravity(true);
+    }
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
+}
+void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
+{
+    AnimalPtr Get_obj        = nullptr;
+    auto      hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
+    auto      col            = GetComponent<ComponentCollisionCapsule>();
+
+    if(hit_owner_name == "Wall") {
+        //  direction_ = 0;
+    }
+    if(hit_owner_name == "Ground") {
+        direction_ = 0;
+        col->UseGravity(false);
+        //地面に当たっているobjをIDLE状態にする
+        Cone_Mode = IDLE;
+    }
+    else {
+        //col->UseGravity(true);
+    }
+}
+void Animal::SetDirectior(float3 dir)
+{
+    direction_ = dir;
 }
 }    // namespace Game01

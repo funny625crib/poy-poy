@@ -12,8 +12,20 @@ public:
     bool Init() override;
 
     void Update() override;
+    void OnHit(const ComponentCollision::HitInfo& hit_info) override;
+    void SetDirectior(float3 dir);
+
+    int Cone_Mode;
+    enum
+    {
+        IDLE,
+        HOLDING,
+        THROWING,
+    };
+    float3 direction_;
 
 private:
+    float speed_ = 1.0f;
 };
 
 }    // namespace Game01
