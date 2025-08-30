@@ -75,10 +75,10 @@ bool Animal::Init()
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
     model->SetAnimation({
-        {"idle",          "data/Sample/Animal/abigail/Pig.mv1", 8, 1.0f},
-        {"walk", "data/Sample/Player/abigail/Anim/Walking.mv1", 0, 1.0f},
+        {"idle", "data/Sample/Animal/abigail/Pig.mv1", 8, 1.0f},
+        /* {"walk", "data/Sample/Player/abigail/Anim/Walking.mv1", 0, 1.0f},
         {"jump",    "data/Sample/Player/abigail/Anim/Jump.mv1", 0, 1.0f},
-        { "run",     "data/Sample/Player/abigail/Anim/Run.mv1", 0, 1.0f},
+        { "run",     "data/Sample/Player/abigail/Anim/Run.mv1", 0, 1.0f},*/
     });
     //model->SetScaleAxisXYZ( { 1, 1, 1 } );
     model->PlayAnimation("idle", true);
@@ -91,9 +91,9 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
-    AddTranslate(direction_ * 1.0f);
+    AddTranslate(direction_ * 3.0f);
     auto col = GetComponent<ComponentCollisionCapsule>();
-    //col->UseGravity(true);
+    // col->UseGravity(true);
 
     if(Cone_Mode == HOLDING) {
         col->UseGravity(false);
@@ -125,5 +125,10 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
 void Animal::SetDirectior(float3 dir)
 {
     direction_ = dir;
+}
+void Animal::SetMoveDirectior(float3 dir)
+{
+    mode_direction_ = dir;
+    AddTranslate(mode_direction_);
 }
 }    // namespace Game01

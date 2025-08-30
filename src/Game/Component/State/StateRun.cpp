@@ -2,6 +2,7 @@
 #include "StateRun.h"
 #include "StateIdleWalk.h"
 #include <System/Component/ComponentModel.h>
+#include <Game/Game01/Animal.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <DxLib.h>
 
