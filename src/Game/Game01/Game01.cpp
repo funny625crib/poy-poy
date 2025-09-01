@@ -57,7 +57,8 @@ void GameUpdate()
 
 #endif
 
-Fade fadein;
+Fade fadein;    //シーンフェイドクラスの関数を使うため宣言
+
 bool Game01::Init()
 {
     GameUpdate();
@@ -90,7 +91,7 @@ bool Game01::Init()
         obj->SetTranslate({0, -739.0f, 0});
     }
 
-    fadein.FadeIn();
+    fadein.FadeIn();    //タイトルシーンからのフェイドイン
 
     return true;
 }

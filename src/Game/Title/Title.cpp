@@ -5,7 +5,7 @@
 #include "TitleBg.h"
 
 namespace Title {
-Fade fadeout;
+Fade fadeout;    //シーンフェイドクラスの関数を使うため宣言
 //タイトル用変数の初期化処理
 bool Title::Init()
 {
@@ -17,7 +17,7 @@ void Title::Update()
 {
     if(Input::IsKeyDown(KEY_INPUT_SPACE)) {
         // 次のシーンに移動準備します
-        fadeout.FadeOut();
+        fadeout.FadeOut();    //Game01シーンにフェイドアウト
     }
 
     // フェードアウトを実行していい状態なら
