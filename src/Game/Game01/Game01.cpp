@@ -6,6 +6,7 @@
 #include "Player_sol.h"
 #include "Player_betty.h"
 #include "Player_abigail.h"
+#include <Game/SceneFade/SceneFade.h>
 namespace Game01 {
 #if 1    // 参考用
 class GameObject
@@ -55,6 +56,8 @@ void GameUpdate()
 }
 
 #endif
+
+Fade fadein;
 bool Game01::Init()
 {
     GameUpdate();
@@ -87,11 +90,16 @@ bool Game01::Init()
         obj->SetTranslate({0, -739.0f, 0});
     }
 
+    fadein.FadeIn();
+
     return true;
 }
 
 void Game01::Update()
 {
+    // フェードイン中なら待つ
+    if(fadein.WaitFadeIn())
+        return;
     //--------------------------------------------------------------
     // 雲を動かすように空をY軸で少しづつ回転させます　⑤
     //--------------------------------------------------------------

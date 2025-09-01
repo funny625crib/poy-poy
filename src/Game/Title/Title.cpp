@@ -1,9 +1,11 @@
 ﻿#include <System/Scene.h>
 #include <Game/Game01/Game01.h>
+#include <Game/SceneFade/SceneFade.h>
 #include "Title.h"
 #include "TitleBg.h"
 
 namespace Title {
+Fade fadeout;
 //タイトル用変数の初期化処理
 bool Title::Init()
 {
@@ -14,8 +16,18 @@ bool Title::Init()
 void Title::Update()
 {
     if(Input::IsKeyDown(KEY_INPUT_SPACE)) {
+        // 次のシーンに移動準備します
+        fadeout.FadeOut();
+    }
+
+    // フェードアウトを実行していい状態なら
+    if(!fadeout.WaitFadeOut()) {
         // シーンを切り替えます
         Scene::Change(Scene::GetScene<Game01::Game01>());
     }
+    // if(Input::IsKeyDown(KEY_INPUT_SPACE)) {
+    //     // シーンを切り替えます
+    //     Scene::Change(Scene::GetScene<Game01::Game01>());
+    // }
 }
 }    // namespace Title
