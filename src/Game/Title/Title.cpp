@@ -3,6 +3,7 @@
 #include <Game/SceneFade/SceneFade.h>
 #include "Title.h"
 #include "TitleBg.h"
+#include "TitleUI.h"
 
 namespace Title {
 Fade fadeout;    //シーンフェイドクラスの関数を使うため宣言
@@ -10,6 +11,7 @@ Fade fadeout;    //シーンフェイドクラスの関数を使うため宣言
 bool Title::Init()
 {
     Scene::Object::Create<Bg>();
+    Scene::Object::Create<UI>();
     return true;
 }
 //タイトルの更新処理
