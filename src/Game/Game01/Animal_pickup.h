@@ -14,6 +14,9 @@ public:
     void Init() override;
 
     void Update() override;
+    void Draw() override;
+    bool check = false;
+    bool Check_Pickup();
 
 private:
 };

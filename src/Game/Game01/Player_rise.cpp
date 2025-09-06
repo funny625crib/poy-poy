@@ -8,11 +8,14 @@
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Game01/Skills/Acceleration.h>
-
 #include <Game/Component/State/StateIdleWalk.h>
+#include <Game/Game01/Animal_pickup.h>
 #include <Game/Component/State/StateJump.h>
 
 namespace Game01 {
+//float3    dir{0, 0, 0};
+//AnimalPtr Get_obj2 = nullptr;    //一番近くのオブジェクトの保管
+
 bool Player_Rise::Init()
 {
     Super::Init();
@@ -38,7 +41,7 @@ bool Player_Rise::Init()
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
 
     AddComponent<ComponentGameCamera>();
-
+    AddComponent<Pickup>();
     AddComponent<StateIdleWalk>();
 
     return true;
@@ -47,6 +50,7 @@ bool Player_Rise::Init()
 void Player_Rise::Update()
 {
     Super::Update();
+    pos_npc_ = GetTranslate();
     enum
     {
         MODE_IDLE,         //プレイヤーが立っているとき
@@ -82,12 +86,97 @@ void Player_Rise::Update()
         }
     }
 
-    // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
+    //if(IsKey(KEY_INPUT_W))
+    //    dir = {0, 180, -90};
+
+    //if(IsKey(KEY_INPUT_S))
+    //    dir = {0, 0, 90};
+
+    //if(IsKey(KEY_INPUT_D))
+    //    dir = {-90, 270, 0};
+
+    //if(IsKey(KEY_INPUT_A))
+    //    dir = {90, 90, 0};
+    //float max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
+    //for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+    //    // ここに来る場合 obj がEnemyクラスということが保証されます。
+    //    // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+    //    auto name        = obj_->GetName();
+    //    auto get_obj_pos = obj_->GetTranslate();
+    //    auto get_npc_pos = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
+    //    dis              = get_obj_pos - get_npc_pos;
+    //    float dir        = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
+    //    if(dir < max_dir) {
+    //        max_dir = dir;
+
+    //        Get_obj2 = obj_;
+    //    }
+    //}
+}
+void Player_Rise::Draw()
+{
+    //float3 Get_pos = GetTranslate();
+
+    //float3 pos_XZ = {Get_pos.x, 0.0f, Get_pos.z};
+    //int    color  = GetColor(255, 255, 255);
+
+    //float3 pos1 = Get_pos;
+    //float3 pos2 = Get_obj2->GetTranslate();
+    //DrawSphere3D(cast(pos1), 5.0f, 100, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
+    //DrawSphere3D(cast(pos2), 6.0f, 100, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
+    //pos1.y = 0.0f;
+    //pos2.y = 0.0f;
+
+    //float x        = pos1.x - pos2.x;
+    //float y        = pos1.y - pos2.y;
+    //float z        = pos1.z - pos2.z;
+    //float distance = sqrtf(x * x + y * y + z * z);
+    //float radius   = 35.0f + 7.0f;
+
+    ////	１：２つのベクトルを用意
+    ////	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
+    //float3 front;
+    //front.x = 1.0f * sinf((dir.y * 3.14159265f / 180.0f));
+    //front.z = 1.0f * cosf((dir.y * 3.14159265f / 180.0f));
+
+    ////	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
+    //float3 target = pos2 - pos1;
+    ////	ベクトルの正規化（ベクトルの長さを 1.0 に）
+
+    //float length = sqrtf(target.x * target.x + target.z * target.z);
+    //if(length > 0.0f) {
+    //    target.x = target.x / length;
+    //    target.z = target.z / length;
+    //}
+    ////	２：２つのベクトルの内積を取得
+    //float front_dot = front.x * target.x + front.z * target.z;
+    ///*  GetFloat2Dot(front, target);*/
+
+    ////	３：求めた内積の値から角度を求める
+    ////	この内積の値（ front_dot ）を acos 関数に渡すことで角度を取得できます
+    ////	acosf：アークコサイン関数（ cos 関数の逆関数）← ラジアン角が返ってきます
+    //float radian = acosf(front_dot);
+    ////	ラジアン角を角度の「度」にします
+    //float degree = radian * 180.0f / 3.14159265f;
+
+    //if(distance <= radius && degree < 25.0f) {
+    //    color = GetColor(0, 255, 255);
+    //}
+    //else {
+    //    color = GetColor(255, 255, 255);
+    //}
+    //float3 line1;
+    //line1.x = pos_XZ.x + 40.0f * sinf((dir.y + 25.0f) * 3.141592f / 180.0f);
+    //line1.z = pos_XZ.z + 40.0f * cosf((dir.y + 25.0f) * 3.141592f / 180.0f);
+    //DrawLine3D(cast(pos_XZ), cast(line1), color);
+    //float3 line2;
+    //line2.x = pos_XZ.x + 40.0f * sinf((dir.y - 25.0f) * 3.141592f / 180.0f);
+    //line2.z = pos_XZ.z + 40.0f * cosf((dir.y - 25.0f) * 3.141592f / 180.0f);
+    //DrawLine3D(cast(pos_XZ), cast(line2), color);
 }
 void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
-    pos_npc_ = GetTranslate();
 
     float     max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
     AnimalPtr Get_obj = nullptr;     //一番近くのオブジェクトの保管
@@ -117,19 +206,20 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 
     //IDLE状態のときPキー押した時HOLDING状態にする
     if(IsKeyOn(KEY_INPUT_Q) && _isholding == IDLE) {
-        if(hit_owner_name2 == "Animal") {
+        auto get_pickup_com = GetComponent<Pickup>();
+        if(get_pickup_com->Check_Pickup() == true) {
             _isholding = HOLDING;
         }
-        //もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
-        if(_isholding == HOLDING) {
-            for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-                if(Get_obj == obj_) {
-                    obj_->Cone_Mode = HOLDING;
-                    obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
-                }
+    }
+    //もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
+    if(_isholding == HOLDING) {
+        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+            if(Get_obj == obj_) {
+                obj_->Cone_Mode = HOLDING;
+                obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
             }
-            up_obj = true;
         }
+        up_obj = true;
     }
     if(_isholding == HOLDING) {
         up_obj = true;
@@ -162,14 +252,6 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
             up_obj     = false;
             _isholding = IDLE;
         }
-    }
-
-    if(up_obj == true) {
-        /*  for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-            if(obj_->Cone_Mode == HOLDING) {
-                obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
-            }
-        }*/
     }
 }
 }    // namespace Game01

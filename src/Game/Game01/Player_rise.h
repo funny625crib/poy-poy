@@ -22,6 +22,7 @@ public:
         HOLDING,
         THROWING,
     };
+    void Draw() override;
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
 
 private:
