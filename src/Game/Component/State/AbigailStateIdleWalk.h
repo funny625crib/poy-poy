@@ -28,7 +28,7 @@ public:
     void GUI() override;
 
 private:
-    float move_speed_ = 0.1f;
+    float move_speed_ = 0.3f;    //アビゲイルのメリットの移動速度が速い
     float rot_speed_  = 20.0f;
 
     float front_rot_ = 0.0f;    //!<前方ベクトルの回転角度(0-360度)
