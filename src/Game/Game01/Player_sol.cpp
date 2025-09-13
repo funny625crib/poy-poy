@@ -11,6 +11,7 @@
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
+#include <Game/Component/State/SolStateIdleWalk.h>
 
 namespace Game01 {
 bool Player_Sol::Init()
@@ -40,6 +41,8 @@ bool Player_Sol::Init()
     model->PlayAnimation("idle", true);
 
     AddComponent<ComponentGameCamera>();
+
+    AddComponent<SolStateIdleWalk>();
 
     return true;
 }

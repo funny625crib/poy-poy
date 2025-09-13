@@ -7,7 +7,7 @@
 #include "Player_sol.h"
 #include "Player_betty.h"
 #include "Player_abigail.h"
-
+#include <Game/SceneFade/SceneFade.h>
 namespace Game01 {
 #if 1    // 参考用
 class GameObject
@@ -57,6 +57,9 @@ void GameUpdate()
 }
 
 #endif
+
+Fade fadein;    //シーンフェイドクラスの関数を使うため宣言
+
 bool Game01::Init()
 {
     GameUpdate();
@@ -69,7 +72,6 @@ bool Game01::Init()
     Scene::Object::Create<Player_Betty>();
     Scene::Object::Create<Player_Abigail>();
     Scene::Object::Create<Player_Sol>();
-
     //動物
     for(int i = 0; i < 20; ++i) {
         Scene::Object::Create<Animal>();
@@ -90,11 +92,16 @@ bool Game01::Init()
         obj->SetTranslate({0, -739.0f, 0});
     }
 
+    fadein.FadeIn();    //タイトルシーンからのフェイドイン
+
     return true;
 }
 
 void Game01::Update()
 {
+    // フェードイン中なら待つ
+    if(fadein.WaitFadeIn())
+        return;
     //--------------------------------------------------------------
     // 雲を動かすように空をY軸で少しづつ回転させます　⑤
     //--------------------------------------------------------------
