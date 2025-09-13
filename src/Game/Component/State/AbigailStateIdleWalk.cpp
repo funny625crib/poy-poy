@@ -19,7 +19,7 @@ void AbigailStateIdleWalk::Update()
     auto owner = GetOwner();
 
     // 移動方向がランダムする
-    static int abigail_dir = 2;    //移動方向
+    static int abigail_dir = 3;    //移動方向
 
     static int abigail_wait_frame;    //移動方向を変わる前に待つ時間
 
@@ -68,6 +68,20 @@ void AbigailStateIdleWalk::Update()
         if(auto mdl = owner->GetComponent<ComponentModel>())
             mdl->PlayAnimationNoSame("idle", true);
     }
+
+    //NPCが画面外が出られないように
+
+    auto pos = owner->GetTranslate();    // 座標
+
+    pos.x = max(-150.0f, min(pos.x, 55.0f));
+    pos.z = max(-100.0f, min(pos.z, 110.0f));
+
+    if(pos.x <= -150.0f || pos.x >= 55.0f || pos.z <= -100.0f || pos.z >= 110.0f) {
+        //壁にぶつかると
+        abigail_dir = GetRand(3);
+    }
+
+    owner->SetTranslate(pos);
 }
 
 AbigailStateIdleWalkPtr AbigailStateIdleWalk::SetMoveSpeed(const float speed)

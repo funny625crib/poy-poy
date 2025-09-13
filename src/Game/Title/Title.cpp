@@ -17,7 +17,7 @@ bool Title::Init()
 //タイトルの更新処理
 void Title::Update()
 {
-    if(Input::IsKeyDown(KEY_INPUT_SPACE)) {
+    if(CheckHitKeyAll(DX_CHECKINPUT_ALL)) {
         // 次のシーンに移動準備します
         fadeout.FadeOut();    //Game01シーンにフェイドアウト
     }

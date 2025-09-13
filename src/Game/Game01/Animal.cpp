@@ -112,7 +112,8 @@ bool Animal::Init()
 
     AddComponent<ComponentGameCamera>();
 
-    //AddComponent<AnimalStateIdleWalk>();
+    auto state = AddComponent<AnimalStateIdleWalk>();
+    state->SetMoveSpeed(0.3f)->SetRotateSpeed(20.0f);
 
     return true;
 }
