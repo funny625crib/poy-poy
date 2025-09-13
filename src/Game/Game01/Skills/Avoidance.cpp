@@ -3,6 +3,7 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionSphere.h>
+#include <Game/Game01/Animal.h>
 #include <DxLib.h>
 #include <Game/Game01/Player_rise.h>
 

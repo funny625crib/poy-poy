@@ -1,8 +1,9 @@
 ﻿#include "Game01.h"
 #include "Ground.h"
 #include "Camera.h"
-#include "Player_rise.h"
+
 #include "Animal.h"
+#include "Player_rise.h"
 #include "Player_sol.h"
 #include "Player_betty.h"
 #include "Player_abigail.h"

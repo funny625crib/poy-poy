@@ -3,9 +3,9 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Game01/Skills/Acceleration.h>
 #include <Game/Game01/Skills/Ramming.h>
+#include <Game/Game01/Animal.h>
 #include <Game/Game01/Skills/Avoidance.h>
 #include <System/Component/ComponentSpringArm.h>
-#include <System/Component/ComponentModel.h>
 #include "StateJump.h"
 #include "StateRun.h"
 
@@ -40,10 +40,20 @@ void StateIdleWalk::Update()
     if((float)length(dir) > 0.0f) {
         // 斜めが押されていることを考慮し、
         // その方向の移動スピードを1とし、スピードを掛け合わせる
-        dir = normalize(dir);
+        dir              = normalize(dir);
+        float base_speed = 0.5f;
+        if(owner->GetComponent<Game01::Acceleration>() && Input::IsKeyRepeat(KEY_INPUT_P)) {
+            base_speed = 1.5f;
+        }
 
         // キャラのローカル方向で移動をさせる
-        owner->AddTranslate(dir * move_speed_, true);
+        owner->AddTranslate(dir * base_speed, true);
+        for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
+            if(obj_->Cone_Mode == obj_->HOLDING) {
+                auto Get_positon = owner->GetTranslate();
+                obj_->SetTranslate({Get_positon.x, Get_positon.y + 18.0f, Get_positon.z});
+            }
+        }
 
         // モデルを移動の方向に向けます
         if(auto mdl = owner->GetComponent<ComponentModel>()) {
@@ -72,15 +82,6 @@ void StateIdleWalk::Update()
         {
             owner->RemoveComponent(shared_from_this());
             owner->AddComponent<StateRun>();
-        }
-    }
-    else if(Input::IsKeyRepeat(KEY_INPUT_P))    //走る
-    {
-        if(Input::IsKeyRepeat(KEY_INPUT_W) || Input::IsKeyRepeat(KEY_INPUT_A) || Input::IsKeyRepeat(KEY_INPUT_S) ||
-           Input::IsKeyRepeat(KEY_INPUT_D))    //移動キー押している時だけ
-        {
-            owner->RemoveComponent(shared_from_this());
-            owner->AddComponent<Game01::Acceleration>();
         }
     }
     else if(Input::IsKeyOn(KEY_INPUT_O))    //走る

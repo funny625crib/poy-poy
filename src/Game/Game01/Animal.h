@@ -14,8 +14,8 @@ public:
     void Update() override;
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
     void SetDirectior(float3 dir);
-
-    int Cone_Mode;
+    void SetMoveDirectior(float3 dir);
+    int  Cone_Mode;
     enum
     {
         IDLE,
@@ -23,6 +23,7 @@ public:
         THROWING,
     };
     float3 direction_;
+    float3 mode_direction_;
 
 private:
     float speed_ = 1.0f;

@@ -12,7 +12,6 @@ public:
     bool Init() override;
 
     void   Update() override;
-    bool   up_obj     = false;
     int    _isholding = 0;
     float3 pos_npc_;
     float3 dis;
@@ -22,6 +21,7 @@ public:
         HOLDING,
         THROWING,
     };
+    void Draw() override;
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
 
 private:

@@ -121,16 +121,19 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
-    AddTranslate(direction_ * 1.0f);
+    AddTranslate(direction_ * 3.0f);
     auto col = GetComponent<ComponentCollisionCapsule>();
-    //col->UseGravity(true);
+    // col->UseGravity(true);
+    bool T_OR_F = true;
 
     if(Cone_Mode == HOLDING) {
-        col->UseGravity(false);
+        T_OR_F = false;
     }
     else if(Cone_Mode == THROWING) {
-        col->UseGravity(true);
+        T_OR_F = true;
     }
+
+    col->UseGravity(T_OR_F);
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
@@ -139,22 +142,20 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
     auto      hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
     auto      col            = GetComponent<ComponentCollisionCapsule>();
 
-    if(hit_owner_name == "Wall") {
-        //  direction_ = 0;
-    }
     if(hit_owner_name == "Ground") {
         direction_ = 0;
-        col->UseGravity(false);
         //地面に当たっているobjをIDLE状態にする
         Cone_Mode = IDLE;
     }
-    else {
-        //col->UseGravity(true);
-    }
+    __super::OnHit(hit_info);
 }
 void Animal::SetDirectior(float3 dir)
 {
     direction_ = dir;
 }
-
+void Animal::SetMoveDirectior(float3 dir)
+{
+    mode_direction_ = dir;
+    AddTranslate(mode_direction_);
+}
 }    // namespace Game01
