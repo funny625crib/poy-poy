@@ -20,8 +20,7 @@ void   Pickup::Init()
 void Pickup::Update()
 {
     __super::Update();
-    auto owner = GetOwner();
-    //  pos_npc_      = GetTranslate();
+    auto   owner   = GetOwner();
     float3 Get_pos = owner->GetTranslate();
     float  max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
     for(auto obj_ : Scene::Object::GetArray<Animal>()) {
@@ -54,10 +53,8 @@ void Pickup::Update()
 
     float3 pos1 = Get_pos;
     float3 pos2 = Get_obj2->GetTranslate();
-    //DrawSphere3D(cast(pos1), 5.0f, 100, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
-    //DrawSphere3D(cast(pos2), 6.0f, 100, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
-    pos1.y = 0.0f;
-    pos2.y = 0.0f;
+    pos1.y      = 0.0f;
+    pos2.y      = 0.0f;
 
     float x        = pos1.x - pos2.x;
     float y        = pos1.y - pos2.y;

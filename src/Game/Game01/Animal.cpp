@@ -71,7 +71,7 @@ bool Animal::Init()
     col->SetRadius(radius);
     col->SetHeight(height);
     col->UseGravity();
-
+    col->SetCollisionGroup(ComponentCollision::CollisionGroup::ENEMY);
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
     model->SetAnimation({
@@ -94,13 +94,18 @@ void Animal::Update()
     AddTranslate(direction_ * 3.0f);
     auto col = GetComponent<ComponentCollisionCapsule>();
     // col->UseGravity(true);
+    bool T_OR_F = true;
 
     if(Cone_Mode == HOLDING) {
-        col->UseGravity(false);
+        T_OR_F = false;
     }
     else if(Cone_Mode == THROWING) {
-        col->UseGravity(true);
+        T_OR_F = true;
     }
+    else {
+        /*  col->UseGravity(true);*/
+    }
+    col->UseGravity(T_OR_F);
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
@@ -109,18 +114,12 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
     auto      hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
     auto      col            = GetComponent<ComponentCollisionCapsule>();
 
-    if(hit_owner_name == "Wall") {
-        //  direction_ = 0;
-    }
     if(hit_owner_name == "Ground") {
         direction_ = 0;
-        col->UseGravity(false);
         //地面に当たっているobjをIDLE状態にする
         Cone_Mode = IDLE;
     }
-    else {
-        //col->UseGravity(true);
-    }
+    __super::OnHit(hit_info);
 }
 void Animal::SetDirectior(float3 dir)
 {

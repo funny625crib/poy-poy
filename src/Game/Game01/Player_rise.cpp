@@ -15,8 +15,8 @@
 namespace Game01 {
 //float3    dir{0, 0, 0};
 //AnimalPtr Get_obj2 = nullptr;    //一番近くのオブジェクトの保管
-
-bool Player_Rise::Init()
+AnimalPtr Get_obj = nullptr;
+bool      Player_Rise::Init()
 {
     Super::Init();
 
@@ -178,39 +178,37 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
 
-    float     max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
-    AnimalPtr Get_obj = nullptr;     //一番近くのオブジェクトの保管
+    float max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
+                                 //一番近くのオブジェクトの保管
 
     //すべて見て行って一番近くのオブジェクトを取得
-
-    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-        // ここに来る場合 obj がEnemyクラスということが保証されます。
-        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
-        auto name        = obj_->GetName();
-        auto get_obj_pos = obj_->GetTranslate();
-        auto get_npc_pos = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
-        dis              = get_obj_pos - get_npc_pos;
-        float dir        = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-        if(dir < max_dir) {
-            max_dir = dir;
-
-            Get_obj = obj_;
-        }
-    }
-
-    auto& obj = Get_obj;    //一番近くのオブジェクトを取得
-
-    auto hit_owner_name2 = hit_info.hit_collision_->GetOwner()->GetNameDefault();    //npcがあたっているものの名前を取得
-
-    //もしnpcの状態がTHROWING状態なら一番近くで当たってるものをTHROWING状態にする
-
-    //IDLE状態のときPキー押した時HOLDING状態にする
     if(IsKeyOn(KEY_INPUT_Q) && _isholding == IDLE) {
+        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+            // ここに来る場合 obj がEnemyクラスということが保証されます。
+            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+            //if(Get_obj == nullptr) {
+            auto name        = obj_->GetName();
+            auto get_obj_pos = obj_->GetTranslate();
+            auto get_npc_pos = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
+            dis              = get_obj_pos - get_npc_pos;
+            float dir        = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
+            if(dir < max_dir) {
+                max_dir = dir;
+
+                Get_obj = obj_;
+            }
+            //  }
+        }
         auto get_pickup_com = GetComponent<Pickup>();
         if(get_pickup_com->Check_Pickup() == true) {
             _isholding = HOLDING;
         }
     }
+
+    auto& obj = Get_obj;    //一番近くのオブジェクトを取得
+
+    //IDLE状態のときPキー押した時HOLDING状態にする
+
     //もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
     if(_isholding == HOLDING) {
         for(auto obj_ : Scene::Object::GetArray<Animal>()) {
@@ -219,10 +217,6 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
                 obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
             }
         }
-        up_obj = true;
-    }
-    if(_isholding == HOLDING) {
-        up_obj = true;
     }
     //HOLDING状態のときOキー押した時THROWING状態にする
     if(IsKeyOn(KEY_INPUT_E) && _isholding == HOLDING) {
@@ -236,21 +230,21 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
         }
     }
     //IDLE状態のときオブジェクトを移動するのをやめさせる
-    if(obj->Cone_Mode == IDLE) {
-        obj->SetDirectior(0 * 15);
+    if(obj) {
+        if(obj->Cone_Mode == IDLE) {
+            obj->SetDirectior(0 * 15);
+        }
     }
 
     //THROWING状態のとき投げる処理
-    //for(auto obj_ : Scene::Object::GetArray<Animal>()) {
     if(_isholding == THROWING) {
         if(obj->Cone_Mode == THROWING) {
             obj->SetTranslate(GetTranslate() + float3{0, 18.0f, 0});
             auto modelrot = GetComponent<ComponentModel>();
-
-            auto dir = -modelrot->GetWorldMatrix().axisZ();
+            auto dir      = -modelrot->GetWorldMatrix().axisZ();
             obj->SetDirectior(dir * 1.0f);
-            up_obj     = false;
             _isholding = IDLE;
+            Get_obj    = nullptr;
         }
     }
 }
