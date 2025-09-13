@@ -28,6 +28,12 @@ void AnimalStateIdleWalk::Update()
             wait_frame_++;
         }
     }
+
+    if(wait_frame_ == 180) {
+        dir_        = GetRand(3);
+        wait_frame_ = 0;
+    }
+
     float3 dir{0, 0, 0};
 
     switch(dir_) {
