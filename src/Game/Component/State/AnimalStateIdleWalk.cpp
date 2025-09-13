@@ -8,6 +8,7 @@
 void AnimalStateIdleWalk::Init()
 {
     __super::Init();
+    wait_frame_ = GetRand(100);
 }
 
 void AnimalStateIdleWalk::Update()
@@ -19,19 +20,16 @@ void AnimalStateIdleWalk::Update()
     auto owner = GetOwner();
 
     // 移動方向がランダムする
-    static int animal_dir;    //動物の移動方向
 
-    static int animal_wait_frame;    //移動方向を変わる前に待つ時間
-
-    animal_wait_frame++;
-    if(animal_wait_frame >= 300) {
-        animal_dir        = GetRand(3);
-        animal_wait_frame = 0;
+    wait_frame_++;
+    if(wait_frame_ >= 120) {
+        dir_        = GetRand(3);
+        wait_frame_ = 0;
     }
 
     float3 dir{0, 0, 0};
 
-    switch(animal_dir) {
+    switch(dir_) {
     case 0:    //up
         dir += {0, 0, -1};
         break;
@@ -68,6 +66,20 @@ void AnimalStateIdleWalk::Update()
         if(auto mdl = owner->GetComponent<ComponentModel>())
             mdl->PlayAnimationNoSame("idle", true);
     }
+
+    //動物が画面外が出られないように
+
+    auto pos = owner->GetTranslate();    // 座標
+
+    pos.x = max(-150.0f, min(pos.x, 55.0f));
+    pos.z = max(-100.0f, min(pos.z, 110.0f));
+
+    if(pos.x <= -150.0f || pos.x >= 55.0f || pos.z <= -100.0f || pos.z >= 110.0f) {
+        //壁にぶつかると
+        dir_ = GetRand(3);
+    }
+
+    owner->SetTranslate(pos);
 }
 
 AnimalStateIdleWalkPtr AnimalStateIdleWalk::SetMoveSpeed(const float speed)

@@ -31,7 +31,9 @@ private:
     float move_speed_ = 0.5f;
     float rot_speed_  = 20.0f;
 
-    float front_rot_ = 0.0f;    //!<前方ベクトルの回転角度(0-360度)
+    float front_rot_  = 0.0f;    //!<前方ベクトルの回転角度(0-360度)
+    int   dir_        = 0;
+    int   wait_frame_ = 0;
 
     //--------------------------------------------------------------------
     //! @name Cereal処理
@@ -46,7 +48,9 @@ private:
         arc(CEREAL_NVP(move_speed_),
             CEREAL_NVP(rot_speed_),
 
-            CEREAL_NVP(front_rot_));
+            CEREAL_NVP(front_rot_),
+            CEREAL_NVP(dir_),
+            CEREAL_NVP(wait_frame_));
 
         arc(cereal::make_nvp("Component", cereal::base_class<Component>(this)));
     }
