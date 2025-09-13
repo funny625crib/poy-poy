@@ -127,7 +127,9 @@ void Animal::Update()
     bool T_OR_F = true;
 
     if(Cone_Mode == HOLDING) {
-        T_OR_F = false;
+        T_OR_F   = false;
+        auto mdl = GetComponent<ComponentModel>();
+        mdl->PlayAnimation("idle", true);
     }
     else if(Cone_Mode == THROWING) {
         T_OR_F = true;

@@ -2,6 +2,7 @@
 #include <Game/Component/State/AnimalStateIdleWalk.h>
 #include <System/Component/ComponentSpringArm.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/Game01/Animal.h>
 #include "StateJump.h"
 #include "StateRun.h"
 
@@ -21,12 +22,12 @@ void AnimalStateIdleWalk::Update()
 
     // 移動方向がランダムする
 
-    wait_frame_++;
-    if(wait_frame_ >= 120) {
-        dir_        = GetRand(3);
-        wait_frame_ = 0;
+    if(auto animal = dynamic_cast<Game01::Animal*>(GetOwner())) {
+        int mode = animal->Cone_Mode;
+        if(mode == Game01::Animal::IDLE) {
+            wait_frame_++;
+        }
     }
-
     float3 dir{0, 0, 0};
 
     switch(dir_) {
