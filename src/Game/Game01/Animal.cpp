@@ -121,16 +121,24 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
-    AddTranslate(direction_ * 3.0f);
+    //float V0     = 0.4f;    //初速度
+    //direction_.y = -0.5f * 0.25f * throw_time *3.0 + V0 * throw_time;
+    /*direction_.x = 0.0f;
+    direction_.z = 0.0f;*/
+
     auto col = GetComponent<ComponentCollisionCapsule>();
     // col->UseGravity(true);
-    bool T_OR_F = true;
-
+    bool T_OR_F  = true;
+    throw_time  += 0.1f;
     if(Cone_Mode == HOLDING) {
-        T_OR_F = false;
+        T_OR_F     = false;
+        throw_time = 0.0f;
     }
     else if(Cone_Mode == THROWING) {
         T_OR_F = true;
+    }
+    else {
+        throw_time = 0.0f;
     }
 
     col->UseGravity(T_OR_F);
@@ -152,6 +160,9 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
 void Animal::SetDirectior(float3 dir)
 {
     direction_ = dir;
+}
+void Animal::SetDirectior2(float3 dir)
+{
 }
 void Animal::SetMoveDirectior(float3 dir)
 {

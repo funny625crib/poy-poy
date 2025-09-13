@@ -242,7 +242,12 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
             obj->SetTranslate(GetTranslate() + float3{0, 18.0f, 0});
             auto modelrot = GetComponent<ComponentModel>();
             auto dir      = -modelrot->GetWorldMatrix().axisZ();
-            obj->SetDirectior(dir * 1.0f);
+            if(IsKeyOn(KEY_INPUT_E)) {
+                auto throw_direction  = dir;
+                throw_direction.y    += 3.0f;
+                obj->AddTranslate(throw_direction * 3.0f);
+            }
+            //obj->SetDirectior(dir * 1.0f);
             _isholding = IDLE;
             Get_obj    = nullptr;
         }

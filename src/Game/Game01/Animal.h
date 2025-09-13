@@ -9,13 +9,14 @@ class Animal : public Object
 public:
     BP_OBJECT_DECL(Animal, u8"Game01 の Animal");
 
-    bool Init() override;
-
-    void Update() override;
-    void OnHit(const ComponentCollision::HitInfo& hit_info) override;
-    void SetDirectior(float3 dir);
-    void SetMoveDirectior(float3 dir);
-    int  Cone_Mode;
+    bool  Init() override;
+    float throw_time;
+    void  Update() override;
+    void  OnHit(const ComponentCollision::HitInfo& hit_info) override;
+    void  SetDirectior(float3 dir);
+    void  SetDirectior2(float3 dir);
+    void  SetMoveDirectior(float3 dir);
+    int   Cone_Mode;
     enum
     {
         IDLE,
