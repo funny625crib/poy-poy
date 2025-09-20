@@ -73,6 +73,7 @@ bool Game01::Init()
     Scene::Object::Create<Player_Abigail>();
     Scene::Object::Create<Player_Sol>();
     //動物
+
     for(int i = 0; i < 20; ++i) {
         Scene::Object::Create<Animal>();
     }
