@@ -1,7 +1,8 @@
-超加速,
-突進,
-怪力,
-回避,
-潜伏,
-威嚇,
-シールド
+type,name,description,iconPath
+Acceleration,超加速,とても加速する,acceleration
+Charge,突進,正面に体当たり,charge
+Strength,怪力,すごく力が強くなる,strength
+Avoidance,回避,攻撃をよける,avoidance
+Infiltration,潜伏,相手から見えなくなる,infiltration
+Intimidation,威嚇,周りを怖がらせる,intimidation
+Shield,シールド,自分を守るシールドを展開する,shield

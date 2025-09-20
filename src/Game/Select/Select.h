@@ -14,6 +14,8 @@ public:
     void Update() override;
 
 private:
+    int file_count_;
+    int vertical_count_;
 };
 
 }    // namespace Select
