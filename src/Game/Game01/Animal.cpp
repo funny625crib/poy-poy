@@ -1,5 +1,6 @@
 ﻿#include "Animal.h"
 #include <DxLib.h>
+#include <Game/Component/State/StatePhysics.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 #include <System/Component/ComponentCollisionCapsule.h>
@@ -109,11 +110,11 @@ bool Animal::Init()
     });
 
     model->PlayAnimation("idle", true);
-
+    AddComponent<StatePhysics>();
     AddComponent<ComponentGameCamera>();
 
-    auto state = AddComponent<AnimalStateIdleWalk>();
-    state->SetMoveSpeed(0.3f)->SetRotateSpeed(20.0f);
+    //auto state = AddComponent<AnimalStateIdleWalk>();
+    // state->SetMoveSpeed(0.3f)->SetRotateSpeed(20.0f);
 
     return true;
 }
@@ -121,27 +122,30 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
-    //float V0     = 0.4f;    //初速度
-    //direction_.y = -0.5f * 0.25f * throw_time *3.0 + V0 * throw_time;
-    /*direction_.x = 0.0f;
-    direction_.z = 0.0f;*/
+    //float V0     = 0.5f;    //初速度
+    //direction_.y = -0.5f * 0.25f * throw_time * throw_time + V0 * throw_time * 1.1;
 
     auto col = GetComponent<ComponentCollisionCapsule>();
     // col->UseGravity(true);
     bool T_OR_F  = true;
-    throw_time  += 0.1f;
+    throw_time  += 0.4f;
     if(Cone_Mode == HOLDING) {
         T_OR_F     = false;
         throw_time = 0.0f;
+        // col->RemoveThisComponent();
     }
     else if(Cone_Mode == THROWING) {
-        T_OR_F = true;
+        T_OR_F = false;
     }
     else {
         throw_time = 0.0f;
     }
+    if(col)
+        col->UseGravity(T_OR_F);
 
-    col->UseGravity(T_OR_F);
+    /* direction_.x *= 1.08f;
+    direction_.z *= 1.08f;*/
+    AddTranslate(direction_ * 1.0f);
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
