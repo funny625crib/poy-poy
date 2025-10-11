@@ -2,6 +2,7 @@
 #include <Game/Component/State/AnimalStateIdleWalk.h>
 #include <System/Component/ComponentSpringArm.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/Game01/Animal.h>
 #include "StateJump.h"
 #include "StateRun.h"
 
@@ -15,14 +16,32 @@ void AnimalStateIdleWalk::Update()
 {
     __super::Update();
 
+    if(auto animal = dynamic_cast<Game01::Animal*>(GetOwner())) {
+        if(animal->Cone_Mode == Game01::Animal::HOLDING) {
+            if(auto mdl = GetOwner()->GetComponent<ComponentModel>()) {
+                mdl->PlayAnimationNoSame("catch", true);
+            }
+            return;
+        }
+        if(animal->Cone_Mode == Game01::Animal::THROWING) {
+            return;
+        }
+    }
+
     // オーナー(自分がAddComponentされたObject)を取得します
     // 処理されるときは必ずOwnerは存在しますので基本的にnullptrチェックは必要ありません
     auto owner = GetOwner();
 
     // 移動方向がランダムする
 
-    wait_frame_++;
-    if(wait_frame_ >= 120) {
+    if(auto animal = dynamic_cast<Game01::Animal*>(GetOwner())) {
+        int mode = animal->Cone_Mode;
+        if(mode == Game01::Animal::IDLE) {
+            wait_frame_++;
+        }
+    }
+
+    if(wait_frame_ == 180) {
         dir_        = GetRand(3);
         wait_frame_ = 0;
     }
