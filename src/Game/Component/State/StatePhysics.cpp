@@ -17,7 +17,12 @@ void StatePhysics::Update()
 {
     __super::Update();
     auto owner = GetOwner();
-    owner->AddTranslate(velocity * update_delta_time_);
+    if(IsStatic == false)
+        return;
+    if(gravity_on) {
+        addForce(float3{0, 1, 0} * 9.8f * mass, Force);
+    }
+    owner->AddTranslate(velocity * GetDeltaTime());
 }
 
 void StatePhysics::GUI()
@@ -25,24 +30,35 @@ void StatePhysics::GUI()
     __super::GUI();
 }
 
-void StatePhysics::addForce(float3 force, int mode1)
+void StatePhysics::addForce(float3 force, int mode1 = Force)
 {
+    float3 acceleration = force / mass;
     switch(mode1) {
-    case 1:
-        float3 acceleration  = force / mass;
-        velocity            += acceleration * update_delta_time_;
+    case Force:
+        velocity += acceleration * GetDeltaTime();
         break;
-    case 2:
+    case Impulse:
         velocity += force / mass;
         break;
+    case VelocityChange:
+        break;
+    case Acceleration:
+        break;
     default:
+
         break;
     }
+    //return velocity;
 }
 
 float3 StatePhysics::SetVelocity()
 {
     return velocity;
+}
+
+void StatePhysics::SetStatic(bool Static)
+{
+    IsStatic = Static;
 }
 
 CEREAL_REGISTER_TYPE(StatePhysics)

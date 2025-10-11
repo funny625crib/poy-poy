@@ -101,7 +101,7 @@ bool Animal::Init()
     col->SetRadius(radius);
     col->SetHeight(height);
     col->UseGravity();
-
+    // AddComponent<StatePhysics>();
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
     model->SetAnimation({
@@ -113,8 +113,8 @@ bool Animal::Init()
     AddComponent<StatePhysics>();
     AddComponent<ComponentGameCamera>();
 
-    //auto state = AddComponent<AnimalStateIdleWalk>();
-    // state->SetMoveSpeed(0.3f)->SetRotateSpeed(20.0f);
+    //   auto state = AddComponent<AnimalStateIdleWalk>();
+    //    state->SetMoveSpeed(0.3f)->SetRotateSpeed(20.0f);
 
     return true;
 }
@@ -122,31 +122,30 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
-    //float V0     = 0.5f;    //初速度
-    //direction_.y = -0.5f * 0.25f * throw_time * throw_time + V0 * throw_time * 1.1;
+    //  float V0     = 0.5f;    //初速度
+    //   direction_.y = -0.5f * 0.15f * throw_time * throw_time + V0 * throw_time * 1.1;
 
-    auto col = GetComponent<ComponentCollisionCapsule>();
-    // col->UseGravity(true);
-    bool T_OR_F  = true;
-    throw_time  += 0.4f;
-    if(Cone_Mode == HOLDING) {
-        T_OR_F     = false;
-        throw_time = 0.0f;
-        // col->RemoveThisComponent();
-    }
-    else if(Cone_Mode == THROWING) {
-        T_OR_F = false;
+    auto col     = GetComponent<ComponentCollisionCapsule>();
+    auto physics = GetComponent<StatePhysics>();
+    // throw_time  += 0.4f;
+
+    if(Cone_Mode == THROWING) {
+        physics->StatePhysics::gravity_on = true;
     }
     else {
-        throw_time = 0.0f;
+        physics->StatePhysics::gravity_on = false;
     }
-    if(col)
-        col->UseGravity(T_OR_F);
 
-    /* direction_.x *= 1.08f;
-    direction_.z *= 1.08f;*/
-    AddTranslate(direction_ * 1.0f);
-    // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
+    //if(col)
+    //   col->UseGravity(T_OR_F);
+
+    /*dir_xyz_     += 0.005f;
+    if(dir_xyz_ > 1.05f) {
+        dir_xyz_ = 1.05f;
+    }*/
+    /*  direction_.x *= dir_xyz_;
+    direction_.z *= dir_xyz_;*/
+    // AddTranslate(direction_ * 1.0f);
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
@@ -155,7 +154,7 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
     auto      col            = GetComponent<ComponentCollisionCapsule>();
 
     if(hit_owner_name == "Ground") {
-        direction_ = 0;
+        direction_ = {0.0f, 0.0f, 0.0f};
         //地面に当たっているobjをIDLE状態にする
         Cone_Mode = IDLE;
     }
@@ -165,12 +164,16 @@ void Animal::SetDirectior(float3 dir)
 {
     direction_ = dir;
 }
-void Animal::SetDirectior2(float3 dir)
+
+void Animal::Throw()
 {
-}
-void Animal::SetMoveDirectior(float3 dir)
-{
-    mode_direction_ = dir;
-    AddTranslate(mode_direction_);
+    auto physics = GetComponent<StatePhysics>();
+    physics->addForce(direction_ * 20.0f, Impulse);
+    if(Cone_Mode == IDLE) {
+        physics->SetStatic(false);
+    }
+    else {
+        physics->SetStatic(true);
+    }
 }
 }    // namespace Game01
