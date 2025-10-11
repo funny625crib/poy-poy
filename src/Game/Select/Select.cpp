@@ -1,9 +1,6 @@
 ﻿#include <System/Scene.h>
 #include <Game/Game01/Game01.h>
 #include <Game/SceneFade/SceneFade.h>
-#include <fstream>
-#include <sstream>
-#include <string>
 #include "Select.h"
 
 namespace Select {
@@ -11,44 +8,13 @@ Fade fadeout;    //シーンフェイドクラスの関数を使うため宣言
 //タイトル用変数の初期化処理
 bool Select::Init()
 {
-    std::ifstream ifs("data/Game/Select/SkillData.csv");
-    //ファイルが開かなかったらfalseを返す
-    if(!ifs.is_open()) {
-        return false;
-    };
-    // 1行ずつ読み込む
-    std::string line;
-    //getline関数でifsの中身を一文づつ読み込み
-    while(std::getline(ifs, line)) {
-        std::stringstream ss(line);    //ssに切り取った一文を入れる
-        std::string       type;
-        std::string       name;
-        std::string       description;
-        std::string       iconPath;
-        std::string       colum;
-        // カンマ区切りで分割
-        while(std::getline(ss, colum, ',')) {
-            // item に1つのデータが入る
-            // ここで必要な処理を行う
-            file_count_++;
-            if(file_count_ == 1) {
-                type = colum;
-            }
-            else if(file_count_ == 2) {
-                name = colum;
-            }
-            else if(file_count_ == 3) {
-                description = colum;
-            }
-            else if(file_count_ == 4) {
-                iconPath = colum;
-            }
-            if(file_count_ >= 4) {
-                file_count_ = 0;
-            }
-        }
-    }
-    ifs.close();
+    SkillTypeNames[0] = "超加速";
+    SkillTypeNames[1] = "突進";
+    SkillTypeNames[2] = "怪力";
+    SkillTypeNames[3] = "回避";
+    SkillTypeNames[4] = "潜伏";
+    SkillTypeNames[5] = "威嚇";
+    SkillTypeNames[6] = "シールド";
     return true;
 }
 //タイトルの更新処理
@@ -64,9 +30,36 @@ void Select::Update()
         // シーンを切り替えます
         Scene::Change(Scene::GetScene<Game01::Game01>());
     }
-    // if(Input::IsKeyDown(KEY_INPUT_SPACE)) {
-    //     // シーンを切り替えます
-    //     Scene::Change(Scene::GetScene<Game01::Game01>());
-    // }
+
+    //マウスの位置を取得
+    GetMousePoint(&mouse_x_, &mouse_y_);
+    //マウスがクリックされたら
+    if(MOUSE_INPUT_LEFT) {
+        for(int i = 0; i < SkillTypeCount; i++) {
+            int y      = text_y_ + (i * 50);
+            int width  = 200;    // 文字列の幅（適宜調整）
+            int height = 40;     // 文字列の高さ（適宜調整）
+            //マウスの位置が文字列の範囲内にあるかをチェック
+            if(mouse_x_ >= text_x_ && mouse_x_ <= text_x_ + width && mouse_y_ >= y && mouse_y_ <= y + height) {
+                selected_index_ = i;
+                // 選択したスキルをインゲームに渡すために変数に格納
+                selected_skill_ = SkillTypeNames[i];
+                // シーンを切り替えます
+                Scene::Change(Scene::GetScene<Game01::Game01>());
+            }
+        }
+    }
+}
+void Select::Draw()
+{
+    //スキルタイプの名前を表示
+    for(int i = 0; i < SkillTypeCount; i++) {
+        DrawString(text_x_, text_y_ + (i * 50), SkillTypeNames[i].c_str(), GetColor(255, 255, 255));
+    }
+}
+//ユーザーが選択したスキルを返す関数
+string Select::GetSelectedSkill()
+{
+    return SkillTypeNames[selected_index_];
 }
 }    // namespace Select
