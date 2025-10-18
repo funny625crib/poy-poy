@@ -8,6 +8,8 @@
 #include "Player_betty.h"
 #include "Player_abigail.h"
 #include <Game/SceneFade/SceneFade.h>
+
+#include "Hp.h"
 namespace Game01 {
 #if 1    // 参考用
 class GameObject
@@ -80,6 +82,8 @@ bool Game01::Init()
 
     // カメラオブジェクト
     Scene::Object::Create<Camera>();
+
+    Scene::Object::Create<Hp>();
 
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④
