@@ -1,5 +1,5 @@
 ﻿#include <System/Scene.h>
-#include <Game/Game01/Game01.h>
+#include <Game/Select/Select.h>
 #include <Game/SceneFade/SceneFade.h>
 #include "Title.h"
 #include "TitleBg.h"
@@ -25,7 +25,7 @@ void Title::Update()
     // フェードアウトを実行していい状態なら
     if(!fadeout.WaitFadeOut()) {
         // シーンを切り替えます
-        Scene::Change(Scene::GetScene<Game01::Game01>());
+        Scene::Change(Scene::GetScene<Select::Select>());
     }
     // if(Input::IsKeyDown(KEY_INPUT_SPACE)) {
     //     // シーンを切り替えます

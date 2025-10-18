@@ -34,7 +34,7 @@ void Select::Update()
     //マウスの位置を取得
     GetMousePoint(&mouse_x_, &mouse_y_);
     //マウスがクリックされたら
-    if(MOUSE_INPUT_LEFT) {
+    if(GetMouseInput() & MOUSE_INPUT_LEFT) {
         for(int i = 0; i < SkillTypeCount; i++) {
             int y      = text_y_ + (i * 50);
             int width  = 200;    // 文字列の幅（適宜調整）

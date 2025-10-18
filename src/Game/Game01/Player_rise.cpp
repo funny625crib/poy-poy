@@ -45,6 +45,12 @@ bool Player_Rise::Init()
 void Player_Rise::Update()
 {
     Super::Update();
+    //セレクト画面の実装を止めているのでコメントアウト
+    //string skill_type;
+    //skill_type = select.GetSelectedSkill();
+    //if(skill_type == "超加速") {
+    //
+    //}
 
     enum
     {

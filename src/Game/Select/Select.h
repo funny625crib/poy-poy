@@ -36,9 +36,9 @@ public:
 private:
     int    text_x_         = 500;
     int    text_y_         = 200;
-    int    mouse_x_        = 0;     //マウスが押されたときにマウスのX座標を取得する変数
-    int    mouse_y_        = 0;     //マウスが押されたときにマウスのY座標を取得する変数
-    int    selected_index_ = -1;    // 選択されたスキルタイプのインデックス
-    string selected_skill_;         //選択されたスキルタイプの名前
+    int    mouse_x_        = 0;    //マウスが押されたときにマウスのX座標を取得する変数
+    int    mouse_y_        = 0;    //マウスが押されたときにマウスのY座標を取得する変数
+    int    selected_index_ = 0;    // 選択されたスキルタイプのインデックス
+    string selected_skill_;        //選択されたスキルタイプの名前
 };
 }    // namespace Select

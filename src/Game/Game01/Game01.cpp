@@ -6,7 +6,6 @@
 #include "Player_sol.h"
 #include "Player_betty.h"
 #include "Player_abigail.h"
-#include <Game/Select/Select.h>
 #include <Game/SceneFade/SceneFade.h>
 namespace Game01 {
 #if 1    // 参考用
@@ -58,9 +57,8 @@ void GameUpdate()
 
 #endif
 
-Fade           fadein;    //シーンフェイドクラスの関数を使うため宣言
-Select::Select select;    //セレクトクラスの関数を使うため宣言
-bool           Game01::Init()
+Fade fadein;    //シーンフェイドクラスの関数を使うため宣言
+bool Game01::Init()
 {
     GameUpdate();
 
