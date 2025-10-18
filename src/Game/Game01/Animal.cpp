@@ -131,7 +131,7 @@ void Animal::Update()
     auto physics = GetComponent<StatePhysics>();
     // throw_time  += 0.4f;
 
-    if(Cone_Mode == THROWING) {
+    if(Cone_Mode == THROWING || Cone_Mode == IDLE) {
         physics->StatePhysics::gravity_on = true;
     }
     else {
@@ -163,8 +163,9 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
 
     if(Cone_Mode == IDLE) {
         auto physics = GetComponent<StatePhysics>();
-        // physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
-        physics->SetStatic(true);
+        physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
+
+        physics->SetStatic(false);
     }
     __super::OnHit(hit_info);
 }
@@ -178,8 +179,8 @@ void Animal::Throw()
     auto physics = GetComponent<StatePhysics>();
 
     //    if(Cone_Mode != IDLE) {
-    physics->addForce(direction_ * 50.0f, StatePhysics::Impulse);
-    physics->SetStatic(true);
+    physics->addForce(direction_ * 1.0f, StatePhysics::Impulse);
+    physics->SetStatic(false);
     //  }
 }
 }    // namespace Game01

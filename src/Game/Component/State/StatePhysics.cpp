@@ -17,12 +17,12 @@ void StatePhysics::Update()
 {
     __super::Update();
     auto owner = GetOwner();
-    if(IsStatic == false)
+    if(IsStatic)
         return;
     if(gravity_on) {
-        addForce(float3{0, -1, 0} * 9.8f * mass, Force);
+        addForce(float3{0, -1, 0} * 9.8f * mass * 0.1f, Force);
     }
-    owner->AddTranslate(velocity * GetDeltaTime());
+    owner->AddTranslate(velocity);
 }
 
 void StatePhysics::GUI()

@@ -21,10 +21,10 @@ public:
     float3 velocity;
     int    mode;
     float3 speed;
-    float  mass = 1.0f;
+    float  mass = 0.5f;
     float  gravity;
     bool   gravity_on = true;
-    bool   IsStatic   = true;
+    bool   IsStatic   = false;
     enum
     {
         Force,
