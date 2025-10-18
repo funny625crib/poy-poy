@@ -14,9 +14,10 @@ public:
     void  Update() override;
     void  OnHit(const ComponentCollision::HitInfo& hit_info) override;
     void  SetDirectior(float3 dir);
-
-    void Throw();
-    int  Cone_Mode;
+    void  SetMoveDirectior(float3 dir);
+    void  UpdateAnimation();
+    void  Throw();
+    int   Cone_Mode;
     enum
     {
         IDLE,

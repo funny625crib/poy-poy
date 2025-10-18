@@ -34,6 +34,7 @@ bool Animal::Init()
     SetName("Animal");
     SetTranslate({pos_x, 5.0f, pos_z});
     SetRotationAxisXYZ({0.0f, 180.0f, 0.0f});
+    Cone_Mode = IDLE;
 
     int         num = GetRand(9);
     const char* str = Animal_name[num];
@@ -105,8 +106,9 @@ bool Animal::Init()
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
     model->SetAnimation({
-        {"idle", Animal_name[num],  8, 1.0f},
-        {"walk", Animal_name[num], 17, 1.0f},
+        { "idle", Animal_name[num],  8, 1.0f},
+        { "walk", Animal_name[num], 17, 1.0f},
+        {"catch", Animal_name[num],  6, 1.0f},
     });
     Cone_Mode = THROWING;
     model->PlayAnimation("idle", true);
@@ -136,16 +138,14 @@ void Animal::Update()
         physics->StatePhysics::gravity_on = false;
     }
 
-    //if(col)
-    //   col->UseGravity(T_OR_F);
+    col->UseGravity(T_OR_F);
 
-    /*dir_xyz_     += 0.005f;
-    if(dir_xyz_ > 1.05f) {
-        dir_xyz_ = 1.05f;
-    }*/
-    /*  direction_.x *= dir_xyz_;
-    direction_.z *= dir_xyz_;*/
-    // AddTranslate(direction_ * 1.0f);
+    if(Cone_Mode == HOLDING) {
+        if(auto mdl = GetComponent<ComponentModel>()) {
+            mdl->PlayAnimationNoSame("catch", true);
+        }
+    }
+    // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
 {

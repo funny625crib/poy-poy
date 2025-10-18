@@ -197,8 +197,6 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 
                 Get_obj = obj_;
             }
-
-            //  }
         }
         auto get_pickup_com = GetComponent<Pickup>();
         if(get_pickup_com->Check_Pickup() == true) {
@@ -216,6 +214,13 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
             if(Get_obj == obj_) {
                 obj_->Cone_Mode = HOLDING;
                 obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+                // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
+                if(auto pModel = GetComponent<ComponentModel>()) {
+                    const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
+                    if(auto aModel = obj_->GetComponent<ComponentModel>()) {
+                        aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
+                    }
+                }
             }
         }
     }
