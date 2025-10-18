@@ -100,7 +100,7 @@ bool Animal::Init()
     auto col = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(radius);
     col->SetHeight(height);
-    col->UseGravity();
+    // col->UseGravity();
     // AddComponent<StatePhysics>();
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
@@ -108,7 +108,7 @@ bool Animal::Init()
         {"idle", Animal_name[num],  8, 1.0f},
         {"walk", Animal_name[num], 17, 1.0f},
     });
-
+    Cone_Mode = THROWING;
     model->PlayAnimation("idle", true);
     AddComponent<StatePhysics>();
     AddComponent<ComponentGameCamera>();
@@ -154,9 +154,14 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
     auto      col            = GetComponent<ComponentCollisionCapsule>();
 
     if(hit_owner_name == "Ground") {
-        direction_ = {0.0f, 0.0f, 0.0f};
         //地面に当たっているobjをIDLE状態にする
         Cone_Mode = IDLE;
+    }
+    if(Cone_Mode == IDLE) {
+        auto physics = GetComponent<StatePhysics>();
+
+        physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
+        physics->SetStatic(false);
     }
     __super::OnHit(hit_info);
 }
@@ -168,12 +173,10 @@ void Animal::SetDirectior(float3 dir)
 void Animal::Throw()
 {
     auto physics = GetComponent<StatePhysics>();
-    physics->addForce(direction_ * 20.0f, Impulse);
-    if(Cone_Mode == IDLE) {
-        physics->SetStatic(false);
-    }
-    else {
-        physics->SetStatic(true);
-    }
+
+    //    if(Cone_Mode != IDLE) {
+    physics->addForce(direction_ * 50.0f, StatePhysics::Impulse);
+    physics->SetStatic(true);
+    //  }
 }
 }    // namespace Game01

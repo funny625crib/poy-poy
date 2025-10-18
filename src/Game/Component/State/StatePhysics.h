@@ -23,12 +23,13 @@ public:
     float3 speed;
     float  mass = 1.0f;
     float  gravity;
-    bool   gravity_on = false;
-    bool   IsStatic   = false;
+    bool   gravity_on = true;
+    bool   IsStatic   = true;
     enum
     {
         Force,
         Impulse,
+        NoMotion,
         VelocityChange,
         Acceleration,
     };

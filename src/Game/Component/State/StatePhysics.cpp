@@ -20,7 +20,7 @@ void StatePhysics::Update()
     if(IsStatic == false)
         return;
     if(gravity_on) {
-        addForce(float3{0, 1, 0} * 9.8f * mass, Force);
+        addForce(float3{0, -1, 0} * 9.8f * mass, Force);
     }
     owner->AddTranslate(velocity * GetDeltaTime());
 }
@@ -40,10 +40,14 @@ void StatePhysics::addForce(float3 force, int mode1 = Force)
     case Impulse:
         velocity += force / mass;
         break;
+    case NoMotion:
+        velocity = force * GetDeltaTime();
+        break;
     case VelocityChange:
         break;
     case Acceleration:
         break;
+
     default:
 
         break;
