@@ -1,5 +1,6 @@
 ﻿#include "Animal.h"
 #include <DxLib.h>
+#include <Game/Component/State/StatePhysics.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 #include <System/Component/ComponentCollisionCapsule.h>
@@ -100,8 +101,8 @@ bool Animal::Init()
     auto col = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(radius);
     col->SetHeight(height);
-    col->UseGravity();
-
+    // col->UseGravity();
+    // AddComponent<StatePhysics>();
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
     model->SetAnimation({
@@ -109,9 +110,9 @@ bool Animal::Init()
         { "walk", Animal_name[num], 17, 1.0f},
         {"catch", Animal_name[num],  6, 1.0f},
     });
-
-    //model->PlayAnimation("idle", true);
-
+    Cone_Mode = THROWING;
+    model->PlayAnimation("idle", true);
+    AddComponent<StatePhysics>();
     AddComponent<ComponentGameCamera>();
 
     auto state = AddComponent<AnimalStateIdleWalk>();
@@ -123,23 +124,28 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
-    AddTranslate(direction_ * 3.0f);
-    auto col = GetComponent<ComponentCollisionCapsule>();
-    // col->UseGravity(true);
-    bool T_OR_F = true;
+    //  float V0     = 0.5f;    //初速度
+    //   direction_.y = -0.5f * 0.15f * throw_time * throw_time + V0 * throw_time * 1.1;
 
-    if(Cone_Mode == HOLDING) {
-        T_OR_F = false;
-    }
-    else if(Cone_Mode == THROWING) {
-        T_OR_F = true;
-    }
+    auto col     = GetComponent<ComponentCollisionCapsule>();
+    auto physics = GetComponent<StatePhysics>();
+    // throw_time  += 0.4f;
 
-    col->UseGravity(T_OR_F);
+    if(Cone_Mode == THROWING || Cone_Mode == IDLE) {
+        physics->StatePhysics::gravity_on = true;
+    }
+    else {
+        physics->StatePhysics::gravity_on = false;
+    }
 
     if(Cone_Mode == HOLDING) {
         if(auto mdl = GetComponent<ComponentModel>()) {
             mdl->PlayAnimationNoSame("catch", true);
+        }
+    }
+    if(Cone_Mode == IDLE) {
+        if(auto mdl = GetComponent<ComponentModel>()) {
+            mdl->PlayAnimationNoSame("walk", true);
         }
     }
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
@@ -149,11 +155,17 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
     AnimalPtr Get_obj        = nullptr;
     auto      hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
     auto      col            = GetComponent<ComponentCollisionCapsule>();
-
+    // Cone_Mode                = THROWING;
     if(hit_owner_name == "Ground") {
-        direction_ = 0;
         //地面に当たっているobjをIDLE状態にする
         Cone_Mode = IDLE;
+    }
+
+    if(Cone_Mode == IDLE) {
+        auto physics = GetComponent<StatePhysics>();
+        physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
+
+        physics->SetStatic(false);
     }
     __super::OnHit(hit_info);
 }
@@ -161,9 +173,14 @@ void Animal::SetDirectior(float3 dir)
 {
     direction_ = dir;
 }
-void Animal::SetMoveDirectior(float3 dir)
+
+void Animal::Throw()
 {
-    mode_direction_ = dir;
-    AddTranslate(mode_direction_);
+    auto physics = GetComponent<StatePhysics>();
+
+    //    if(Cone_Mode != IDLE) {
+    physics->addForce(direction_ * 1.0f, StatePhysics::Impulse);
+    physics->SetStatic(false);
+    //  }
 }
 }    // namespace Game01

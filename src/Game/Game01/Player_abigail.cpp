@@ -40,7 +40,7 @@ bool Player_Abigail::Init()
 
     AddComponent<ComponentGameCamera>();
 
-    AddComponent<AbigailStateIdleWalk>();
+    // AddComponent<AbigailStateIdleWalk>();
 
     return true;
 }
@@ -49,10 +49,25 @@ void Player_Abigail::Update()
 {
     Super::Update();
     pos_npc_ = GetTranslate();
+
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetName();
+    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+        if(obj_) {
+            if(obj_->Cone_Mode == THROWING) {
+                auto get_name = obj_->GetName();
+                if(hit_owner_name == get_name) {
+                    auto  get_throw_animal_pos = obj_->GetTranslate();
+                    auto  get_hit_player_pos   = GetTranslate();
+                    auto  get_dir              = get_hit_player_pos - get_throw_animal_pos;
+                    float dis                  = sqrtf(get_dir.x * get_dir.x + get_dir.y * get_dir.y + get_dir.z * get_dir.z);
+                }
+            }
+        }
+    }
 }
 }    // namespace Game01

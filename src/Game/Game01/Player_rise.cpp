@@ -230,7 +230,12 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
         if(_isholding == THROWING) {
             for(auto obj_ : Scene::Object::GetArray<Animal>()) {
                 if(Get_obj == obj_) {
+                    obj->SetTranslate(GetTranslate() + float3{0, 18.0f, 0});
+                    auto modelrot = GetComponent<ComponentModel>();
+                    auto dir      = -modelrot->GetWorldMatrix().axisZ();
+                    obj->SetDirectior(dir);
                     obj_->Cone_Mode = THROWING;
+                    obj_->Game01::Animal::Throw();
                 }
             }
         }
@@ -238,20 +243,19 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
     //IDLE状態のときオブジェクトを移動するのをやめさせる
     if(obj) {
         if(obj->Cone_Mode == IDLE) {
-            obj->SetDirectior(0 * 15);
-        }
-    }
-
-    //THROWING状態のとき投げる処理
-    if(_isholding == THROWING) {
-        if(obj->Cone_Mode == THROWING) {
-            obj->SetTranslate(GetTranslate() + float3{0, 18.0f, 0});
-            auto modelrot = GetComponent<ComponentModel>();
-            auto dir      = -modelrot->GetWorldMatrix().axisZ();
-            obj->SetDirectior(dir * 1.0f);
             _isholding = IDLE;
             Get_obj    = nullptr;
         }
     }
+
+    //THROWING状態のとき投げる処理
+    /*  if(obj) {
+        if(_isholding == THROWING) {
+            if(obj->Cone_Mode == THROWING) {
+             
+              
+            }
+        }
+    }*/
 }
 }    // namespace Game01
