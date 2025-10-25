@@ -16,7 +16,9 @@ namespace Game01 {
 //float3    dir{0, 0, 0};
 //AnimalPtr Get_obj2 = nullptr;    //一番近くのオブジェクトの保管
 AnimalPtr Get_obj = nullptr;
-bool      Player_Rise::Init()
+int       effect;
+
+bool Player_Rise::Init()
 {
     Super::Init();
 
@@ -40,6 +42,8 @@ bool      Player_Rise::Init()
     });
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
 
+    effect = LoadEffekseerEffect("data/effects/00_Version16/Barrior01.efkefc");
+
     AddComponent<ComponentGameCamera>();
     AddComponent<Pickup>();
     AddComponent<StateIdleWalk>();
@@ -61,6 +65,15 @@ void Player_Rise::Update()
 
     static int ani_time      = 0;    //ジャンプの持続時間
     static int ani_wait_time = 0;    //ジャンプ前の待機時間
+
+    static int    h;
+    static float3 pos;
+    if(Input::IsKeyDown(KEY_INPUT_Z)) {
+        h = PlayEffekseer3DEffect(effect);
+    }
+    pos = GetTranslate();
+    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y, pos.z);
+    SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
 
     if(Input::IsKeyDown(KEY_INPUT_SPACE) && player_mode == MODE_IDLE) {
         player_mode   = MODE_JUMP_WAIT;
