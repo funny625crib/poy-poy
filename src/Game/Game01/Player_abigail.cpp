@@ -12,6 +12,8 @@
 #include <Game/Component/State/AbigailStateIdleWalk.h>
 
 namespace Game01 {
+bool check = false;
+
 bool Player_Abigail::Init()
 {
     Super::Init();
@@ -55,7 +57,7 @@ void Player_Abigail::Update()
 void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
-    auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetName();
+    /*auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetName();
     for(auto obj_ : Scene::Object::GetArray<Animal>()) {
         if(obj_) {
             if(obj_->Cone_Mode == THROWING) {
@@ -68,6 +70,21 @@ void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
                 }
             }
         }
+    }*/
+
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner();
+
+    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+        if(obj_->GetName() == hit_owner_name->GetName()) {
+            if(obj_->Cone_Mode == THROWING) {
+                if(obj_->who_throwing != Game01::Animal::ABIGAIL && obj_->who_throwing != Game01::Animal::NOBODY) {
+                    obj_->Cone_Mode = Game01::Animal::DEATH;
+                }
+            }
+        }
+    }
+    if(check == true) {
+        //printfDx("あたった");
     }
 }
 }    // namespace Game01

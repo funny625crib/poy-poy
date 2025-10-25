@@ -21,6 +21,7 @@ public:
         IDLE,
         HOLDING,
         THROWING,
+        DEATH,
         NOTHING,
     };
     enum
@@ -30,6 +31,15 @@ public:
         VelocityChange,
         Acceleration,
     };
+    enum
+    {
+        NOBODY,
+        RISE,
+        BETTY,
+        ABIGAIL,
+        SOL,
+    };
+    int    who_throwing = 0;
     float3 direction_;
     float  dir_xyz_ = 1.00f;
     float3 mode_direction_;

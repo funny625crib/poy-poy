@@ -55,5 +55,14 @@ void Player_Betty::Update()
 void Player_Betty::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner();
+    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+        if(obj_->GetName() == hit_owner_name->GetName()) {
+            if(obj_->Cone_Mode == THROWING) {
+                if(obj_->who_throwing != Game01::Animal::BETTY) {
+                }
+            }
+        }
+    }
 }
 }    // namespace Game01
