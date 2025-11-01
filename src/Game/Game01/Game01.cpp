@@ -3,6 +3,7 @@
 #include "Camera.h"
 
 #include "Animal.h"
+#include "AnimalGenerator.h"
 #include "Player_rise.h"
 #include "Player_sol.h"
 #include "Player_betty.h"
@@ -74,8 +75,11 @@ bool Game01::Init()
     Scene::Object::Create<Player_Betty>();
     Scene::Object::Create<Player_Abigail>();
     Scene::Object::Create<Player_Sol>();
-    //動物
 
+    // 動物生成器
+    Scene::Object::Create<Generator>();
+
+    //動物
     for(int i = 0; i < 20; ++i) {
         Scene::Object::Create<Animal>();
     }

@@ -27,6 +27,8 @@ public:
 
     void GUI() override;
 
+    bool is_just_generated_ = false;    //今生成が完了したかどうか
+
 private:
     float move_speed_ = 0.5f;
     float rot_speed_  = 20.0f;
@@ -34,6 +36,8 @@ private:
     float front_rot_  = 0.0f;    //!<前方ベクトルの回転角度(0-360度)
     int   dir_        = 0;
     int   wait_frame_ = 0;
+
+    float generation_time_ = 0.0f;
 
     //--------------------------------------------------------------------
     //! @name Cereal処理
