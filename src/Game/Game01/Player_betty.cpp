@@ -11,6 +11,7 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/BettyStateIdleWalk.h>
+#include "Hp.h"
 
 namespace Game01 {
 bool Player_Betty::Init()
@@ -70,7 +71,9 @@ void Player_Betty::OnHit(const ComponentCollision::HitInfo& hit_info)
         if(obj_->GetName() == hit_owner_name->GetName()) {
             if(obj_->Cone_Mode == THROWING) {
                 if(obj_->who_throwing != Game01::Animal::BETTY && obj_->who_throwing != Game01::Animal::NOBODY) {
-                    obj_->Cone_Mode = Game01::Animal::DEATH;
+                    obj_->Cone_Mode         = Game01::Animal::DEATH;
+                    auto Hp_get             = Scene::Object::Get<Hp>();
+                    Hp_get->Hp_count_betty -= 1;
                 }
             }
         }

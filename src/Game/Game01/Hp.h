@@ -15,7 +15,10 @@ public:
     void Draw() override;
 
     void Exit() override;
-    int  Hp_count;
+    int  Hp_count_abigail;
+    int  Hp_count_sol;
+    int  Hp_count_rise;
+    int  Hp_count_betty;
 
 private:
     int Hp_image;
@@ -26,21 +29,18 @@ private:
     int Hp_imgy;
 
     int Hp_image2;
-    int Hp_count2;
     int Hp_x2;
     int Hp_y2;
     int Hp_imgx2;
     int Hp_imgy2;
 
     int Hp_image3;
-    int Hp_count3;
     int Hp_x3;
     int Hp_y3;
     int Hp_imgx3;
     int Hp_imgy3;
 
     int Hp_image4;
-    int Hp_count4;
     int Hp_x4;
     int Hp_y4;
     int Hp_imgx4;
