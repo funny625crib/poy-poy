@@ -1,10 +1,12 @@
 ﻿#include "Animal_Pickup.h"
 #include "Animal.h"
-
+#include <Game/Game01/time_bomb.h>
 namespace Game01 {
-float3    dir{0, 0, 0};
-AnimalPtr Get_obj2 = nullptr;
-float3    pos_npc_;
+float3       dir{0, 0, 0};
+AnimalPtr    Get_obj_animal = nullptr;
+Time_bombPtr Get_obj_boms   = nullptr;
+
+float3 pos_npc_;
 
 float3 pos_XZ;
 float  r     = 35.0f;
@@ -34,9 +36,51 @@ void Pickup::Update()
         if(dir < max_dir) {
             max_dir = dir;
 
-            Get_obj2 = obj_;
+            Get_obj_animal = obj_;
         }
     }
+    for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+        // ここに来る場合 obj がEnemyクラスということが保証されます。
+        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+        auto   name        = obj_boms_->GetName();
+        auto   get_obj_pos = obj_boms_->GetTranslate();
+        auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
+        float3 dis         = get_obj_pos - get_npc_pos;
+        float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
+        if(dir < max_dir) {
+            max_dir = dir;
+
+            Get_obj_boms = obj_boms_;
+        }
+    }
+
+    //for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+    //    for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
+    //        // ここに来る場合 obj がEnemyクラスということが保証されます。
+    //        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+    //        //if(Get_obj == nullptr) {
+    //        auto   get_bom_pos           = obj_boms_->GetTranslate();
+    //        auto   get_obj_pos           = obj_->GetTranslate();
+    //        auto   get_npc_pos           = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
+    //        float3 dis_character_animal_ = get_obj_pos - get_npc_pos;
+    //        float3 dis_character_Boms_   = get_bom_pos - get_npc_pos;
+    //        float  dir                   = sqrtf(dis_character_animal_.x * dis_character_animal_.x + dis_character_animal_.y * dis_character_animal_.y +
+    //                          dis_character_animal_.z * dis_character_animal_.z);
+    //        float  dir2                  = sqrtf(dis_character_Boms_.x * dis_character_Boms_.x + dis_character_Boms_.y * dis_character_Boms_.y +
+    //                           dis_character_Boms_.z * dis_character_Boms_.z);
+    //        if(dir2 < max_dir) {
+    //            max_dir        = dir2;
+    //            Get_obj_animal = nullptr;
+    //            Get_obj_boms   = obj_boms_;
+    //        }
+    //        if(dir < max_dir) {
+    //            max_dir        = dir;
+    //            Get_obj_animal = obj_;
+    //            Get_obj_boms   = nullptr;
+    //        }
+    //
+    //    }
+    //}
     if(IsKey(KEY_INPUT_W))
         dir = {0, 180, -90};
 
@@ -52,15 +96,29 @@ void Pickup::Update()
     pos_XZ = {Get_pos.x, 0.0f, Get_pos.z};
 
     float3 pos1 = Get_pos;
-    float3 pos2 = Get_obj2->GetTranslate();
-    pos1.y      = 0.0f;
-    pos2.y      = 0.0f;
+    float3 pos2;
+    if(Get_obj_animal != nullptr)
+        pos2 = Get_obj_animal->GetTranslate();
+    float3 pos3;
+    if(Get_obj_boms != nullptr)
+        pos3 = Get_obj_boms->GetTranslate();
 
-    float x        = pos1.x - pos2.x;
-    float y        = pos1.y - pos2.y;
-    float z        = pos1.z - pos2.z;
-    float distance = sqrtf(x * x + y * y + z * z);
-    float radius   = 40.0f + 7.0f;
+    pos1.y = 0.0f;
+    pos2.y = 0.0f;
+    pos3.y = 0.0f;
+
+    float x = pos1.x - pos2.x;
+    float y = pos1.y - pos2.y;
+    float z = pos1.z - pos2.z;
+
+    float x_bom = pos1.x - pos3.x;
+    float y_bom = pos1.y - pos3.y;
+    float z_bom = pos1.z - pos3.z;
+
+    float distance  = sqrtf(x * x + y * y + z * z);
+    float distance2 = sqrtf(x_bom * x_bom + y_bom * y_bom + z_bom * z_bom);
+
+    float radius = 40.0f + 7.0f;
 
     //	１：２つのベクトルを用意
     //	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
@@ -88,13 +146,15 @@ void Pickup::Update()
     //	ラジアン角を角度の「度」にします
     float degree = radian * 180.0f / 3.14159265f;
 
-    if(distance <= radius && degree < r) {
-        check = true;
-        color = GetColor(0, 255, 255);
-    }
-    else {
-        check = false;
-        color = GetColor(255, 255, 255);
+    if(degree < r) {
+        if(distance <= radius || distance2 <= radius) {
+            check = true;
+            color = GetColor(0, 255, 255);
+        }
+        else {
+            check = false;
+            color = GetColor(255, 255, 255);
+        }
     }
 }
 void Pickup::Draw()

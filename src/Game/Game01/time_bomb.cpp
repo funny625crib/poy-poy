@@ -8,6 +8,7 @@
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Game01/Skills/Acceleration.h>
+#include <Game/Component/State/StatePhysics.h>
 
 namespace Game01 {
 
@@ -27,6 +28,7 @@ bool Time_bomb::Init()
 
     auto model      = AddComponent<ComponentModel>("data/Sample/time bomb/Bomb.mv1");
     model->Matrix() = matrix::scale(0.05f);
+    AddComponent<StatePhysics>();
 
     //model->UseShader(false);
 
@@ -38,5 +40,41 @@ bool Time_bomb::Init()
 void Time_bomb::Update()
 {
     Super::Update();
+    if(auto physics = GetComponent<StatePhysics>()) {
+        if(Boms_Mode == THROWING || Boms_Mode == IDLE) {
+            physics->StatePhysics::gravity_on = true;
+        }
+        else {
+            physics->StatePhysics::gravity_on = false;
+        }
+    }
+}
+void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
+{
+    __super::OnHit(hit_info);
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
+    auto col            = GetComponent<ComponentCollisionCapsule>();
+    if(hit_owner_name == "Ground") {
+        //地面に当たっているobjをIDLE状態にする
+        Boms_Mode    = IDLE;
+        who_throwing = NOBODY;
+    }
+
+    if(Boms_Mode == IDLE) {
+        auto physics = GetComponent<StatePhysics>();
+        physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
+        who_throwing = NOBODY;
+        physics->SetStatic(false);
+    }
+}
+void Time_bomb::SetDirectior(float3 dir)
+{
+    direction_ = dir;
+}
+void Time_bomb::Throw()
+{
+    auto physics = GetComponent<StatePhysics>();
+    physics->addForce(direction_ * 1.0f, StatePhysics::Impulse);
+    physics->SetStatic(false);
 }
 }    // namespace Game01

@@ -82,6 +82,7 @@ void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
                     obj_->Cone_Mode           = Game01::Animal::DEATH;
                     auto Hp_get               = Scene::Object::Get<Hp>();
                     Hp_get->Hp_count_abigail -= 1;
+                    //当たった瞬間
                 }
             }
         }

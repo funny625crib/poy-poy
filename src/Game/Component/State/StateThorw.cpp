@@ -7,8 +7,11 @@
 #include <DxLib.h>
 #include <Game/Game01/Animal.h>
 #include <Game/Game01/Animal_pickup.h>
-Game01::AnimalPtr Get_obj = nullptr;
-void              StateThorw::Init()
+#include <Game/Game01/time_bomb.h>
+Game01::AnimalPtr    Get_obj  = nullptr;
+Game01::Time_bombPtr Get_obj2 = nullptr;
+
+void StateThorw::Init()
 {
     __super::Init();
 
@@ -35,29 +38,42 @@ void StateThorw::Update()
 
     //すべて見て行って一番近くのオブジェクトを取得
     if(IsKeyOn(KEY_INPUT_Q) && owner->_isholding == IDLE) {
-        for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
-            // ここに来る場合 obj がEnemyクラスということが保証されます。
-            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
-            //if(Get_obj == nullptr) {
-            auto name        = obj_->GetName();
-            auto get_obj_pos = obj_->GetTranslate();
-            auto get_npc_pos = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
-            dis              = get_obj_pos - get_npc_pos;
-            float dir        = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-            if(dir < max_dir) {
-                max_dir = dir;
+        for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+            for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
+                // ここに来る場合 obj がEnemyクラスということが保証されます。
+                // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+                //if(Get_obj == nullptr) {
+                auto get_bom_pos      = obj_boms_->GetTranslate();
+                auto get_obj_pos      = obj_->GetTranslate();
+                auto get_npc_pos      = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
+                dis_character_animal_ = get_obj_pos - get_npc_pos;
+                dis_character_Boms_   = get_bom_pos - get_npc_pos;
+                float dir             = sqrtf(dis_character_animal_.x * dis_character_animal_.x + dis_character_animal_.y * dis_character_animal_.y +
+                                  dis_character_animal_.z * dis_character_animal_.z);
+                float dir2            = sqrtf(dis_character_Boms_.x * dis_character_Boms_.x + dis_character_Boms_.y * dis_character_Boms_.y +
+                                   dis_character_Boms_.z * dis_character_Boms_.z);
 
-                Get_obj = obj_;
+                if(dir < max_dir) {
+                    max_dir  = dir;
+                    Get_obj  = obj_;
+                    Get_obj2 = nullptr;
+                }
+                if(dir2 < max_dir) {
+                    max_dir  = dir2;
+                    Get_obj  = nullptr;
+                    Get_obj2 = obj_boms_;
+                }
             }
         }
+
         auto get_pickup_com = owner->GetComponent<Game01::Pickup>();
         if(get_pickup_com->Check_Pickup() == true) {
             owner->_isholding = HOLDING;
         }
     }
 
-    auto& obj = Get_obj;    //一番近くのオブジェクトを取得
-
+    auto& obj     = Get_obj;     //一番近くのオブジェクトを取得
+    auto& obj_bom = Get_obj2;    //一番近くのオブジェクトを取得
     //IDLE状態のときPキー押した時HOLDING状態にする
 
     //もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
@@ -70,6 +86,19 @@ void StateThorw::Update()
                 if(auto pModel = owner->GetComponent<ComponentModel>()) {
                     const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
                     if(auto aModel = obj_->GetComponent<ComponentModel>()) {
+                        aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
+                    }
+                }
+            }
+        }
+        for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+            if(Get_obj2 == obj_boms_) {
+                obj_boms_->Boms_Mode = HOLDING;
+                obj_boms_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+                // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
+                if(auto pModel = owner->GetComponent<ComponentModel>()) {
+                    const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
+                    if(auto aModel = obj_boms_->GetComponent<ComponentModel>()) {
                         aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
                     }
                 }
@@ -91,6 +120,17 @@ void StateThorw::Update()
                     obj_->Game01::Animal::Throw();
                 }
             }
+            for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+                if(Get_obj2 == obj_boms_) {
+                    obj_bom->SetTranslate(owner->GetTranslate() + float3{0, 18.0f, 0});
+                    auto modelrot = owner->GetComponent<ComponentModel>();
+                    auto dir      = -modelrot->GetWorldMatrix().axisZ();
+                    obj_bom->SetDirectior(dir);
+                    obj_boms_->Boms_Mode    = THROWING;
+                    obj_boms_->who_throwing = Game01::Animal::RISE;
+                    obj_boms_->Game01::Time_bomb::Throw();
+                }
+            }
         }
     }
     //IDLE状態のときオブジェクトを移動するのをやめさせる
@@ -98,6 +138,12 @@ void StateThorw::Update()
         if(obj->Cone_Mode == IDLE || obj->Cone_Mode == Game01::Animal::DEATH) {
             owner->_isholding = IDLE;
             Get_obj           = nullptr;
+        }
+    }
+    if(obj_bom) {
+        if(obj_bom->Boms_Mode == IDLE || obj_bom->Boms_Mode == Game01::Animal::DEATH) {
+            owner->_isholding = IDLE;
+            Get_obj2          = nullptr;
         }
     }
     // Super::OnHit(hit_info);

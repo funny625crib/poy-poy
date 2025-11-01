@@ -149,15 +149,14 @@ void Animal::Update()
         }
     }
     if(Cone_Mode == DEATH) {
-        Scene::Object::Release(SharedThis());
+        // Scene::Object::Release(SharedThis());
     }
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
-    AnimalPtr Get_obj        = nullptr;
-    auto      hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
-    auto      col            = GetComponent<ComponentCollisionCapsule>();
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
+    auto col            = GetComponent<ComponentCollisionCapsule>();
     if(hit_owner_name == "Ground") {
         //地面に当たっているobjをIDLE状態にする
         Cone_Mode    = IDLE;
@@ -180,10 +179,7 @@ void Animal::SetDirectior(float3 dir)
 void Animal::Throw()
 {
     auto physics = GetComponent<StatePhysics>();
-
-    //    if(Cone_Mode != IDLE) {
     physics->addForce(direction_ * 1.0f, StatePhysics::Impulse);
     physics->SetStatic(false);
-    //  }
 }
 }    // namespace Game01
