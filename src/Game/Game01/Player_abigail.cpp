@@ -10,6 +10,7 @@
 #include <Game/Component/State/StateJump.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/State/AbigailStateIdleWalk.h>
+#include "Hp.h"
 
 namespace Game01 {
 bool check = false;
@@ -78,13 +79,12 @@ void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
         if(obj_->GetName() == hit_owner_name->GetName()) {
             if(obj_->Cone_Mode == THROWING) {
                 if(obj_->who_throwing != Game01::Animal::ABIGAIL && obj_->who_throwing != Game01::Animal::NOBODY) {
-                    obj_->Cone_Mode = Game01::Animal::DEATH;
+                    obj_->Cone_Mode   = Game01::Animal::DEATH;
+                    auto Hp_get       = Scene::Object::Get<Hp>();
+                    Hp_get->Hp_count -= 1;
                 }
             }
         }
-    }
-    if(check == true) {
-        //printfDx("あたった");
     }
 }
 }    // namespace Game01

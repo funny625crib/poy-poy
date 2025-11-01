@@ -47,19 +47,15 @@ void Hp::Update()
     //  いったん左右キーで操作
     //  １番左
     if(Input::IsKeyDown(KEY_INPUT_RIGHT)) {
-        if(Hp_count < 10) {
-            Hp_count += 1;
-            Hp_imgx   = Hp_count % 4 * 100;
-            Hp_imgy   = Hp_count / 4 * 100;
-        }
+        Hp_count += 1;
     }
     if(Input::IsKeyDown(KEY_INPUT_LEFT)) {
-        if(Hp_count > 0) {
-            Hp_count -= 1;
-            Hp_imgx   = Hp_count % 4 * 100;
-            Hp_imgy   = Hp_count / 4 * 100;
-        }
+        Hp_count -= 1;
     }
+    Hp_count = max(0, min(Hp_count, 10));
+    Hp_imgx  = Hp_count % 4 * 100;
+    Hp_imgy  = Hp_count / 4 * 100;
+    //  Hp_count = min(Hp_count, 10);
 
     //  左から２番目
     if(Input::IsKeyDown(KEY_INPUT_M)) {
@@ -114,7 +110,7 @@ void Hp::Draw()
 {
     Super::Draw();
     DrawRectGraph(Hp_x, Hp_y, Hp_imgx, Hp_imgy, 100, 100, Hp_image, TRUE, FALSE);
-
+    DrawFormatString(0, 10, WHITE, "%d", Hp_count);
     DrawRectGraph(Hp_x2, Hp_y2, Hp_imgx2, Hp_imgy2, 100, 100, Hp_image2, TRUE, FALSE);
     DrawRectGraph(Hp_x3, Hp_y3, Hp_imgx3, Hp_imgy3, 100, 100, Hp_image3, TRUE, FALSE);
     DrawRectGraph(Hp_x4, Hp_y4, Hp_imgx4, Hp_imgy4, 100, 100, Hp_image4, TRUE, FALSE);

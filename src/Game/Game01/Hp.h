@@ -5,6 +5,8 @@ class Hp : public Object
 {
 public:
     BP_OBJECT_DECL(Hp, u8"Game02 の Hp");
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+#define min(a, b) (((a) < (b)) ? (a) : (b))
 
     bool Init() override;
 
@@ -13,10 +15,11 @@ public:
     void Draw() override;
 
     void Exit() override;
+    int  Hp_count;
 
 private:
     int Hp_image;
-    int Hp_count;
+
     int Hp_x;
     int Hp_y;
     int Hp_imgx;
