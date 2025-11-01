@@ -181,7 +181,7 @@ class Object : public std::enable_shared_from_this<Object>, public IMatrix<Objec
 
 public:
     BP_OBJECT_DECL(Object, "object");
-
+    int _isholding = 0;
     Object();             //!< コンストラクタ
     virtual ~Object();    //!< デストラクタ
 
