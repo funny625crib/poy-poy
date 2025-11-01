@@ -68,6 +68,8 @@ void Player_Rise::Update()
 
     static int    h;
     static float3 pos;
+
+    //Zキー：一時的に無敵になる
     if(Input::IsKeyDown(KEY_INPUT_Z)) {
         h = PlayEffekseer3DEffect(effect);
     }
@@ -128,64 +130,6 @@ void Player_Rise::Update()
 }
 void Player_Rise::Draw()
 {
-    //float3 Get_pos = GetTranslate();
-
-    //float3 pos_XZ = {Get_pos.x, 0.0f, Get_pos.z};
-    //int    color  = GetColor(255, 255, 255);
-
-    //float3 pos1 = Get_pos;
-    //float3 pos2 = Get_obj2->GetTranslate();
-    //DrawSphere3D(cast(pos1), 5.0f, 100, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
-    //DrawSphere3D(cast(pos2), 6.0f, 100, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
-    //pos1.y = 0.0f;
-    //pos2.y = 0.0f;
-
-    //float x        = pos1.x - pos2.x;
-    //float y        = pos1.y - pos2.y;
-    //float z        = pos1.z - pos2.z;
-    //float distance = sqrtf(x * x + y * y + z * z);
-    //float radius   = 35.0f + 7.0f;
-
-    ////	１：２つのベクトルを用意
-    ////	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
-    //float3 front;
-    //front.x = 1.0f * sinf((dir.y * 3.14159265f / 180.0f));
-    //front.z = 1.0f * cosf((dir.y * 3.14159265f / 180.0f));
-
-    ////	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
-    //float3 target = pos2 - pos1;
-    ////	ベクトルの正規化（ベクトルの長さを 1.0 に）
-
-    //float length = sqrtf(target.x * target.x + target.z * target.z);
-    //if(length > 0.0f) {
-    //    target.x = target.x / length;
-    //    target.z = target.z / length;
-    //}
-    ////	２：２つのベクトルの内積を取得
-    //float front_dot = front.x * target.x + front.z * target.z;
-    ///*  GetFloat2Dot(front, target);*/
-
-    ////	３：求めた内積の値から角度を求める
-    ////	この内積の値（ front_dot ）を acos 関数に渡すことで角度を取得できます
-    ////	acosf：アークコサイン関数（ cos 関数の逆関数）← ラジアン角が返ってきます
-    //float radian = acosf(front_dot);
-    ////	ラジアン角を角度の「度」にします
-    //float degree = radian * 180.0f / 3.14159265f;
-
-    //if(distance <= radius && degree < 25.0f) {
-    //    color = GetColor(0, 255, 255);
-    //}
-    //else {
-    //    color = GetColor(255, 255, 255);
-    //}
-    //float3 line1;
-    //line1.x = pos_XZ.x + 40.0f * sinf((dir.y + 25.0f) * 3.141592f / 180.0f);
-    //line1.z = pos_XZ.z + 40.0f * cosf((dir.y + 25.0f) * 3.141592f / 180.0f);
-    //DrawLine3D(cast(pos_XZ), cast(line1), color);
-    //float3 line2;
-    //line2.x = pos_XZ.x + 40.0f * sinf((dir.y - 25.0f) * 3.141592f / 180.0f);
-    //line2.z = pos_XZ.z + 40.0f * cosf((dir.y - 25.0f) * 3.141592f / 180.0f);
-    //DrawLine3D(cast(pos_XZ), cast(line2), color);
 }
 void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
