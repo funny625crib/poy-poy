@@ -3,7 +3,6 @@
 #include "Camera.h"
 
 #include "Animal.h"
-#include "TIme_bomb.h"
 #include "Player_rise.h"
 #include "Player_sol.h"
 #include "Player_betty.h"
@@ -85,8 +84,6 @@ bool Game01::Init()
     Scene::Object::Create<Camera>();
 
     Scene::Object::Create<Hp>();
-
-    Scene::Object::Create<Time_bomb>();
 
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④
