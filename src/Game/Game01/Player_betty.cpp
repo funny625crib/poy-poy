@@ -12,8 +12,10 @@
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/BettyStateIdleWalk.h>
 #include "Hp.h"
+extern int hit_effect;
 
 namespace Game01 {
+
 bool Player_Betty::Init()
 {
     Super::Init();
@@ -39,6 +41,9 @@ bool Player_Betty::Init()
     });
     //model->SetScaleAxisXYZ( { 1, 1, 1 } );
     model->PlayAnimation("idle", true);
+
+    //当たるエフェクトの初期化
+    hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
 
     AddComponent<ComponentGameCamera>();
 
@@ -74,6 +79,13 @@ void Player_Betty::OnHit(const ComponentCollision::HitInfo& hit_info)
                     obj_->Cone_Mode         = Game01::Animal::DEATH;
                     auto Hp_get             = Scene::Object::Get<Hp>();
                     Hp_get->Hp_count_betty -= 1;
+
+                    //エフェクトが出る
+                    int h = PlayEffekseer3DEffect(hit_effect);
+
+                    float3 pos = GetTranslate();
+                    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 5.0f, pos.z);
+                    SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
                 }
             }
         }

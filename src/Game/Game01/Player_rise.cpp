@@ -57,6 +57,7 @@ void Player_Rise::Update()
 {
     Super::Update();
     // StateThorw::ThorwUpdate(_isholding);
+
     pos_npc_ = GetTranslate();
     enum
     {
@@ -71,6 +72,7 @@ void Player_Rise::Update()
 
     static int    h;
     static float3 pos;
+
     if(Input::IsKeyDown(KEY_INPUT_Z)) {
         h = PlayEffekseer3DEffect(effect);
     }

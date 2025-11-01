@@ -19,10 +19,10 @@ bool Time_bomb::Init()
 
     Bomb_Mode = NOTHING;
 
-    // プレイヤー
+    // 爆弾
     SetName("Time bomb");
     SetTranslate({-87.0f, 26.0f, 57.0f});
-    AddComponent<Acceleration>();
+
     auto col = AddComponent<ComponentCollisionCapsule>();    //
     col->SetRadius(5.53f);
     col->SetHeight(5.81f);
@@ -44,21 +44,22 @@ void Time_bomb::Update()
 
 void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
-    Time_bombPtr Get_obj        = nullptr;
-    auto         hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
-    auto         col            = GetComponent<ComponentCollisionCapsule>();
+    __super::OnHit(hit_info);
+
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
 
     if(hit_owner_name == "Ground" && Bomb_Mode != IDLE) {
         Bomb_Mode = HIT;
     }
 
     if(Bomb_Mode == HIT) {
-        int    h   = PlayEffekseer3DEffect(bomb_effect);
+        //エフェクトが出る
+        int h = PlayEffekseer3DEffect(bomb_effect);
+
         float3 pos = GetTranslate();
-        SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y, pos.z);
+        SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 5.0f, pos.z);
         SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
         Bomb_Mode = IDLE;
     }
-    __super::OnHit(hit_info);
 }
 }    // namespace Game01
