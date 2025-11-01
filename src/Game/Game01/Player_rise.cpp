@@ -11,12 +11,16 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Game01/Animal_pickup.h>
 #include <Game/Component/State/StateJump.h>
+#include <Game/Component/State/StateThorw.h>
+#include "Hp.h"
 
 namespace Game01 {
 //float3    dir{0, 0, 0};
 //AnimalPtr Get_obj2 = nullptr;    //一番近くのオブジェクトの保管
 AnimalPtr Get_obj = nullptr;
-bool      Player_Rise::Init()
+int       effect;
+
+bool Player_Rise::Init()
 {
     Super::Init();
 
@@ -40,16 +44,19 @@ bool      Player_Rise::Init()
     });
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
 
+    effect = LoadEffekseerEffect("data/effects/00_Version16/Barrior01.efkefc");
+
     AddComponent<ComponentGameCamera>();
     AddComponent<Pickup>();
     AddComponent<StateIdleWalk>();
-
+    AddComponent<StateThorw>();
     return true;
 }
 
 void Player_Rise::Update()
 {
     Super::Update();
+    // StateThorw::ThorwUpdate(_isholding);
     pos_npc_ = GetTranslate();
     enum
     {
@@ -61,6 +68,15 @@ void Player_Rise::Update()
 
     static int ani_time      = 0;    //ジャンプの持続時間
     static int ani_wait_time = 0;    //ジャンプ前の待機時間
+
+    static int    h;
+    static float3 pos;
+    if(Input::IsKeyDown(KEY_INPUT_Z)) {
+        h = PlayEffekseer3DEffect(effect);
+    }
+    pos = GetTranslate();
+    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y, pos.z);
+    SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
 
     if(Input::IsKeyDown(KEY_INPUT_SPACE) && player_mode == MODE_IDLE) {
         player_mode   = MODE_JUMP_WAIT;
@@ -113,149 +129,117 @@ void Player_Rise::Update()
     //    }
     //}
 }
-void Player_Rise::Draw()
-{
-    //float3 Get_pos = GetTranslate();
 
-    //float3 pos_XZ = {Get_pos.x, 0.0f, Get_pos.z};
-    //int    color  = GetColor(255, 255, 255);
-
-    //float3 pos1 = Get_pos;
-    //float3 pos2 = Get_obj2->GetTranslate();
-    //DrawSphere3D(cast(pos1), 5.0f, 100, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
-    //DrawSphere3D(cast(pos2), 6.0f, 100, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
-    //pos1.y = 0.0f;
-    //pos2.y = 0.0f;
-
-    //float x        = pos1.x - pos2.x;
-    //float y        = pos1.y - pos2.y;
-    //float z        = pos1.z - pos2.z;
-    //float distance = sqrtf(x * x + y * y + z * z);
-    //float radius   = 35.0f + 7.0f;
-
-    ////	１：２つのベクトルを用意
-    ////	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
-    //float3 front;
-    //front.x = 1.0f * sinf((dir.y * 3.14159265f / 180.0f));
-    //front.z = 1.0f * cosf((dir.y * 3.14159265f / 180.0f));
-
-    ////	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
-    //float3 target = pos2 - pos1;
-    ////	ベクトルの正規化（ベクトルの長さを 1.0 に）
-
-    //float length = sqrtf(target.x * target.x + target.z * target.z);
-    //if(length > 0.0f) {
-    //    target.x = target.x / length;
-    //    target.z = target.z / length;
-    //}
-    ////	２：２つのベクトルの内積を取得
-    //float front_dot = front.x * target.x + front.z * target.z;
-    ///*  GetFloat2Dot(front, target);*/
-
-    ////	３：求めた内積の値から角度を求める
-    ////	この内積の値（ front_dot ）を acos 関数に渡すことで角度を取得できます
-    ////	acosf：アークコサイン関数（ cos 関数の逆関数）← ラジアン角が返ってきます
-    //float radian = acosf(front_dot);
-    ////	ラジアン角を角度の「度」にします
-    //float degree = radian * 180.0f / 3.14159265f;
-
-    //if(distance <= radius && degree < 25.0f) {
-    //    color = GetColor(0, 255, 255);
-    //}
-    //else {
-    //    color = GetColor(255, 255, 255);
-    //}
-    //float3 line1;
-    //line1.x = pos_XZ.x + 40.0f * sinf((dir.y + 25.0f) * 3.141592f / 180.0f);
-    //line1.z = pos_XZ.z + 40.0f * cosf((dir.y + 25.0f) * 3.141592f / 180.0f);
-    //DrawLine3D(cast(pos_XZ), cast(line1), color);
-    //float3 line2;
-    //line2.x = pos_XZ.x + 40.0f * sinf((dir.y - 25.0f) * 3.141592f / 180.0f);
-    //line2.z = pos_XZ.z + 40.0f * cosf((dir.y - 25.0f) * 3.141592f / 180.0f);
-    //DrawLine3D(cast(pos_XZ), cast(line2), color);
-}
+//void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
+//{
+//    Super::OnHit(hit_info);
+//
+//    //float max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
+//    //                             //一番近くのオブジェクトの保管
+//
+//    ////すべて見て行って一番近くのオブジェクトを取得
+//    //if(IsKeyOn(KEY_INPUT_Q) && _isholding == IDLE) {
+//    //    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+//    //        // ここに来る場合 obj がEnemyクラスということが保証されます。
+//    //        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+//    //        //if(Get_obj == nullptr) {
+//    //        auto name        = obj_->GetName();
+//    //        auto get_obj_pos = obj_->GetTranslate();
+//    //        auto get_npc_pos = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
+//    //        dis              = get_obj_pos - get_npc_pos;
+//    //        float dir        = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
+//    //        if(dir < max_dir) {
+//    //            max_dir = dir;
+//
+//    //            Get_obj = obj_;
+//    //        }
+//    //    }
+//    //    auto get_pickup_com = GetComponent<Pickup>();
+//    //    if(get_pickup_com->Check_Pickup() == true) {
+//    //        _isholding = HOLDING;
+//    //    }
+//    //}
+//
+//    //auto& obj = Get_obj;    //一番近くのオブジェクトを取得
+//
+//    ////IDLE状態のときPキー押した時HOLDING状態にする
+//
+//    ////もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
+//    //if(_isholding == HOLDING) {
+//    //    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+//    //        if(Get_obj == obj_) {
+//    //            obj_->Cone_Mode = HOLDING;
+//    //            obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+//    //            // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
+//    //            if(auto pModel = GetComponent<ComponentModel>()) {
+//    //                const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
+//    //                if(auto aModel = obj_->GetComponent<ComponentModel>()) {
+//    //                    aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
+//    //                }
+//    //            }
+//    //        }
+//    //    }
+//    //}
+//    ////HOLDING状態のときOキー押した時THROWING状態にする
+//    //if(IsKeyOn(KEY_INPUT_E) && _isholding == HOLDING) {
+//    //    _isholding = THROWING;
+//    //    if(_isholding == THROWING) {
+//    //        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+//    //            if(Get_obj == obj_) {
+//    //                obj->SetTranslate(GetTranslate() + float3{0, 18.0f, 0});
+//    //                auto modelrot = GetComponent<ComponentModel>();
+//    //                auto dir      = -modelrot->GetWorldMatrix().axisZ();
+//    //                obj->SetDirectior(dir);
+//    //                obj_->Cone_Mode    = THROWING;
+//    //                obj_->who_throwing = Game01::Animal::RISE;
+//    //                obj_->Game01::Animal::Throw();
+//    //            }
+//    //        }
+//    //    }
+//    //}
+//    ////IDLE状態のときオブジェクトを移動するのをやめさせる
+//    //if(obj) {
+//    //    if(obj->Cone_Mode == IDLE) {
+//    //        _isholding = IDLE;
+//    //        Get_obj    = nullptr;
+//    //    }
+//    //}
+//    //// Super::OnHit(hit_info);
+//    //auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
+//
+//    //for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+//    //    if(obj_->Cone_Mode == THROWING) {
+//    //        if(hit_owner_name == "Animal") {
+//    //            // printfDx("%s\n", obj_->GetName());
+//    //        }
+//    //    }
+//    //}
+//}
 void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner();
+    //for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+    //    if(obj_->GetName() == hit_owner_name->GetName()) {
+    //        if(obj_->Cone_Mode == THROWING) {
+    //            if(obj_->who_throwing != Game01::Animal::BETTY) {
+    //                //ここに当たったら
+    //            }
+    //        }
+    //    }
+    //}
 
-    float max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
-                                 //一番近くのオブジェクトの保管
-
-    //すべて見て行って一番近くのオブジェクトを取得
-    if(IsKeyOn(KEY_INPUT_Q) && _isholding == IDLE) {
-        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-            // ここに来る場合 obj がEnemyクラスということが保証されます。
-            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
-            //if(Get_obj == nullptr) {
-            auto name        = obj_->GetName();
-            auto get_obj_pos = obj_->GetTranslate();
-            auto get_npc_pos = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
-            dis              = get_obj_pos - get_npc_pos;
-            float dir        = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-            if(dir < max_dir) {
-                max_dir = dir;
-
-                Get_obj = obj_;
-            }
-        }
-        auto get_pickup_com = GetComponent<Pickup>();
-        if(get_pickup_com->Check_Pickup() == true) {
-            _isholding = HOLDING;
-        }
-    }
-
-    auto& obj = Get_obj;    //一番近くのオブジェクトを取得
-
-    //IDLE状態のときPキー押した時HOLDING状態にする
-
-    //もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
-    if(_isholding == HOLDING) {
-        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-            if(Get_obj == obj_) {
-                obj_->Cone_Mode = HOLDING;
-                obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
-                // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
-                if(auto pModel = GetComponent<ComponentModel>()) {
-                    const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
-                    if(auto aModel = obj_->GetComponent<ComponentModel>()) {
-                        aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
-                    }
+    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+        if(obj_->GetName() == hit_owner_name->GetName()) {
+            if(obj_->Cone_Mode == THROWING) {
+                if(obj_->who_throwing != Game01::Animal::RISE && obj_->who_throwing != Game01::Animal::NOBODY) {
+                    obj_->Cone_Mode        = Game01::Animal::DEATH;
+                    auto Hp_get            = Scene::Object::Get<Hp>();
+                    Hp_get->Hp_count_rise -= 1;
                 }
             }
         }
     }
-    //HOLDING状態のときOキー押した時THROWING状態にする
-    if(IsKeyOn(KEY_INPUT_E) && _isholding == HOLDING) {
-        _isholding = THROWING;
-        if(_isholding == THROWING) {
-            for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-                if(Get_obj == obj_) {
-                    obj->SetTranslate(GetTranslate() + float3{0, 18.0f, 0});
-                    auto modelrot = GetComponent<ComponentModel>();
-                    auto dir      = -modelrot->GetWorldMatrix().axisZ();
-                    obj->SetDirectior(dir);
-                    obj_->Cone_Mode = THROWING;
-                    obj_->Game01::Animal::Throw();
-                }
-            }
-        }
-    }
-    //IDLE状態のときオブジェクトを移動するのをやめさせる
-    if(obj) {
-        if(obj->Cone_Mode == IDLE) {
-            _isholding = IDLE;
-            Get_obj    = nullptr;
-        }
-    }
-
-    //THROWING状態のとき投げる処理
-    /*  if(obj) {
-        if(_isholding == THROWING) {
-            if(obj->Cone_Mode == THROWING) {
-             
-              
-            }
-        }
-    }*/
 }
+
 }    // namespace Game01

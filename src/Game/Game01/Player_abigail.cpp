@@ -10,8 +10,11 @@
 #include <Game/Component/State/StateJump.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/State/AbigailStateIdleWalk.h>
+#include "Hp.h"
 
 namespace Game01 {
+bool check = false;
+
 bool Player_Abigail::Init()
 {
     Super::Init();
@@ -55,7 +58,7 @@ void Player_Abigail::Update()
 void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
-    auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetName();
+    /*auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetName();
     for(auto obj_ : Scene::Object::GetArray<Animal>()) {
         if(obj_) {
             if(obj_->Cone_Mode == THROWING) {
@@ -65,6 +68,20 @@ void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
                     auto  get_hit_player_pos   = GetTranslate();
                     auto  get_dir              = get_hit_player_pos - get_throw_animal_pos;
                     float dis                  = sqrtf(get_dir.x * get_dir.x + get_dir.y * get_dir.y + get_dir.z * get_dir.z);
+                }
+            }
+        }
+    }*/
+
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner();
+
+    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+        if(obj_->GetName() == hit_owner_name->GetName()) {
+            if(obj_->Cone_Mode == THROWING) {
+                if(obj_->who_throwing != Game01::Animal::ABIGAIL && obj_->who_throwing != Game01::Animal::NOBODY) {
+                    obj_->Cone_Mode           = Game01::Animal::DEATH;
+                    auto Hp_get               = Scene::Object::Get<Hp>();
+                    Hp_get->Hp_count_abigail -= 1;
                 }
             }
         }
