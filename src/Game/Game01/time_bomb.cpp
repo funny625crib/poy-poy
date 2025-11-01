@@ -11,17 +11,13 @@
 
 namespace Game01 {
 
-int bomb_effect;
-
 bool Time_bomb::Init()
 {
     Super::Init();
 
-    Bomb_Mode = NOTHING;
-
     // プレイヤー
     SetName("Time bomb");
-    SetTranslate({-87.0f, 26.0f, 57.0f});
+    SetTranslate({-87.0f, -6.0f, 47.0f});
     AddComponent<Acceleration>();
     auto col = AddComponent<ComponentCollisionCapsule>();    //
     col->SetRadius(5.53f);
@@ -32,7 +28,9 @@ bool Time_bomb::Init()
     auto model      = AddComponent<ComponentModel>("data/Sample/time bomb/Bomb.mv1");
     model->Matrix() = matrix::scale(0.05f);
 
-    bomb_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/fire.efkefc");
+    //model->UseShader(false);
+
+    //AddComponent<ComponentGameCamera>();
 
     return true;
 }
@@ -40,26 +38,5 @@ bool Time_bomb::Init()
 void Time_bomb::Update()
 {
     Super::Update();
-}
-
-void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
-{
-    Time_bombPtr Get_obj        = nullptr;
-    auto         hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
-    auto         col            = GetComponent<ComponentCollisionCapsule>();
-
-    if(hit_owner_name == "Ground" && Bomb_Mode != IDLE) {
-        //地面に当たっているobjをIDLE状態にする
-        Bomb_Mode = HIT;
-    }
-
-    if(Bomb_Mode == HIT) {
-        int    h   = PlayEffekseer3DEffect(bomb_effect);
-        float3 pos = GetTranslate();
-        SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y, pos.z);
-        SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
-        Bomb_Mode = IDLE;
-    }
-    __super::OnHit(hit_info);
 }
 }    // namespace Game01

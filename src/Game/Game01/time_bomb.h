@@ -11,19 +11,7 @@ public:
 
     bool Init() override;
 
-    void OnHit(const ComponentCollision::HitInfo& hit_info) override;
-
     void Update() override;
-
-    int Bomb_Mode;
-    enum
-    {
-        IDLE,
-        HOLDING,
-        THROWING,
-        HIT,
-        NOTHING,
-    };
 
 private:
 };

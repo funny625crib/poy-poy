@@ -97,7 +97,7 @@ bool Animal::Init()
         height = 11.0f;
         break;
     }
-    //子リジョン
+
     auto col = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(radius);
     col->SetHeight(height);
@@ -148,6 +148,9 @@ void Animal::Update()
             mdl->PlayAnimationNoSame("walk", true);
         }
     }
+    if(Cone_Mode == DEATH) {
+        Scene::Object::Release(SharedThis());
+    }
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
@@ -155,16 +158,16 @@ void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
     AnimalPtr Get_obj        = nullptr;
     auto      hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
     auto      col            = GetComponent<ComponentCollisionCapsule>();
-    // Cone_Mode                = THROWING;
     if(hit_owner_name == "Ground") {
         //地面に当たっているobjをIDLE状態にする
-        Cone_Mode = IDLE;
+        Cone_Mode    = IDLE;
+        who_throwing = NOBODY;
     }
 
     if(Cone_Mode == IDLE) {
         auto physics = GetComponent<StatePhysics>();
         physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
-
+        who_throwing = NOBODY;
         physics->SetStatic(false);
     }
     __super::OnHit(hit_info);
