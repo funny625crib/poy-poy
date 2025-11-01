@@ -71,6 +71,8 @@ void Player_Rise::Update()
 
     static int    h;
     static float3 pos;
+
+    //Zキー：一時的に無敵になる
     if(Input::IsKeyDown(KEY_INPUT_Z)) {
         h = PlayEffekseer3DEffect(effect);
     }
