@@ -12,7 +12,6 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/SolStateIdleWalk.h>
-#include "Hp.h"
 
 namespace Game01 {
 bool Player_Sol::Init()
@@ -57,19 +56,6 @@ void Player_Sol::Update()
 void Player_Sol::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
-    auto hit_owner_name = hit_info.hit_collision_->GetOwner();
-
-    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-        if(obj_->GetName() == hit_owner_name->GetName()) {
-            if(obj_->Cone_Mode == THROWING) {
-                if(obj_->who_throwing != Game01::Animal::SOL && obj_->who_throwing != Game01::Animal::NOBODY) {
-                    obj_->Cone_Mode       = Game01::Animal::DEATH;
-                    auto Hp_get           = Scene::Object::Get<Hp>();
-                    Hp_get->Hp_count_sol -= 1;
-                }
-            }
-        }
-    }
     //コミット
 }
 }    // namespace Game01
