@@ -97,7 +97,7 @@ bool Animal::Init()
         height = 11.0f;
         break;
     }
-
+    //子リジョン
     auto col = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(radius);
     col->SetHeight(height);
