@@ -70,12 +70,13 @@ void Player_Rise::Update()
     static int ani_time      = 0;    //ジャンプの持続時間
     static int ani_wait_time = 0;    //ジャンプ前の待機時間
 
-    static int    h;
+    static int    h = -1;
     static float3 pos;
 
     if(Input::IsKeyDown(KEY_INPUT_Z)) {
         h = PlayEffekseer3DEffect(effect);
     }
+
     pos = GetTranslate();
     SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y, pos.z);
     SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);

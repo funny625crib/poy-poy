@@ -54,11 +54,11 @@ void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
 
     if(Bomb_Mode == HIT) {
         //エフェクトが出る
-        int h = PlayEffekseer3DEffect(bomb_effect);
+        int a = PlayEffekseer3DEffect(bomb_effect);
 
         float3 pos = GetTranslate();
-        SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 5.0f, pos.z);
-        SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
+        SetPosPlayingEffekseer3DEffect(a, pos.x, pos.y + 0.0f, pos.z);
+        SetScalePlayingEffekseer3DEffect(a, 4.0f, 4.0f, 4.0f);
         Bomb_Mode = IDLE;
     }
 }
