@@ -149,7 +149,7 @@ void Animal::Update()
         }
     }
     if(Cone_Mode == DEATH) {
-        // Scene::Object::Release(SharedThis());
+        Scene::Object::Release(SharedThis());
     }
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }

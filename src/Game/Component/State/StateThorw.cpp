@@ -35,6 +35,7 @@ void StateThorw::Update()
     float3 pos_npc_ = owner->GetTranslate();
     float  max_dir  = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
                                    //一番近くのオブジェクトの保管
+    auto get_pickup_com = owner->GetComponent<Game01::Pickup>();
 
     //すべて見て行って一番近くのオブジェクトを取得
     if(IsKeyOn(KEY_INPUT_Q) && owner->_isholding == IDLE) {
@@ -66,7 +67,6 @@ void StateThorw::Update()
             }
         }
 
-        auto get_pickup_com = owner->GetComponent<Game01::Pickup>();
         if(get_pickup_com->Check_Pickup() == true) {
             owner->_isholding = HOLDING;
         }
@@ -79,7 +79,7 @@ void StateThorw::Update()
     //もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
     if(owner->_isholding == HOLDING) {
         for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
-            if(Get_obj == obj_) {
+            if(Get_obj == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
                 obj_->Cone_Mode = HOLDING;
                 obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
                 // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
@@ -92,9 +92,9 @@ void StateThorw::Update()
             }
         }
         for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
-            if(Get_obj2 == obj_boms_) {
+            if(Get_obj2 == obj_boms_ && get_pickup_com->set_obj_ == Game01::Pickup::BOMS) {
                 obj_boms_->Boms_Mode = HOLDING;
-                obj_boms_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+                obj_boms_->SetTranslate({pos_npc_.x, pos_npc_.y + 25.0f, pos_npc_.z});
                 // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
                 if(auto pModel = owner->GetComponent<ComponentModel>()) {
                     const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準

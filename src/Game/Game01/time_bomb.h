@@ -16,6 +16,7 @@ public:
     void SetDirectior(float3 dir);
     void Throw();
     int  Boms_Mode;
+    bool first_thorw = false;
     enum
     {
         IDLE,

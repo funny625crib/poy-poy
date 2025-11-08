@@ -23,17 +23,10 @@ bool Time_bomb::Init()
     auto col = AddComponent<ComponentCollisionCapsule>();    //
     col->SetRadius(5.53f);
     col->SetHeight(5.81f);
-    col->UseGravity();
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::ITEM);
-
     auto model      = AddComponent<ComponentModel>("data/Sample/time bomb/Bomb.mv1");
     model->Matrix() = matrix::scale(0.05f);
-    AddComponent<StatePhysics>();
-
-    //model->UseShader(false);
-
-    //AddComponent<ComponentGameCamera>();
-
+    AddComponent<StatePhysics>();    //投げるために必要
     return true;
 }
 
@@ -48,6 +41,9 @@ void Time_bomb::Update()
             physics->StatePhysics::gravity_on = false;
         }
     }
+    if(Boms_Mode == THROWING) {
+        first_thorw = true;
+    }
 }
 void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
@@ -56,10 +52,14 @@ void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
     auto col            = GetComponent<ComponentCollisionCapsule>();
     if(hit_owner_name == "Ground") {
         //地面に当たっているobjをIDLE状態にする
-        Boms_Mode    = IDLE;
-        who_throwing = NOBODY;
+        Boms_Mode    = IDLE;      //こいつの状態
+        who_throwing = NOBODY;    //誰が投げてるか
+        if(first_thorw == true) {
+            //最初に投げた時＆＆地面に当たった時消す
+            Scene::Object::Release(SharedThis());
+        }
     }
-
+    //IDLE時に動かないように
     if(Boms_Mode == IDLE) {
         auto physics = GetComponent<StatePhysics>();
         physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);

@@ -22,7 +22,8 @@ void   Pickup::Init()
 void Pickup::Update()
 {
     __super::Update();
-    auto   owner   = GetOwner();
+    auto owner     = GetOwner();
+    set_obj_       = NOOBJ;
     float3 Get_pos = owner->GetTranslate();
     float  max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
     for(auto obj_ : Scene::Object::GetArray<Animal>()) {
@@ -34,8 +35,8 @@ void Pickup::Update()
         float3 dis         = get_obj_pos - get_npc_pos;
         float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
         if(dir < max_dir) {
-            max_dir = dir;
-
+            max_dir        = dir;
+            set_obj_       = ANIMAL;
             Get_obj_animal = obj_;
         }
     }
@@ -48,8 +49,8 @@ void Pickup::Update()
         float3 dis         = get_obj_pos - get_npc_pos;
         float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
         if(dir < max_dir) {
-            max_dir = dir;
-
+            max_dir      = dir;
+            set_obj_     = BOMS;
             Get_obj_boms = obj_boms_;
         }
     }
@@ -97,10 +98,10 @@ void Pickup::Update()
 
     float3 pos1 = Get_pos;
     float3 pos2;
-    if(Get_obj_animal != nullptr)
+    if(Get_obj_animal != nullptr && set_obj_ == ANIMAL)
         pos2 = Get_obj_animal->GetTranslate();
     float3 pos3;
-    if(Get_obj_boms != nullptr)
+    if(Get_obj_boms != nullptr && set_obj_ == BOMS)
         pos3 = Get_obj_boms->GetTranslate();
 
     pos1.y = 0.0f;
@@ -127,34 +128,48 @@ void Pickup::Update()
     front.z = 1.0f * cosf((dir.y * 3.14159265f / 180.0f));
 
     //	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
-    float3 target = pos2 - pos1;
+    float3 target     = pos2 - pos1;
+    float3 target_bom = pos3 - pos1;
+
     //	ベクトルの正規化（ベクトルの長さを 1.0 に）
 
-    float length = sqrtf(target.x * target.x + target.z * target.z);
+    float length     = sqrtf(target.x * target.x + target.z * target.z);
+    float length_bom = sqrtf(target_bom.x * target_bom.x + target_bom.z * target_bom.z);
+
     if(length > 0.0f) {
         target.x = target.x / length;
         target.z = target.z / length;
     }
+    if(length_bom > 0.0f) {
+        target_bom.x = target_bom.x / length_bom;
+        target_bom.z = target_bom.z / length_bom;
+    }
     //	２：２つのベクトルの内積を取得
-    float front_dot = front.x * target.x + front.z * target.z;
+    float front_dot     = front.x * target.x + front.z * target.z;
+    float front_dot_bom = front.x * target_bom.x + front.z * target_bom.z;
+
     /*  GetFloat2Dot(front, target);*/
 
     //	３：求めた内積の値から角度を求める
     //	この内積の値（ front_dot ）を acos 関数に渡すことで角度を取得できます
     //	acosf：アークコサイン関数（ cos 関数の逆関数）← ラジアン角が返ってきます
-    float radian = acosf(front_dot);
+    float radian     = acosf(front_dot);
+    float radian_bom = acosf(front_dot_bom);
     //	ラジアン角を角度の「度」にします
-    float degree = radian * 180.0f / 3.14159265f;
+    float degree     = radian * 180.0f / 3.14159265f;
+    float degree_bom = radian_bom * 180.0f / 3.14159265f;
 
-    if(degree < r) {
-        if(distance <= radius || distance2 <= radius) {
-            check = true;
-            color = GetColor(0, 255, 255);
-        }
-        else {
-            check = false;
-            color = GetColor(255, 255, 255);
-        }
+    if(set_obj_ == BOMS && distance2 <= radius && degree_bom < r) {
+        color = GetColor(0, 255, 0);
+        check = true;
+    }
+    else if(distance <= radius && set_obj_ == ANIMAL && degree < r) {
+        color = GetColor(0, 255, 255);
+        check = true;
+    }
+    else {
+        check = false;
+        color = GetColor(255, 255, 255);
     }
 }
 void Pickup::Draw()
