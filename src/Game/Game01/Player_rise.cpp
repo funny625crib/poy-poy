@@ -19,6 +19,7 @@ namespace Game01 {
 //AnimalPtr Get_obj2 = nullptr;    //一番近くのオブジェクトの保管
 AnimalPtr Get_obj = nullptr;
 int       effect;
+int       heal_effect;    //回復
 
 bool Player_Rise::Init()
 {
@@ -44,7 +45,10 @@ bool Player_Rise::Init()
     });
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
 
+    //エフェクトの初期化
     effect = LoadEffekseerEffect("data/effects/00_Version16/Barrior01.efkefc");
+
+    heal_effect = LoadEffekseerEffect("data/effects/01_NextSoft01/Heal.efkefc");
 
     AddComponent<ComponentGameCamera>();
     AddComponent<Pickup>();
@@ -70,16 +74,27 @@ void Player_Rise::Update()
     static int ani_time      = 0;    //ジャンプの持続時間
     static int ani_wait_time = 0;    //ジャンプ前の待機時間
 
-    static int    h = -1;
+    static int h = -1;
+
+    static int    heal = -1;    //回復
     static float3 pos;
 
+    //Zキー：無敵化
     if(Input::IsKeyDown(KEY_INPUT_Z)) {
         h = PlayEffekseer3DEffect(effect);
     }
 
     pos = GetTranslate();
-    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y, pos.z);
-    SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
+    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 1.0f, pos.z);
+    SetScalePlayingEffekseer3DEffect(h, 2.5f, 4.0f, 2.5f);
+
+    //Xキー：回復
+    if(Input::IsKeyDown(KEY_INPUT_X)) {
+        heal = PlayEffekseer3DEffect(heal_effect);
+    }
+    pos = GetTranslate();
+    SetPosPlayingEffekseer3DEffect(heal, pos.x, pos.y + 1.0f, pos.z);
+    SetScalePlayingEffekseer3DEffect(heal, 3.0f, 3.0f, 3.0f);
 
     if(Input::IsKeyDown(KEY_INPUT_SPACE) && player_mode == MODE_IDLE) {
         player_mode   = MODE_JUMP_WAIT;
