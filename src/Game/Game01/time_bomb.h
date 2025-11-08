@@ -11,6 +11,8 @@ public:
 
     bool Init() override;
 
+    void OnHit(const ComponentCollision::HitInfo& hit_info) override;
+
     void Update() override;
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
     void SetDirectior(float3 dir);
@@ -34,6 +36,16 @@ public:
         SOL,
     };
     int who_throwing = 0;
+
+    int Bomb_Mode;
+    enum
+    {
+        IDLE,
+        HOLDING,
+        THROWING,
+        HIT,
+        NOTHING,
+    };
 
 private:
     float3 direction_;

@@ -89,13 +89,21 @@ void AnimalStateIdleWalk::Update()
     //動物が画面外が出られないように
 
     auto pos = owner->GetTranslate();    // 座標
+    if(!is_just_generated_) {
+        pos.x = max(-150.0f, min(pos.x, 55.0f));
+        pos.z = max(-100.0f, min(pos.z, 110.0f));
 
-    pos.x = max(-150.0f, min(pos.x, 55.0f));
-    pos.z = max(-100.0f, min(pos.z, 110.0f));
-
-    if(pos.x <= -150.0f || pos.x >= 55.0f || pos.z <= -100.0f || pos.z >= 110.0f) {
-        //壁にぶつかると
-        dir_ = GetRand(3);
+        if(pos.x <= -150.0f || pos.x >= 55.0f || pos.z <= -100.0f || pos.z >= 110.0f) {
+            //壁にぶつかると
+            dir_ = GetRand(3);
+        }
+    }
+    else {
+        generation_time_++;
+        if(generation_time_ >= 300) {
+            is_just_generated_ = false;
+            generation_time_   = 0.0f;
+        }
     }
 
     owner->SetTranslate(pos);
