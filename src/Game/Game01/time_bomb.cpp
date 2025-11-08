@@ -18,7 +18,7 @@ bool Time_bomb::Init()
 {
     Super::Init();
 
-    Bomb_Mode = NOTHING;
+    Boms_Mode = IDLE;
 
     // プレイヤー
     SetName("Time bomb");
@@ -52,28 +52,7 @@ void Time_bomb::Update()
         first_thorw = true;
     }
 }
-void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
-{
-    __super::OnHit(hit_info);
-    auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
-    auto col            = GetComponent<ComponentCollisionCapsule>();
-    if(hit_owner_name == "Ground") {
-        //地面に当たっているobjをIDLE状態にする
-        Boms_Mode    = IDLE;      //こいつの状態
-        who_throwing = NOBODY;    //誰が投げてるか
-        if(first_thorw == true) {
-            //最初に投げた時＆＆地面に当たった時消す
-            Scene::Object::Release(SharedThis());
-        }
-    }
-    //IDLE時に動かないように
-    if(Boms_Mode == IDLE) {
-        auto physics = GetComponent<StatePhysics>();
-        physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
-        who_throwing = NOBODY;
-        physics->SetStatic(false);
-    }
-}
+
 void Time_bomb::SetDirectior(float3 dir)
 {
     direction_ = dir;
@@ -91,16 +70,31 @@ void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
     auto         hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
     auto         col            = GetComponent<ComponentCollisionCapsule>();
 
-    if(hit_owner_name == "Ground" && Bomb_Mode != IDLE) {
-        Bomb_Mode = HIT;
+    if(hit_owner_name == "Ground" && Boms_Mode == THROWING) {
+        Boms_Mode = HIT;
     }
-
-    if(Bomb_Mode == HIT) {
+    if(hit_owner_name == "Ground") {
+        //地面に当たっているobjをIDLE状態にする
+        // Boms_Mode    = IDLE;      //こいつの状態
+        who_throwing = NOBODY;    //誰が投げてるか
+        if(first_thorw == true) {
+            //最初に投げた時＆＆地面に当たった時消す
+            // Scene::Object::Release(SharedThis());
+        }
+    }
+    if(Boms_Mode == HIT) {
         int    h   = PlayEffekseer3DEffect(bomb_effect);
         float3 pos = GetTranslate();
         SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y, pos.z);
         SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
-        Bomb_Mode = IDLE;
+        Boms_Mode = IDLE;
+    }
+    //IDLE時に動かないように
+    if(Boms_Mode == IDLE) {
+        auto physics = GetComponent<StatePhysics>();
+        physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
+        who_throwing = NOBODY;
+        physics->SetStatic(false);
     }
     __super::OnHit(hit_info);
 }
