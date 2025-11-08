@@ -12,6 +12,8 @@
 #include <Game/Component/State/AbigailStateIdleWalk.h>
 #include "Hp.h"
 
+int hit_effect;
+
 namespace Game01 {
 bool check = false;
 
@@ -42,6 +44,8 @@ bool Player_Abigail::Init()
     model->PlayAnimation("idle", true);
 
     AddComponent<ComponentGameCamera>();
+
+    hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
 
     // AddComponent<AbigailStateIdleWalk>();
 
@@ -82,6 +86,13 @@ void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
                     obj_->Cone_Mode           = Game01::Animal::DEATH;
                     auto Hp_get               = Scene::Object::Get<Hp>();
                     Hp_get->Hp_count_abigail -= 1;
+
+                    //エフェクトが出る
+                    int h = PlayEffekseer3DEffect(hit_effect);
+
+                    float3 pos = GetTranslate();
+                    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 5.0f, pos.z);
+                    SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
                 }
             }
         }
