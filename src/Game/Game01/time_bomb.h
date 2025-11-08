@@ -14,8 +14,10 @@ public:
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
 
     void Update() override;
-
-    int Bomb_Mode;
+    void SetDirectior(float3 dir);
+    void Throw();
+    int  Boms_Mode;
+    bool first_thorw = false;
     enum
     {
         IDLE,
@@ -24,8 +26,18 @@ public:
         HIT,
         NOTHING,
     };
+    enum
+    {
+        NOBODY,
+        RISE,
+        BETTY,
+        ABIGAIL,
+        SOL,
+    };
+    int who_throwing = 0;
 
 private:
+    float3 direction_;
 };
 
 }    // namespace Game01
