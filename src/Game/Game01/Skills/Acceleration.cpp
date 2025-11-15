@@ -19,9 +19,11 @@ void Acceleration::Init()
     }
 
     //初期速度
-    current_speed_ = 2.0f;
+    current_speed_ = 1.0f;
     //目標速度
-    target_speed = 3.0f;
+    target_speed_ = 3.0f;
+    //加速時間
+    stall_time_ = 0.0f;
 }
 
 void Acceleration::Update()
@@ -29,6 +31,25 @@ void Acceleration::Update()
     __super::Update();
     auto owner = GetOwner();    //スキルを使うオブジェクトを取得
 
+    float lerp_factor = 0.1f;    //補間係数(値を大きくすると早く切り替えられる)
+    //Lerpで徐々に速度を変化させる
+    current_speed_ = current_speed_ + (target_speed_ - current_speed_) * lerp_factor;
+    //現在の移動速度を設定
+    move_speed_ = current_speed_;
+    //回転速度を設定
+    rot_speed_ = 30.0f;
+
+    // 目標速度にほぼ到達したら（イプシロン判定）短時間停止してから減速ターゲットに切り替える
+    const float eps = 0.01f;
+    if(target_speed_ > current_speed_ && (target_speed_ - current_speed_) < eps) {
+        // 停止時間をカウント
+        stall_time_              += GetDeltaTime60();    //1フレームの時間を取得
+        const float hold_seconds  = 0.1f;                // 到達後に保持する秒数（必要に応じて調整）
+        if(stall_time_ >= hold_seconds) {
+            target_speed_ = 1.0f;    // 減速開始
+            stall_time_   = 0.0f;    // 停止時間リセット
+        }
+    }
     // 移動方向
     float3 dir{0, 0, 0};
     if(IsKey(KEY_INPUT_W))
@@ -59,29 +80,12 @@ void Acceleration::Update()
             mdl->SetRotationToVectorWithLimit(mul(dir, rot), rot_speed_);
         }
     }
-    float lerp_factor = 0.1f;    //補間係数(値を大きくすると早く切り替えられる)
-    if(stall_time_ <= 0.0f)      //加速フェーズ
-    {
-        //Lerpで徐々に速度を変化させる
-        current_speed_ = current_speed_ + (target_speed - current_speed_) * lerp_factor;
-        //現在の移動速度を設定
-        move_speed_ = current_speed_;
-    }
-
-    target_speed = 1.0f;    //減速目標速度
-    //Lerpで徐々に速度を変化させる
-    current_speed_ = current_speed_ + (target_speed - current_speed_) * lerp_factor;
-    //現在の移動速度を設定
-    move_speed_ = current_speed_;
-    //回転速度を設定
-    rot_speed_ = 30.0f;
-
-    //動く速度がターゲットスピードに到達したら
-    if(move_speed_ >= 4.0f) {
-        stall_time_ += 1.0f;    //減速するために時間をカウント
-    }
-    if(stall_time_ >= 30.0f) {
-        stall_time_ = 0.0f;    //カウントリセット
+    if(auto model = owner->GetComponent<ComponentModel>()) {
+        //　モーションが終了しているか?
+        if(!model->IsPlaying()) {
+            RemoveThisComponent();
+            owner->AddComponent<StateIdleWalk>();
+        }
     }
 }
 }    // namespace Game01
