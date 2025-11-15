@@ -1,13 +1,14 @@
-﻿#include "Ground.h"
+﻿#include "SelectStage.h"
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 
 namespace Game01 {
-bool Ground::Init()
+bool SelectStage::Init()
 {
     Super::Init();
-
-    SetName("Ground");
+    // ステージ
+    SetName("SelectStage");
+    //AddComponent<ComponentModel>("data/Sample/SwordBout/Stage/fantasy-village-market.mv1.mv1");
     AddComponent<ComponentModel>("data/Sample/SwordBout/Stage/village.mv1");
 
     AddComponent<ComponentCollisionModel>()    //
@@ -16,7 +17,7 @@ bool Ground::Init()
     return true;
 }
 
-void Ground::Update()
+void SelectStage::Update()
 {
     Super::Update();
 }
