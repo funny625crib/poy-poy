@@ -56,6 +56,7 @@ void Player_Betty::Update()
 {
     Super::Update();
     pos_npc_ = GetTranslate();
+
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Player_Betty::OnHit(const ComponentCollision::HitInfo& hit_info)

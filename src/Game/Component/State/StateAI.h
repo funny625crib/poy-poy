@@ -2,26 +2,39 @@
 #include <System/Scene.h>
 #include <System/Component/Component.h>
 
-USING_PTR(StateThorw);
+USING_PTR(StateAI);
 
-class StateThorw : public Component
+class StateAI : public Component
 {
 public:
-    BP_COMPONENT_DECL(StateThorw, u8"State_Thorw");
+    BP_COMPONENT_DECL(StateAI, u8"State_Thorw");
 
     void Init() override;
 
     void Update() override;
 
     void GUI() override;
+    int  mode;
+    enum
+    {
+        Searchobj,
+        Movetoobj,
+        SearchPlayer,
+        MovetoPlayer,
+    };
+    enum
+    {
+        NOOBJ,
+        ANIMAL,
+        BOMS,
+    };
     enum
     {
         IDLE,
         HOLDING,
         THROWING,
     };
-    float3 dis_character_animal_;
-    float3 dis_character_Boms_;
+    int set_obj_ = 0;
 
 private:
     ComponentWeakPtr left_collision_;
@@ -41,4 +54,4 @@ private:
     float front_rot_ = 0.0f;    //!<前方ベクトルの回転角度(0-360度)
 };
 
-CEREAL_CLASS_VERSION(StateThorw, 1);
+CEREAL_CLASS_VERSION(StateAI, 1);

@@ -7,6 +7,8 @@
 #include <System/Component/ComponentObjectController.h>
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Component/State/AnimalStateIdleWalk.h>
+#include <Game/Component/State/StateAI.h>
+#include "Animal_pickup.h"
 
 const char* Animal_name[] = {
     "data/Sample/Animal/Pig.mv1",

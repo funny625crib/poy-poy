@@ -55,7 +55,7 @@ bool Player_Rise::Init()
     run_effect = LoadEffekseerEffect("data/effects/01_Pierre01/run.efkefc");
 
     AddComponent<ComponentGameCamera>();
-    AddComponent<Pickup>();
+    //AddComponent<Pickup>();
     AddComponent<StateIdleWalk>();
     AddComponent<StateThorw>();
     return true;
@@ -257,16 +257,6 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
     auto hit_owner_name = hit_info.hit_collision_->GetOwner();
-    //for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-    //    if(obj_->GetName() == hit_owner_name->GetName()) {
-    //        if(obj_->Cone_Mode == THROWING) {
-    //            if(obj_->who_throwing != Game01::Animal::BETTY) {
-    //                //ここに当たったら
-    //            }
-    //        }
-    //    }
-    //}
-
     for(auto obj_ : Scene::Object::GetArray<Animal>()) {
         if(obj_->GetName() == hit_owner_name->GetName()) {
             if(obj_->Cone_Mode == THROWING) {

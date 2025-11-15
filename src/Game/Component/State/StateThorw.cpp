@@ -8,15 +8,13 @@
 #include <Game/Game01/Animal.h>
 #include <Game/Game01/Animal_pickup.h>
 #include <Game/Game01/time_bomb.h>
-Game01::AnimalPtr    Get_obj  = nullptr;
-Game01::Time_bombPtr Get_obj2 = nullptr;
 
 void StateThorw::Init()
 {
     __super::Init();
 
     auto owner = GetOwner();
-
+    owner->AddComponent<Game01::Pickup>();
     auto col = owner->AddComponent<ComponentCollisionSphere>();
     col->AttachToModel("mixamorig:LeftLeg");
     col->SetName("PlayerJump");
@@ -31,6 +29,9 @@ void StateThorw::Init()
 void StateThorw::Update()
 {
     //__super::Update();
+    static Game01::AnimalPtr    Get_obj  = nullptr;
+    static Game01::Time_bombPtr Get_obj2 = nullptr;
+
     auto   owner    = GetOwner();
     float3 pos_npc_ = owner->GetTranslate();
     float  max_dir  = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
@@ -38,7 +39,7 @@ void StateThorw::Update()
     auto get_pickup_com = owner->GetComponent<Game01::Pickup>();
 
     //すべて見て行って一番近くのオブジェクトを取得
-    if(IsKeyOn(KEY_INPUT_Q) && owner->_isholding == IDLE) {
+    if(/*IsKeyOn(KEY_INPUT_Q) &&*/ owner->_isholding == IDLE) {
         for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
             for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
                 // ここに来る場合 obj がEnemyクラスということが保証されます。

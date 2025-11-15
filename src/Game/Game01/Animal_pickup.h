@@ -21,7 +21,7 @@ public:
     void Update() override;
     void Draw() override;
     bool check    = false;
-    int  set_obj_ = 0;
+    int  set_obj_ = NOOBJ;
 
     bool Check_Pickup();
 

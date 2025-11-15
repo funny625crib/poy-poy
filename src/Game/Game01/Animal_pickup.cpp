@@ -2,9 +2,7 @@
 #include "Animal.h"
 #include <Game/Game01/time_bomb.h>
 namespace Game01 {
-float3       dir{0, 0, 0};
-AnimalPtr    Get_obj_animal = nullptr;
-Time_bombPtr Get_obj_boms   = nullptr;
+float3 dir{0, 0, 0};
 
 float3 pos_npc_;
 
@@ -22,7 +20,10 @@ void   Pickup::Init()
 void Pickup::Update()
 {
     __super::Update();
-    auto owner     = GetOwner();
+    auto         owner          = GetOwner();
+    AnimalPtr    Get_obj_animal = nullptr;
+    Time_bombPtr Get_obj_boms   = nullptr;
+
     set_obj_       = NOOBJ;
     float3 Get_pos = owner->GetTranslate();
     float  max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
