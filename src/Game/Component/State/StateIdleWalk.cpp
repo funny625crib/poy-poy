@@ -8,6 +8,7 @@
 #include <System/Component/ComponentSpringArm.h>
 #include "StateJump.h"
 #include "StateRun.h"
+#include <Game/Game01/Player_rise.h>
 
 void StateIdleWalk::Init()
 {
@@ -21,6 +22,9 @@ void StateIdleWalk::Update()
     // オーナー(自分がAddComponentされたObject)を取得します
     // 処理されるときは必ずOwnerは存在しますので基本的にnullptrチェックは必要ありません
     auto owner = GetOwner();
+
+    auto player  = Scene::Object::Get<Game01::Player_Rise>();
+    bool healing = (player && player->IsHealing());
 
     // 移動方向
     float3 dir{0, 0, 0};
@@ -64,9 +68,11 @@ void StateIdleWalk::Update()
         }
     }
     else {
-        // モデルを移動の方向に向けます
-        if(auto mdl = owner->GetComponent<ComponentModel>())
+        if(!healing) {
+            // モデルを移動の方向に向けます
+            auto mdl = owner->GetComponent<ComponentModel>();
             mdl->PlayAnimationNoSame("idle", true);
+        }
     }
 
     if(Input::IsKeyDown(KEY_INPUT_SPACE))    //ジャンプ
