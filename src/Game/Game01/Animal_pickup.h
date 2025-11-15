@@ -12,8 +12,18 @@ public:
     BP_COMPONENT_DECL(Pickup, u8"Game01 の Pickup");
 
     void Init() override;
-
+    enum
+    {
+        NOOBJ,
+        ANIMAL,
+        BOMS,
+    };
     void Update() override;
+    void Draw() override;
+    bool check    = false;
+    int  set_obj_ = 0;
+
+    bool Check_Pickup();
 
 private:
 };

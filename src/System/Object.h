@@ -184,6 +184,7 @@ public:
 
     Object();             //!< コンストラクタ
     virtual ~Object();    //!< デストラクタ
+    int _isholding = 0;
 
     virtual bool Init();          //!< 初期化
     virtual void Update();        //!< 更新

@@ -2,36 +2,53 @@
 #include <Game/Component/State/AnimalStateIdleWalk.h>
 #include <System/Component/ComponentSpringArm.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/Game01/Animal.h>
 #include "StateJump.h"
 #include "StateRun.h"
 
 void AnimalStateIdleWalk::Init()
 {
     __super::Init();
+    wait_frame_ = GetRand(100);
 }
 
 void AnimalStateIdleWalk::Update()
 {
     __super::Update();
 
+    if(auto animal = dynamic_cast<Game01::Animal*>(GetOwner())) {
+        if(animal->Cone_Mode == Game01::Animal::HOLDING) {
+            if(auto mdl = GetOwner()->GetComponent<ComponentModel>()) {
+                mdl->PlayAnimationNoSame("catch", true);
+            }
+            return;
+        }
+        if(animal->Cone_Mode == Game01::Animal::THROWING) {
+            return;
+        }
+    }
+
     // オーナー(自分がAddComponentされたObject)を取得します
     // 処理されるときは必ずOwnerは存在しますので基本的にnullptrチェックは必要ありません
     auto owner = GetOwner();
 
     // 移動方向がランダムする
-    static int animal_dir;    //動物の移動方向
 
-    static int animal_wait_frame;    //移動方向を変わる前に待つ時間
+    if(auto animal = dynamic_cast<Game01::Animal*>(GetOwner())) {
+        int mode = animal->Cone_Mode;
+        if(mode == Game01::Animal::IDLE) {
+            wait_frame_++;
+        }
+    }
 
-    animal_wait_frame++;
-    if(animal_wait_frame >= 300) {
-        animal_dir        = GetRand(3);
-        animal_wait_frame = 0;
+    if(wait_frame_ == 180) {
+        dir_        = GetRand(3);
+        wait_frame_ = 0;
     }
 
     float3 dir{0, 0, 0};
 
-    switch(animal_dir) {
+    switch(dir_) {
     case 0:    //up
         dir += {0, 0, -1};
         break;
@@ -68,6 +85,28 @@ void AnimalStateIdleWalk::Update()
         if(auto mdl = owner->GetComponent<ComponentModel>())
             mdl->PlayAnimationNoSame("idle", true);
     }
+
+    //動物が画面外が出られないように
+
+    auto pos = owner->GetTranslate();    // 座標
+    if(!is_just_generated_) {
+        pos.x = max(-150.0f, min(pos.x, 55.0f));
+        pos.z = max(-100.0f, min(pos.z, 110.0f));
+
+        if(pos.x <= -150.0f || pos.x >= 55.0f || pos.z <= -100.0f || pos.z >= 110.0f) {
+            //壁にぶつかると
+            dir_ = GetRand(3);
+        }
+    }
+    else {
+        generation_time_++;
+        if(generation_time_ >= 300) {
+            is_just_generated_ = false;
+            generation_time_   = 0.0f;
+        }
+    }
+
+    owner->SetTranslate(pos);
 }
 
 AnimalStateIdleWalkPtr AnimalStateIdleWalk::SetMoveSpeed(const float speed)

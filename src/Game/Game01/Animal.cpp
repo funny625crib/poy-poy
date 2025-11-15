@@ -1,5 +1,6 @@
 ﻿#include "Animal.h"
 #include <DxLib.h>
+#include <Game/Component/State/StatePhysics.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 #include <System/Component/ComponentCollisionCapsule.h>
@@ -33,6 +34,7 @@ bool Animal::Init()
     SetName("Animal");
     SetTranslate({pos_x, 5.0f, pos_z});
     SetRotationAxisXYZ({0.0f, 180.0f, 0.0f});
+    Cone_Mode = IDLE;
 
     int         num = GetRand(9);
     const char* str = Animal_name[num];
@@ -99,20 +101,22 @@ bool Animal::Init()
     auto col = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(radius);
     col->SetHeight(height);
-    col->UseGravity();
-
+    // col->UseGravity();
+    // AddComponent<StatePhysics>();
     auto model      = AddComponent<ComponentModel>(str);
     model->Matrix() = matrix::scale(size);
     model->SetAnimation({
-        {"idle", Animal_name[num],  8, 1.0f},
-        {"walk", Animal_name[num], 17, 1.0f},
+        { "idle", Animal_name[num],  8, 1.0f},
+        { "walk", Animal_name[num], 17, 1.0f},
+        {"catch", Animal_name[num],  6, 1.0f},
     });
-
+    Cone_Mode = THROWING;
     model->PlayAnimation("idle", true);
-
+    AddComponent<StatePhysics>();
     AddComponent<ComponentGameCamera>();
 
-    //AddComponent<AnimalStateIdleWalk>();
+    auto state = AddComponent<AnimalStateIdleWalk>();
+    state->SetMoveSpeed(0.3f)->SetRotateSpeed(20.0f);
 
     return true;
 }
@@ -120,40 +124,62 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
-    AddTranslate(direction_ * 1.0f);
-    auto col = GetComponent<ComponentCollisionCapsule>();
-    //col->UseGravity(true);
+    //  float V0     = 0.5f;    //初速度
+    //   direction_.y = -0.5f * 0.15f * throw_time * throw_time + V0 * throw_time * 1.1;
+
+    auto col     = GetComponent<ComponentCollisionCapsule>();
+    auto physics = GetComponent<StatePhysics>();
+    // throw_time  += 0.4f;
+
+    if(Cone_Mode == THROWING || Cone_Mode == IDLE) {
+        physics->StatePhysics::gravity_on = true;
+    }
+    else {
+        physics->StatePhysics::gravity_on = false;
+    }
 
     if(Cone_Mode == HOLDING) {
-        col->UseGravity(false);
+        if(auto mdl = GetComponent<ComponentModel>()) {
+            mdl->PlayAnimationNoSame("catch", true);
+        }
     }
-    else if(Cone_Mode == THROWING) {
-        col->UseGravity(true);
+    if(Cone_Mode == IDLE) {
+        if(auto mdl = GetComponent<ComponentModel>()) {
+            mdl->PlayAnimationNoSame("walk", true);
+        }
+    }
+    if(Cone_Mode == DEATH) {
+        Scene::Object::Release(SharedThis());
     }
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Animal::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
-    AnimalPtr Get_obj        = nullptr;
-    auto      hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
-    auto      col            = GetComponent<ComponentCollisionCapsule>();
-
-    if(hit_owner_name == "Wall") {
-        //  direction_ = 0;
-    }
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
+    auto col            = GetComponent<ComponentCollisionCapsule>();
     if(hit_owner_name == "Ground") {
-        direction_ = 0;
-        col->UseGravity(false);
         //地面に当たっているobjをIDLE状態にする
-        Cone_Mode = IDLE;
+        Cone_Mode    = IDLE;
+        who_throwing = NOBODY;
     }
-    else {
-        //col->UseGravity(true);
+
+    if(Cone_Mode == IDLE) {
+        auto physics = GetComponent<StatePhysics>();
+        physics->addForce(float3{0, 0, 0}, StatePhysics::NoMotion);
+        who_throwing = NOBODY;
+        physics->SetStatic(false);
     }
+    __super::OnHit(hit_info);
 }
 void Animal::SetDirectior(float3 dir)
 {
     direction_ = dir;
 }
 
+void Animal::Throw()
+{
+    auto physics = GetComponent<StatePhysics>();
+    physics->addForce(direction_ * 1.0f, StatePhysics::Impulse);
+    physics->SetStatic(false);
+}
 }    // namespace Game01

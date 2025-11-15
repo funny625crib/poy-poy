@@ -10,8 +10,13 @@
 #include <Game/Component/State/StateJump.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/State/AbigailStateIdleWalk.h>
+#include "Hp.h"
+
+int hit_effect;
 
 namespace Game01 {
+bool check = false;
+
 bool Player_Abigail::Init()
 {
     Super::Init();
@@ -40,7 +45,9 @@ bool Player_Abigail::Init()
 
     AddComponent<ComponentGameCamera>();
 
-    AddComponent<AbigailStateIdleWalk>();
+    hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
+
+    // AddComponent<AbigailStateIdleWalk>();
 
     return true;
 }
@@ -49,102 +56,45 @@ void Player_Abigail::Update()
 {
     Super::Update();
     pos_npc_ = GetTranslate();
+
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
-
-    float     max_dir = 100.0f;     //一番遠くに距離のの初期値を置くを置く
-    AnimalPtr Get_obj = nullptr;    //一番近くのオブジェクトの保管
-
-    //すべて見て行って一番近くのオブジェクトを取得
+    /*auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetName();
     for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-        // ここに来る場合 obj がEnemyクラスということが保証されます。
-        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
-        auto name        = obj_->GetName();
-        auto get_obj_pos = obj_->GetTranslate();
-        auto get_npc_pos = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
-        dis              = get_obj_pos - get_npc_pos;
-        float dir        = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-        if(dir < max_dir) {
-            max_dir = dir;
-            Get_obj = obj_;
+        if(obj_) {
+            if(obj_->Cone_Mode == THROWING) {
+                auto get_name = obj_->GetName();
+                if(hit_owner_name == get_name) {
+                    auto  get_throw_animal_pos = obj_->GetTranslate();
+                    auto  get_hit_player_pos   = GetTranslate();
+                    auto  get_dir              = get_hit_player_pos - get_throw_animal_pos;
+                    float dis                  = sqrtf(get_dir.x * get_dir.x + get_dir.y * get_dir.y + get_dir.z * get_dir.z);
+                }
+            }
         }
-    }
+    }*/
 
-    auto& obj     = Get_obj;                                              //一番近くのオブジェクトを取得
-    auto  Get_col = Get_obj->GetComponent<ComponentCollisionSphere>();    //重力を帰るために必要
-    printfDx("HIT: %s\n", Get_obj->GetName().data());
-    auto hit_owner_name2 = hit_info.hit_collision_->GetOwner()->GetNameDefault();    //npcがあたっているものの名前を取得
-    //printfDx("HIT: %s\n", hit_info.hit_collision_->GetOwner()->GetName().data());
-    //地面に当たっているobjをIDLE状態にする
-    if(hit_owner_name2 == "Ground") {
-        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-            if(Get_obj != obj_) {
-                //obj_->Cone_Mode = IDLE;
-            }
-        }
-    }
-    //もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
-    if(_isholding == HOLDING) {
-        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-            if(Get_obj == obj_) {
-                obj_->Cone_Mode = HOLDING;
-            }
-        }
-    }
-    //もしnpcの状態がTHROWING状態なら一番近くで当たってるものをTHROWING状態にする
-    if(_isholding == THROWING) {
-        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-            if(Get_obj == obj_) {
-                obj_->Cone_Mode = THROWING;
-            }
-        }
-    }
-    //IDLE状態のときPキー押した時HOLDING状態にする
-    if(IsKeyOn(KEY_INPUT_P) && _isholding == IDLE) {
-        if(hit_owner_name2 == "Animal") {
-            _isholding = HOLDING;
-        }
-    }
-    //HOLDING状態のときOキー押した時THROWING状態にする
-    if(IsKeyOn(KEY_INPUT_O) && _isholding == HOLDING) {
-        _isholding = THROWING;
-    }
-    //IDLE状態のときオブジェクトを移動するのをやめさせる
-    if(obj->Cone_Mode == IDLE) {
-        obj->SetDirectior(0 * 15);
-    }
-    //HOLDING状態のとき重力をなくす
-    if(_isholding == HOLDING) {
-        if(obj->Cone_Mode == HOLDING) {
-            if(Get_col) {
-                Get_col->UseGravity(false);
-            }
-        }
-        up_obj = true;
-    }
-    //THROWING状態のとき投げる処理
-    if(_isholding == THROWING) {
-        if(obj->Cone_Mode == THROWING) {
-            obj->SetTranslate(GetTranslate() + float3{0, 18.0f, 0});
-            auto model = GetComponent<ComponentModel>();
-            auto dir   = -model->GetWorldMatrix().axisZ();
-            obj->SetDirectior(dir * 1.0f);
-            if(Get_col) {
-                Get_col->UseGravity(true);
-            }
-            up_obj = false;
+    auto hit_owner_name = hit_info.hit_collision_->GetOwner();
 
-            _isholding = IDLE;
-        }
-    }
-    //up_obj==true状態のときnpcの頭上に置く
-    if(up_obj == true) {
-        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-            if(obj_->Cone_Mode == HOLDING)
-                obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+        if(obj_->GetName() == hit_owner_name->GetName()) {
+            if(obj_->Cone_Mode == THROWING) {
+                if(obj_->who_throwing != Game01::Animal::ABIGAIL && obj_->who_throwing != Game01::Animal::NOBODY) {
+                    obj_->Cone_Mode           = Game01::Animal::DEATH;
+                    auto Hp_get               = Scene::Object::Get<Hp>();
+                    Hp_get->Hp_count_abigail -= 1;
+
+                    //エフェクトが出る
+                    int h = PlayEffekseer3DEffect(hit_effect);
+
+                    float3 pos = GetTranslate();
+                    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 5.0f, pos.z);
+                    SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
+                }
+            }
         }
     }
 }

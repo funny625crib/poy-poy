@@ -11,9 +11,8 @@ public:
 
     bool Init() override;
 
-    void   Update() override;
-    bool   up_obj     = false;
-    int    _isholding = 0;
+    void Update() override;
+
     float3 pos_npc_;
     float3 dis;
     enum
@@ -22,6 +21,7 @@ public:
         HOLDING,
         THROWING,
     };
+
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
 
 private:

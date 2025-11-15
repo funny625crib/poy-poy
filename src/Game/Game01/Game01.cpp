@@ -1,12 +1,17 @@
 ﻿#include "Game01.h"
 #include "Ground.h"
 #include "Camera.h"
-#include "Player_rise.h"
+
 #include "Animal.h"
+#include "TIme_bomb.h"
+#include "AnimalGenerator.h"
+#include "Player_rise.h"
 #include "Player_sol.h"
 #include "Player_betty.h"
 #include "Player_abigail.h"
 #include <Game/SceneFade/SceneFade.h>
+
+#include "Hp.h"
 namespace Game01 {
 #if 1    // 参考用
 class GameObject
@@ -70,6 +75,10 @@ bool Game01::Init()
     Scene::Object::Create<Player_Betty>();
     Scene::Object::Create<Player_Abigail>();
     Scene::Object::Create<Player_Sol>();
+
+    // 動物生成器
+    Scene::Object::Create<Generator>();
+
     //動物
     for(int i = 0; i < 20; ++i) {
         Scene::Object::Create<Animal>();
@@ -77,6 +86,10 @@ bool Game01::Init()
 
     // カメラオブジェクト
     Scene::Object::Create<Camera>();
+
+    Scene::Object::Create<Hp>();
+
+    Scene::Object::Create<Time_bomb>();
 
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④
