@@ -23,8 +23,9 @@ void StateIdleWalk::Update()
     // 処理されるときは必ずOwnerは存在しますので基本的にnullptrチェックは必要ありません
     auto owner = GetOwner();
 
-    auto player  = Scene::Object::Get<Game01::Player_Rise>();
-    bool healing = (player && player->IsHealing());
+    auto player   = Scene::Object::Get<Game01::Player_Rise>();
+    bool healing  = (player && player->IsHealing());
+    bool power_up = (player && player->IsPower_up());
 
     // 移動方向
     float3 dir{0, 0, 0};
@@ -68,7 +69,7 @@ void StateIdleWalk::Update()
         }
     }
     else {
-        if(!healing) {
+        if(!healing && !power_up) {
             // モデルを移動の方向に向けます
             auto mdl = owner->GetComponent<ComponentModel>();
             mdl->PlayAnimationNoSame("idle", true);
