@@ -100,9 +100,9 @@ void Player_Rise::Update()
     auto mdl = GetComponent<ComponentModel>();
 
     // Xキー：回復
-    if(Input::IsKeyDown(KEY_INPUT_X) && !is_healing_) {
+    if(Input::IsKeyDown(KEY_INPUT_X) && !is_healing_ && heal_frame_ == 0) {
         is_healing_ = true;
-        heal_frame_ = 120;
+        heal_frame_ = 160;
 
         mdl->PlayAnimationNoSame("heal", false);
     }
@@ -115,6 +115,7 @@ void Player_Rise::Update()
         if(heal_frame_ <= 0) {
             is_healing_ = false;
             heal_frame_ = 0;
+            mdl->PlayAnimationNoSame("idle", true);
             //アクション完了後アニメーションを再生する
             heal = PlayEffekseer3DEffect(heal_effect);
         }
@@ -124,7 +125,7 @@ void Player_Rise::Update()
     SetScalePlayingEffekseer3DEffect(heal, 3.0f, 3.0f, 3.0f);
 
     //Cキー：怪力
-    if(Input::IsKeyDown(KEY_INPUT_C) && !ispower_up_) {
+    if(Input::IsKeyDown(KEY_INPUT_C) && !ispower_up_ && power_up_frame_ == 0) {
         ispower_up_     = true;
         power_up_frame_ = 120;
 
@@ -142,6 +143,7 @@ void Player_Rise::Update()
         if(power_up_frame_ <= 0) {
             ispower_up_     = false;
             power_up_frame_ = 0;
+            mdl->PlayAnimationNoSame("idle", true);
         }
     }
 

@@ -28,61 +28,61 @@ void StateIdleWalk::Update()
     bool power_up = (player && player->IsPower_up());
 
     // 移動方向
-    float3 dir{0, 0, 0};
-    if(IsKey(key_up_))
-        dir += {0, 0, -1};
+    if(!healing && !power_up) {
+        float3 dir{0, 0, 0};
+        if(IsKey(key_up_))
+            dir += {0, 0, -1};
 
-    if(IsKey(key_down_))
-        dir += {0, 0, 1};
+        if(IsKey(key_down_))
+            dir += {0, 0, 1};
 
-    if(IsKey(key_right_))
-        dir += {-1, 0, 0};
+        if(IsKey(key_right_))
+            dir += {-1, 0, 0};
 
-    if(IsKey(key_left_))
-        dir += {1, 0, 0};
+        if(IsKey(key_left_))
+            dir += {1, 0, 0};
 
-    // 移動キーが押されているか?
-    if((float)length(dir) > 0.0f) {
-        // 斜めが押されていることを考慮し、
-        // その方向の移動スピードを1とし、スピードを掛け合わせる
-        dir              = normalize(dir);
-        float base_speed = 0.5f;
-        if(owner->GetComponent<Game01::Acceleration>() && Input::IsKeyRepeat(KEY_INPUT_P)) {
-            base_speed = 1.5f;
-        }
+        // 移動キーが押されているか?
+        if((float)length(dir) > 0.0f) {
+            // 斜めが押されていることを考慮し、
+            // その方向の移動スピードを1とし、スピードを掛け合わせる
+            dir              = normalize(dir);
+            float base_speed = 0.5f;
+            if(owner->GetComponent<Game01::Acceleration>() && Input::IsKeyRepeat(KEY_INPUT_P)) {
+                base_speed = 1.5f;
+            }
 
-        // キャラのローカル方向で移動をさせる
-        owner->AddTranslate(dir * base_speed, true);
-        for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
-            if(obj_->Cone_Mode == obj_->HOLDING) {
-                auto Get_positon = owner->GetTranslate();
-                obj_->SetTranslate({Get_positon.x, Get_positon.y + 18.0f, Get_positon.z});
+            // キャラのローカル方向で移動をさせる
+            owner->AddTranslate(dir * base_speed, true);
+            for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
+                if(obj_->Cone_Mode == obj_->HOLDING) {
+                    auto Get_positon = owner->GetTranslate();
+                    obj_->SetTranslate({Get_positon.x, Get_positon.y + 18.0f, Get_positon.z});
+                }
+            }
+
+            // モデルを移動の方向に向けます
+            if(auto mdl = owner->GetComponent<ComponentModel>()) {
+                auto rot = quaternion::rotation_axis({0, 1, 0}, front_rot_ * DegToRad);    //< Y軸1度回転
+
+                mdl->SetRotationToVectorWithLimit(mul(dir, rot), rot_speed_);
+                mdl->PlayAnimationNoSame("walk", true);
             }
         }
-
-        // モデルを移動の方向に向けます
-        if(auto mdl = owner->GetComponent<ComponentModel>()) {
-            auto rot = quaternion::rotation_axis({0, 1, 0}, front_rot_ * DegToRad);    //< Y軸1度回転
-
-            mdl->SetRotationToVectorWithLimit(mul(dir, rot), rot_speed_);
-            mdl->PlayAnimationNoSame("walk", true);
-        }
-    }
-    else {
-        if(!healing && !power_up) {
+        else {
             // モデルを移動の方向に向けます
             auto mdl = owner->GetComponent<ComponentModel>();
             mdl->PlayAnimationNoSame("idle", true);
         }
     }
 
-    if(Input::IsKeyDown(KEY_INPUT_SPACE))    //ジャンプ
+    if(Input::IsKeyDown(KEY_INPUT_SPACE) && !healing && !power_up)    //ジャンプ
     {
         owner->RemoveComponent(shared_from_this());
         owner->AddComponent<StateJump>();
     }
 
-    if(Input::IsKeyRepeat(KEY_INPUT_LSHIFT) || Input::IsKeyRepeat(KEY_INPUT_RSHIFT))    //走る
+    if(Input::IsKeyRepeat(KEY_INPUT_LSHIFT) && !healing && !power_up || Input::IsKeyRepeat(KEY_INPUT_RSHIFT) && !healing && !power_up)    //走る
     {
         if(Input::IsKeyRepeat(KEY_INPUT_W) || Input::IsKeyRepeat(KEY_INPUT_A) || Input::IsKeyRepeat(KEY_INPUT_S) ||
            Input::IsKeyRepeat(KEY_INPUT_D))    //移動キー押している時だけ
