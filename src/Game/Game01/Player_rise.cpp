@@ -39,10 +39,12 @@ bool Player_Rise::Init()
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/Rise_school/Rise.mv1");
     model->Matrix() = matrix::scale(0.7f);
     model->SetAnimation({
-        {"idle",    "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
-        {"walk", "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},
-        {"jump",    "data/Sample/Player/Rise_school/Anim/Jump.mv1", 0, 1.0f},
-        { "run",     "data/Sample/Player/Rise_school/Anim/Run.mv1", 0, 1.0f},
+        {    "idle",       "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
+        {    "walk",    "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},
+        {    "jump",       "data/Sample/Player/Rise_school/Anim/Jump.mv1", 0, 1.0f},
+        {     "run",        "data/Sample/Player/Rise_school/Anim/Run.mv1", 0, 1.0f},
+        {    "heal", "data/Sample/Player/Rise_school/Anim/Magic Heal.mv1", 0, 1.0f},
+        {"power up",   "data/Sample/Player/Rise_school/Anim/Power Up.mv1", 0, 1.0f},
     });
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
 
@@ -93,15 +95,33 @@ void Player_Rise::Update()
     SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 1.0f, pos.z);
     SetScalePlayingEffekseer3DEffect(h, 2.5f, 4.0f, 2.5f);
 
-    //Xキー：回復
-    if(Input::IsKeyDown(KEY_INPUT_X)) {
-        heal = PlayEffekseer3DEffect(heal_effect);
+    auto mdl = GetComponent<ComponentModel>();
+
+    // Xキー：回復
+    if(Input::IsKeyDown(KEY_INPUT_X) && !is_healing_) {
+        is_healing_ = true;
+        heal_frame_ = 120;
+
+        mdl->PlayAnimationNoSame("heal", false);
+    }
+
+    if(is_healing_) {
+        if(heal_frame_ > 0) {
+            --heal_frame_;
+        }
+
+        if(heal_frame_ <= 0) {
+            is_healing_ = false;
+            heal_frame_ = 0;
+            //アクション完了後アニメーションを再生する
+            heal = PlayEffekseer3DEffect(heal_effect);
+        }
     }
     pos = GetTranslate();
     SetPosPlayingEffekseer3DEffect(heal, pos.x, pos.y + 1.0f, pos.z);
     SetScalePlayingEffekseer3DEffect(heal, 3.0f, 3.0f, 3.0f);
 
-    //Xキー：回復
+    //IキーとOキー：超加速
     static int run_frame;
     if(Input::IsKeyDown(KEY_INPUT_I) && run_frame == 0 || Input::IsKeyDown(KEY_INPUT_O) && run_frame == 0) {
         run       = PlayEffekseer3DEffect(run_effect);
