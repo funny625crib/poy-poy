@@ -20,7 +20,8 @@ public:
         HOLDING,
         THROWING,
     };
-    float3 dis;
+    float3 dis_character_animal_;
+    float3 dis_character_Boms_;
 
 private:
     ComponentWeakPtr left_collision_;
