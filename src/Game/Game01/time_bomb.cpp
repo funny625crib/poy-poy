@@ -23,7 +23,6 @@ bool Time_bomb::Init()
     // 爆弾
     SetName("Time bomb");
     SetTranslate({-87.0f, 26.0f, 57.0f});
-
     auto col = AddComponent<ComponentCollisionCapsule>();    //
     col->SetRadius(5.53f);
     col->SetHeight(5.81f);

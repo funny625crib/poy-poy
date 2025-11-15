@@ -7,7 +7,6 @@
 #include <System/Component/ComponentObjectController.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/ComponentGameCamera.h>
-#include <Game/Game01/Skills/Acceleration.h>
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Game01/Animal_pickup.h>
 #include <Game/Component/State/StateJump.h>
@@ -29,8 +28,7 @@ bool Player_Rise::Init()
     // プレイヤー
     SetName("Player Rise");
     SetTranslate({-87.0f, -6.0f, 47.0f});
-    AddComponent<Acceleration>();
-    auto col = AddComponent<ComponentCollisionCapsule>();    //
+    auto col = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(4.53f);
     col->SetHeight(16.81f);
     col->UseGravity();

@@ -94,6 +94,11 @@ void StateIdleWalk::Update()
         owner->RemoveComponent(shared_from_this());
         owner->AddComponent<Game01::Ramming>();
     }
+    if(Input::IsKeyDown(KEY_INPUT_P))    //Pを押したら超加速
+    {
+        owner->RemoveComponent(shared_from_this());
+        owner->AddComponent<Game01::Acceleration>();
+    }
 }
 
 StateIdleWalkPtr StateIdleWalk::SetMoveSpeed(const float speed)
