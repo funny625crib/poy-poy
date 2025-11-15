@@ -18,9 +18,10 @@ namespace Game01 {
 //AnimalPtr Get_obj2 = nullptr;    //一番近くのオブジェクトの保管
 AnimalPtr Get_obj = nullptr;
 int       effect;
-int       heal_effect;        //回復
-int       run_effect;         //超加速
-int       power_up_effect;    //怪力
+int       heal_effect;           //回復
+int       run_effect;            //超加速
+int       power_up_effect;       //怪力
+int       threatening_effect;    //威嚇
 
 bool Player_Rise::Init()
 {
@@ -38,12 +39,14 @@ bool Player_Rise::Init()
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/Rise_school/Rise.mv1");
     model->Matrix() = matrix::scale(0.7f);
     model->SetAnimation({
-        {    "idle",       "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
-        {    "walk",    "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},
-        {    "jump",       "data/Sample/Player/Rise_school/Anim/Jump.mv1", 0, 1.0f},
-        {     "run",        "data/Sample/Player/Rise_school/Anim/Run.mv1", 0, 1.0f},
-        {    "heal", "data/Sample/Player/Rise_school/Anim/Magic Heal.mv1", 0, 1.0f},
-        {"power up",   "data/Sample/Player/Rise_school/Anim/Power Up.mv1", 0, 1.0f},
+        {       "idle",        "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
+        {       "walk",     "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},
+        {       "jump",        "data/Sample/Player/Rise_school/Anim/Jump.mv1", 0, 1.0f},
+        {        "run",         "data/Sample/Player/Rise_school/Anim/Run.mv1", 0, 1.0f},
+        {       "heal",  "data/Sample/Player/Rise_school/Anim/Magic Heal.mv1", 0, 1.0f},
+        {     "defend",      "data/Sample/Player/Rise_school/Anim/defend.mv1", 0, 1.0f},
+        {"Threatening", "data/Sample/Player/Rise_school/Anim/Threatening.mv1", 0, 1.0f},
+        {   "power up",    "data/Sample/Player/Rise_school/Anim/Power Up.mv1", 0, 1.0f},
     });
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
 
@@ -81,10 +84,11 @@ void Player_Rise::Update()
     static int ani_time      = 0;    //ジャンプの持続時間
     static int ani_wait_time = 0;    //ジャンプ前の待機時間
 
-    static int h        = -1;
-    static int heal     = -1;    //回復
-    static int run      = -1;    //超加速
-    static int power_up = -1;    //怪力
+    static int h           = -1;
+    static int heal        = -1;    //回復
+    static int run         = -1;    //超加速
+    static int power_up    = -1;    //怪力
+    static int threatening = -1;    //威嚇
 
     static float3 pos;
 
@@ -128,7 +132,6 @@ void Player_Rise::Update()
     if(Input::IsKeyDown(KEY_INPUT_C) && !ispower_up_ && power_up_frame_ == 0) {
         ispower_up_     = true;
         power_up_frame_ = 120;
-
         mdl->PlayAnimationNoSame("power up", false);
         power_up = PlayEffekseer3DEffect(power_up_effect);
     }
@@ -143,6 +146,25 @@ void Player_Rise::Update()
         if(power_up_frame_ <= 0) {
             ispower_up_     = false;
             power_up_frame_ = 0;
+            mdl->PlayAnimationNoSame("idle", true);
+        }
+    }
+
+    //Vキー：威嚇
+    if(Input::IsKeyDown(KEY_INPUT_V) && !isthreatening_ && threatening_frame_ == 0) {
+        isthreatening_     = true;
+        threatening_frame_ = 120;
+        mdl->PlayAnimationNoSame("Threatening", false);
+    }
+
+    if(isthreatening_) {
+        if(threatening_frame_ > 0) {
+            --threatening_frame_;
+        }
+
+        if(threatening_frame_ <= 0) {
+            isthreatening_     = false;
+            threatening_frame_ = 0;
             mdl->PlayAnimationNoSame("idle", true);
         }
     }
