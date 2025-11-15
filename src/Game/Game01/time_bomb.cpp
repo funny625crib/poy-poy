@@ -31,7 +31,8 @@ bool Time_bomb::Init()
     model->Matrix() = matrix::scale(0.05f);
     AddComponent<StatePhysics>();    //投げるために必要
 
-    bomb_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/fire.efkefc");
+    //bomb_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/fire.efkefc");
+    bomb_effect = LoadEffekseerEffect("data/effects/01_Pierre01/Flame.efkefc");
 
     return true;
 }
