@@ -12,8 +12,7 @@ bool Ground::Init()
     SetName("Ground");
     AddComponent<ComponentModel>("data/Sample/SwordBout/Stage/village.mv1");
 
-    AddComponent<ComponentCollisionModel>()    //
-        ->AttachToModel();
+    AddComponent<ComponentCollisionModel>()->AttachToModel();
 
     return true;
 }

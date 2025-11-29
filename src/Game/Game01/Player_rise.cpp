@@ -45,6 +45,7 @@ bool Player_Rise::Init()
         { "run",     "data/Sample/Player/Rise_school/Anim/Run.mv1", 0, 1.0f},
     });
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
+    player_name = RISE;
 
     //エフェクトの初期化
 

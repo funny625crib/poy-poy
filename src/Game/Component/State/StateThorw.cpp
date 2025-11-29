@@ -29,8 +29,6 @@ void StateThorw::Init()
 void StateThorw::Update()
 {
     //__super::Update();
-    static Game01::AnimalPtr    Get_obj  = nullptr;
-    static Game01::Time_bombPtr Get_obj2 = nullptr;
 
     auto   owner    = GetOwner();
     float3 pos_npc_ = owner->GetTranslate();
@@ -39,13 +37,15 @@ void StateThorw::Update()
     auto get_pickup_com = owner->GetComponent<Game01::Pickup>();
 
     //すべて見て行って一番近くのオブジェクトを取得
-    if(/*IsKeyOn(KEY_INPUT_Q) &&*/ owner->_isholding == IDLE) {
+    if(IsKeyOn(KEY_INPUT_Q) && owner->_isholding == IDLE) {
         for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
             for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
                 // ここに来る場合 obj がEnemyクラスということが保証されます。
                 // nameは、必ず存在するため、オブジェクトの名前を取得できます。
                 //if(Get_obj == nullptr) {
-
+                if(obj_->Invisible_ == Game01::Animal::OFF) {
+                    continue;
+                }
                 if(obj_boms_->Boms_Mode == HOLDING)
                     continue;
                 if(obj_->Cone_Mode == HOLDING)
@@ -86,12 +86,20 @@ void StateThorw::Update()
     if(owner->_isholding == HOLDING) {
         for(auto& obj_ : Scene::Object::GetArray<Game01::Animal>()) {
             if(Get_obj == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
-                Get_obj->Cone_Mode = HOLDING;
-                Get_obj->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+                Get_obj->who_holding = owner->player_name;
+
+                if(Get_obj) {
+                    Get_obj->Invisible_ = Game01::Animal::OFF;
+                }
+                if(Get_obj->who_holding == owner->player_name) {
+                    obj->Cone_Mode = HOLDING;
+                    obj->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+                }
+
                 // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
                 if(auto pModel = owner->GetComponent<ComponentModel>()) {
                     const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
-                    if(auto aModel = Get_obj->GetComponent<ComponentModel>()) {
+                    if(auto aModel = obj->GetComponent<ComponentModel>()) {
                         aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
                     }
                 }
@@ -117,12 +125,15 @@ void StateThorw::Update()
         if(owner->_isholding == THROWING) {
             for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
                 if(Get_obj == obj_) {
+                    if(Get_obj) {
+                        Get_obj->Invisible_ = Game01::Animal::ON;
+                    }
                     obj->SetTranslate(owner->GetTranslate() + float3{0, 18.0f, 0});
                     auto modelrot = owner->GetComponent<ComponentModel>();
                     auto dir      = -modelrot->GetWorldMatrix().axisZ();
                     obj->SetDirectior(dir);
                     obj_->Cone_Mode    = THROWING;
-                    obj_->who_throwing = Game01::Animal::RISE;
+                    obj_->who_throwing = obj_->who_holding;
                     obj_->Game01::Animal::Throw();
                 }
             }

@@ -12,6 +12,7 @@
 #include <Game/Component/State/AbigailStateIdleWalk.h>
 #include "Hp.h"
 #include <Game/Component/State/StateAI.h>
+#include "Animal_pickup.h"
 
 int hit_effect;
 
@@ -21,7 +22,7 @@ bool check = false;
 bool Player_Abigail::Init()
 {
     Super::Init();
-
+    player_name = ABIGAIL;
     // プレイヤー
     SetName("Player Abigail");
     SetTranslate({0.0f, 5.0f, 50.0f});
@@ -47,6 +48,7 @@ bool Player_Abigail::Init()
     AddComponent<ComponentGameCamera>();
 
     hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
+    AddComponent<Game01::Pickup>();
 
     // AddComponent<AbigailStateIdleWalk>();
 

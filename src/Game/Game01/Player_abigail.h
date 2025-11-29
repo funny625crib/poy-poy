@@ -16,6 +16,16 @@ public:
     // int    _isholding = 0 ;
     float3 pos_npc_;
     float3 dis;
+
+    enum
+    {
+        NOBODY,
+        RISE,
+        BETTY,
+        ABIGAIL,
+        SOL,
+    };
+
     enum
     {
         IDLE,

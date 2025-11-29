@@ -18,6 +18,15 @@ public:
     float3 dis;
     enum
     {
+        NOBODY,
+        RISE,
+        BETTY,
+        ABIGAIL,
+        SOL,
+    };
+
+    enum
+    {
         IDLE,
         HOLDING,
         THROWING,

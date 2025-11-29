@@ -13,6 +13,7 @@
 #include <Game/Component/State/BettyStateIdleWalk.h>
 #include "Hp.h"
 #include <Game/Component/State/StateAI.h>
+#include "Animal_pickup.h"
 extern int hit_effect;
 
 namespace Game01 {
@@ -42,9 +43,10 @@ bool Player_Betty::Init()
     });
     //model->SetScaleAxisXYZ( { 1, 1, 1 } );
     model->PlayAnimation("idle", true);
-
+    player_name = BETTY;
     //当たるエフェクトの初期化
     hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
+    AddComponent<Game01::Pickup>();
 
     AddComponent<ComponentGameCamera>();
     AddComponent<StateAI>();

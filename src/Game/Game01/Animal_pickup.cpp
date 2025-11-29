@@ -2,14 +2,7 @@
 #include "Animal.h"
 #include <Game/Game01/time_bomb.h>
 namespace Game01 {
-float3 dir{0, 0, 0};
-
-float3 pos_npc_;
-
-float3 pos_XZ;
-float  r     = 35.0f;
-int    color = GetColor(255, 255, 255);
-void   Pickup::Init()
+void Pickup::Init()
 {
     __super::Init();
 
@@ -83,7 +76,7 @@ void Pickup::Update()
     //
     //    }
     //}
-    if(IsKey(KEY_INPUT_W))
+    /*  if(IsKey(KEY_INPUT_W))
         dir = {0, 180, -90};
 
     if(IsKey(KEY_INPUT_S))
@@ -93,8 +86,12 @@ void Pickup::Update()
         dir = {-90, 270, 0};
 
     if(IsKey(KEY_INPUT_A))
-        dir = {90, 90, 0};
+        dir = {90, 90, 0};*/
+    matrix Matrix = owner->GetMatrix();    // Matrixが取得できます
+    dir           = Matrix.axisY();
+    float3 rot    = owner->GetRotationAxisXYZ() + 180;    // X軸Y軸Z軸に対する回転が取得できます
 
+    dir    = {0.0f, rot.y, 0.0f};
     pos_XZ = {Get_pos.x, 0.0f, Get_pos.z};
 
     float3 pos1 = Get_pos;

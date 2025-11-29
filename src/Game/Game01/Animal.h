@@ -18,6 +18,13 @@ public:
     int   Cone_Mode;
     enum
     {
+        ON,
+        OFF,
+    };
+    int Invisible_ = ON;
+    int memory_num;
+    enum
+    {
         IDLE,
         HOLDING,
         THROWING,
@@ -40,6 +47,7 @@ public:
         SOL,
     };
     int    who_throwing = 0;
+    int    who_holding  = NOBODY;
     float3 direction_;
     float  dir_xyz_ = 1.00f;
     float3 mode_direction_;
