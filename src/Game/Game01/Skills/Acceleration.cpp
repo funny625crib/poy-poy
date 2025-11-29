@@ -24,12 +24,19 @@ void Acceleration::Init()
     target_speed_ = 3.0f;
     //加速時間
     stall_time_ = 0.0f;
+
+    accelerate_effect_ = LoadEffekseerEffect("data/effects/01_NextSoft01/Spear2.efkproj");
 }
 
 void Acceleration::Update()
 {
     __super::Update();
     auto owner = GetOwner();    //スキルを使うオブジェクトを取得
+
+    int    acc_efc = PlayEffekseer3DEffect(accelerate_effect_);
+    float3 pos     = owner->GetTranslate();
+    SetPosPlayingEffekseer3DEffect(acc_efc, pos.x, pos.y, pos.z);
+    SetScalePlayingEffekseer3DEffect(acc_efc, 4.0f, 4.0f, 4.0f);
 
     float lerp_factor = 0.1f;    //補間係数(値を大きくすると早く切り替えられる)
     //Lerpで徐々に速度を変化させる
