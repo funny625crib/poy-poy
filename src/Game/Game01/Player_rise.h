@@ -24,17 +24,12 @@ public:
 
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
 
-    //回復のアニメーションが再生しているかどうか
+    // ★ 外部用：现在是不是正在播治疗动画
     bool IsHealing() const { return is_healing_; }
-    //怪力のアニメーションが再生しているかどうか
-    bool IsPower_up() const { return ispower_up_; }
 
 private:
-    bool is_healing_ = false;
-    int  heal_frame_ = 0;
-
-    bool ispower_up_     = false;
-    int  power_up_frame_ = 0;
+    bool is_healing_ = false;    // 是否处于治疗中
+    int  heal_frame_ = 0;        // 治疗动画剩余帧数
 };
 
 }    // namespace Game01

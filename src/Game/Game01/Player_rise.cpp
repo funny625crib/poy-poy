@@ -18,9 +18,8 @@ namespace Game01 {
 //AnimalPtr Get_obj2 = nullptr;    //一番近くのオブジェクトの保管
 AnimalPtr Get_obj = nullptr;
 int       effect;
-int       heal_effect;        //回復
-int       run_effect;         //超加速
-int       power_up_effect;    //怪力
+int       heal_effect;    //回復
+int       run_effect;     //超加速
 
 bool Player_Rise::Init()
 {
@@ -55,8 +54,6 @@ bool Player_Rise::Init()
 
     run_effect = LoadEffekseerEffect("data/effects/01_Pierre01/run.efkefc");
 
-    power_up_effect = LoadEffekseerEffect("data/effects/01_NextSoft01/power up.efkefc");
-
     AddComponent<ComponentGameCamera>();
     AddComponent<Pickup>();
     AddComponent<StateIdleWalk>();
@@ -81,10 +78,9 @@ void Player_Rise::Update()
     static int ani_time      = 0;    //ジャンプの持続時間
     static int ani_wait_time = 0;    //ジャンプ前の待機時間
 
-    static int h        = -1;
-    static int heal     = -1;    //回復
-    static int run      = -1;    //超加速
-    static int power_up = -1;    //怪力
+    static int h    = -1;
+    static int heal = -1;    //回復
+    static int run  = -1;    //超加速
 
     static float3 pos;
 
@@ -100,9 +96,9 @@ void Player_Rise::Update()
     auto mdl = GetComponent<ComponentModel>();
 
     // Xキー：回復
-    if(Input::IsKeyDown(KEY_INPUT_X) && !is_healing_ && heal_frame_ == 0) {
+    if(Input::IsKeyDown(KEY_INPUT_X) && !is_healing_) {
         is_healing_ = true;
-        heal_frame_ = 160;
+        heal_frame_ = 120;
 
         mdl->PlayAnimationNoSame("heal", false);
     }
@@ -115,7 +111,6 @@ void Player_Rise::Update()
         if(heal_frame_ <= 0) {
             is_healing_ = false;
             heal_frame_ = 0;
-            mdl->PlayAnimationNoSame("idle", true);
             //アクション完了後アニメーションを再生する
             heal = PlayEffekseer3DEffect(heal_effect);
         }
@@ -123,29 +118,6 @@ void Player_Rise::Update()
     pos = GetTranslate();
     SetPosPlayingEffekseer3DEffect(heal, pos.x, pos.y + 1.0f, pos.z);
     SetScalePlayingEffekseer3DEffect(heal, 3.0f, 3.0f, 3.0f);
-
-    //Cキー：怪力
-    if(Input::IsKeyDown(KEY_INPUT_C) && !ispower_up_ && power_up_frame_ == 0) {
-        ispower_up_     = true;
-        power_up_frame_ = 120;
-
-        mdl->PlayAnimationNoSame("power up", false);
-        power_up = PlayEffekseer3DEffect(power_up_effect);
-    }
-    pos = GetTranslate();
-    SetPosPlayingEffekseer3DEffect(power_up, pos.x, pos.y, pos.z);
-    SetScalePlayingEffekseer3DEffect(power_up, 6.0f, 6.0f, 6.0f);
-    if(ispower_up_) {
-        if(power_up_frame_ > 0) {
-            --power_up_frame_;
-        }
-
-        if(power_up_frame_ <= 0) {
-            ispower_up_     = false;
-            power_up_frame_ = 0;
-            mdl->PlayAnimationNoSame("idle", true);
-        }
-    }
 
     //IキーとOキー：超加速
     static int run_frame;
