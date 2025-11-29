@@ -45,6 +45,11 @@ void StateThorw::Update()
                 // ここに来る場合 obj がEnemyクラスということが保証されます。
                 // nameは、必ず存在するため、オブジェクトの名前を取得できます。
                 //if(Get_obj == nullptr) {
+
+                if(obj_boms_->Boms_Mode == HOLDING)
+                    continue;
+                if(obj_->Cone_Mode == HOLDING)
+                    continue;
                 auto get_bom_pos      = obj_boms_->GetTranslate();
                 auto get_obj_pos      = obj_->GetTranslate();
                 auto get_npc_pos      = float3{pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z};
@@ -79,14 +84,14 @@ void StateThorw::Update()
 
     //もしnpcの状態がHOLDING状態なら一番近くで当たってるものをHOLDING状態にする
     if(owner->_isholding == HOLDING) {
-        for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
+        for(auto& obj_ : Scene::Object::GetArray<Game01::Animal>()) {
             if(Get_obj == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
-                obj_->Cone_Mode = HOLDING;
-                obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+                Get_obj->Cone_Mode = HOLDING;
+                Get_obj->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
                 // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
                 if(auto pModel = owner->GetComponent<ComponentModel>()) {
                     const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
-                    if(auto aModel = obj_->GetComponent<ComponentModel>()) {
+                    if(auto aModel = Get_obj->GetComponent<ComponentModel>()) {
                         aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
                     }
                 }
@@ -94,12 +99,12 @@ void StateThorw::Update()
         }
         for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
             if(Get_obj2 == obj_boms_ && get_pickup_com->set_obj_ == Game01::Pickup::BOMS) {
-                obj_boms_->Boms_Mode = HOLDING;
-                obj_boms_->SetTranslate({pos_npc_.x, pos_npc_.y + 25.0f, pos_npc_.z});
+                Get_obj2->Boms_Mode = HOLDING;
+                Get_obj2->SetTranslate({pos_npc_.x, pos_npc_.y + 25.0f, pos_npc_.z});
                 // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
                 if(auto pModel = owner->GetComponent<ComponentModel>()) {
                     const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
-                    if(auto aModel = obj_boms_->GetComponent<ComponentModel>()) {
+                    if(auto aModel = Get_obj2->GetComponent<ComponentModel>()) {
                         aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
                     }
                 }

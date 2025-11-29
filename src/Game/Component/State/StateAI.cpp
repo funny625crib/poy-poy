@@ -9,14 +9,14 @@
 #include <Game/Game01/Animal_pickup.h>
 #include <Game/Game01/time_bomb.h>
 #include "StateThorw.h"
-
+#include <Game/Game01/Player_rise.h>
 void StateAI::Init()
 {
     __super::Init();
 
     auto owner = GetOwner();
-
-    owner->AddComponent<StateThorw>();
+    owner->AddComponent<Game01::Pickup>();
+    //owner->AddComponent<StateThorw>();
 
     mode = Searchobj;
 }
@@ -25,11 +25,13 @@ void StateAI::Update()
 {
     __super::Update();
     auto owner = GetOwner();
+    // static Game01::AnimalPtr    Get_obj_A = nullptr;
+    // static Game01::Time_bombPtr Get_obj_B = nullptr;
+
     //  Game01::AnimalPtr    memory_animal = nullptr;
     //Game01::Time_bombPtr memory_bom     = nullptr;
-    float3               Get_pos   = owner->GetTranslate();
-    Game01::AnimalPtr    Get_obj_A = nullptr;
-    Game01::Time_bombPtr Get_obj_B = nullptr;
+    float3 Get_pos        = owner->GetTranslate();
+    auto   get_pickup_com = owner->GetComponent<Game01::Pickup>();
 
     if(mode == Searchobj) {
         float max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
@@ -71,6 +73,7 @@ void StateAI::Update()
                 // memory_bom = obj_boms_;
             }
         }
+
         mode = Movetoobj;
     }
 
@@ -102,6 +105,46 @@ void StateAI::Update()
         }
         if(auto mdl = owner->GetComponent<ComponentModel>()) {
             mdl->PlayAnimationNoSame("walk", true);
+        }
+        if(get_pickup_com->Check_Pickup() == true) {
+            owner->_isholding = HOLDING;
+            mode              = SearchPlayer;
+        }
+    }
+    if(mode == SearchPlayer) {
+        float3 pos1   = Get_pos;
+        auto   player = Scene::Object::Get<Game01::Player_Rise>();
+        float3 pos2   = player->GetTranslate();
+        owner->SetRotationToPositionWithLimit(pos2, 3.0f);
+        owner->AddTranslate({0, 0, -0.3f}, true);
+
+        if(owner->_isholding == HOLDING) {
+            for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
+                if(Get_obj_A == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
+                    Get_obj_A->Cone_Mode = HOLDING;
+                    Get_obj_A->SetTranslate({Get_pos.x, Get_pos.y + 18.0f, Get_pos.z});
+                    // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
+                    if(auto pModel = owner->GetComponent<ComponentModel>()) {
+                        const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
+                        if(auto aModel = Get_obj_A->GetComponent<ComponentModel>()) {
+                            aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
+                        }
+                    }
+                }
+            }
+            for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+                if(Get_obj_B == obj_boms_ && get_pickup_com->set_obj_ == Game01::Pickup::BOMS) {
+                    Get_obj_B->Boms_Mode = HOLDING;
+                    Get_obj_B->SetTranslate({Get_pos.x, Get_pos.y + 25.0f, Get_pos.z});
+                    // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
+                    if(auto pModel = owner->GetComponent<ComponentModel>()) {
+                        const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
+                        if(auto aModel = Get_obj_B->GetComponent<ComponentModel>()) {
+                            aModel->SetRotationToVectorWithLimit(-forward, 999.0f);    // 即時に向きを一致
+                        }
+                    }
+                }
+            }
         }
     }
 }

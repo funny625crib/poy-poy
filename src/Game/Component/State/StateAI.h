@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include <System/Scene.h>
 #include <System/Component/Component.h>
-
+#include <Game/Game01/Animal.h>
+#include <Game/Game01/time_bomb.h>
 USING_PTR(StateAI);
 
 class StateAI : public Component
@@ -13,8 +14,10 @@ public:
 
     void Update() override;
 
-    void GUI() override;
-    int  mode;
+    void                 GUI() override;
+    Game01::AnimalPtr    Get_obj_A = nullptr;
+    Game01::Time_bombPtr Get_obj_B = nullptr;
+    int                  mode;
     enum
     {
         Searchobj,

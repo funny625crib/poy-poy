@@ -12,6 +12,7 @@
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/BettyStateIdleWalk.h>
 #include "Hp.h"
+#include <Game/Component/State/StateAI.h>
 extern int hit_effect;
 
 namespace Game01 {
@@ -46,8 +47,8 @@ bool Player_Betty::Init()
     hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
 
     AddComponent<ComponentGameCamera>();
-
-    AddComponent<BettyStateIdleWalk>();
+    AddComponent<StateAI>();
+    //  AddComponent<BettyStateIdleWalk>();
 
     return true;
 }

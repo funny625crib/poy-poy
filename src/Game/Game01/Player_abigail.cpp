@@ -30,7 +30,7 @@ bool Player_Abigail::Init()
     auto col = AddComponent<ComponentCollisionCapsule>();    //
     col->SetRadius(4.53f);
     col->SetHeight(16.81f);
-    //col->UseGravity();
+    col->UseGravity();
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/abigail/abigail.mv1");
