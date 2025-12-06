@@ -26,6 +26,13 @@ bool Camera::Init()
 void Camera::Update()
 {
     Super::Update();
+
+    auto player      = Scene::Object::Get<Game01::Player_Rise>();
+    bool healing     = (player && player->IsHealing());
+    bool power_up    = (player && player->IsPower_up());
+    bool threatening = (player && player->IsThreatening());
+    bool using_skill = healing || power_up || threatening;
+
     //4人のプレイヤー位置を格納する配列
     std::array<float3, 4> playerPositions{};
     //各プレイヤーの位置を取得して配列に格納
@@ -41,8 +48,10 @@ void Camera::Update()
     auto sol           = Scene::Object::Get<Player_Sol>();    //solのオブジェクトを取得
     playerPositions[3] = sol->GetTranslate();                 //solの位置を取得
 
-    //4人のプレイヤー位置を使ってカメラ更新
-    cameraUpdate(playerPositions);
+    //4人のプレイヤー位置を使ってカメラ更新(現在はスキルを使っている時、カメラの場所は更新しない)
+    if(!using_skill) {
+        cameraUpdate(playerPositions);
+    }
 }
 void Camera::cameraUpdate(const std::array<float3, 4>& playerPositions)
 {

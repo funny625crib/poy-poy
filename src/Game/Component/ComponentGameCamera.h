@@ -21,6 +21,15 @@ public:
 
     ComponentGameCameraPtr SetUseMouse(bool use = true);
 
+    // 現在のカメラのワールド座標を取得
+    float3 GetPosition() const;
+
+    // 現在のカメラの注視点（ターゲット）を取得
+    float3 GetTarget() const;
+
+    // カメラのワールド座標と注視点をまとめて設定（スキルカメラ用）
+    ComponentGameCameraPtr SetPositionAndTarget(float3 position, float3 target);
+
     bool IsUseMouse() const;
 
     void GUI() override;
