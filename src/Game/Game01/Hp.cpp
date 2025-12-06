@@ -88,7 +88,7 @@ void Hp::Update()
     Hp_imgy4       = Hp_count_betty / 4 * 100;
 }
 
-void Hp::Draw()
+void Hp::LateDraw()
 {
     Super::Draw();
     DrawRectGraph(Hp_x, Hp_y, Hp_imgx, Hp_imgy, 100, 100, Hp_image, TRUE, FALSE);

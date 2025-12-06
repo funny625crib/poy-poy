@@ -126,7 +126,10 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
+    auto physics = GetComponent<StatePhysics>();
     if(Invisible_ == OFF) {
+        physics->addForce(0.0f, StatePhysics::Impulse);
+        physics->SetStatic(false);
         RemoveComponent<ComponentCollisionCapsule>();
     }
     if(Invisible_ == ON) {
@@ -196,9 +199,11 @@ void Animal::Update()
     //  float V0     = 0.5f;    //初速度
     //   direction_.y = -0.5f * 0.15f * throw_time * throw_time + V0 * throw_time * 1.1;
 
-    auto physics = GetComponent<StatePhysics>();
+    //auto physics = GetComponent<StatePhysics>();
     // throw_time  += 0.4f;
-
+    if(physics->IsStatic == false) {
+        physics->addForce(0.0f, StatePhysics::Impulse);
+    }
     if(Cone_Mode == THROWING || Cone_Mode == IDLE) {
         physics->StatePhysics::gravity_on = true;
     }

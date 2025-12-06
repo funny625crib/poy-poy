@@ -75,6 +75,9 @@ void StateThorw::Update()
 
         if(get_pickup_com->Check_Pickup() == true) {
             owner->_isholding = HOLDING;
+            if(Get_obj) {
+                Get_obj->who_holding = owner->player_name;
+            }
         }
     }
 
@@ -86,14 +89,13 @@ void StateThorw::Update()
     if(owner->_isholding == HOLDING) {
         for(auto& obj_ : Scene::Object::GetArray<Game01::Animal>()) {
             if(Get_obj == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
-                Get_obj->who_holding = owner->player_name;
-
                 if(Get_obj) {
                     Get_obj->Invisible_ = Game01::Animal::OFF;
                 }
                 if(Get_obj->who_holding == owner->player_name) {
-                    obj->Cone_Mode = HOLDING;
-                    obj->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+                    obj->Cone_Mode   = HOLDING;
+                    float3 pos_npc_2 = owner->GetTranslate();
+                    obj->SetTranslate({pos_npc_2.x, pos_npc_2.y + 18.0f, pos_npc_2.z});
                 }
 
                 // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる

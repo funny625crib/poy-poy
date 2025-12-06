@@ -58,7 +58,7 @@ bool Player_Rise::Init()
     AddComponent<ComponentGameCamera>();
     //AddComponent<Pickup>();
     AddComponent<StateIdleWalk>();
-    AddComponent<StateThorw>();
+
     return true;
 }
 

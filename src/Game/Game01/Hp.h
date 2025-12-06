@@ -12,7 +12,7 @@ public:
 
     void Update() override;
 
-    void Draw() override;
+    void LateDraw() override;
 
     void Exit() override;
     int  Hp_count_abigail;

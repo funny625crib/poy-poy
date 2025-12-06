@@ -60,7 +60,7 @@ void Player_Abigail::Update()
     Super::Update();
     pos_npc_ = GetTranslate();
     auto pos = pos_npc_;
-    printfDx("Player座標: %f, %f, %f\n", pos.x, pos.y, pos.z);
+    //printfDx("Player座標: %f, %f, %f\n", pos.x, pos.y, pos.z);
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)

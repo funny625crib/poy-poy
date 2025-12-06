@@ -76,7 +76,7 @@ void Pickup::Update()
     //
     //    }
     //}
-    /*  if(IsKey(KEY_INPUT_W))
+    /* if(IsKey(KEY_INPUT_W))
         dir = {0, 180, -90};
 
     if(IsKey(KEY_INPUT_S))

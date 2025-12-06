@@ -37,7 +37,9 @@ void StateAI::Update()
     auto   get_pickup_com = owner->GetComponent<Game01::Pickup>();
 
     if(mode == Searchobj) {
-        float max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
+        count_pickup_cooldown = 0;
+        float min_dir         = 0.0f;        //一番近くに距離のの初期値を置くを置く
+        float max_dir         = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
         for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
             // ここに来る場合 obj がEnemyクラスということが保証されます。
             // nameは、必ず存在するため、オブジェクトの名前を取得できます。
@@ -51,8 +53,8 @@ void StateAI::Update()
             auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
             float3 dis         = get_obj_pos - get_npc_pos;
             float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-            if(dir < max_dir) {
-                max_dir   = dir;
+            if(dir > min_dir) {
+                min_dir   = dir;
                 set_obj_  = ANIMAL;
                 Get_obj_A = obj_;
             }
@@ -67,8 +69,8 @@ void StateAI::Update()
             auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
             float3 dis         = get_obj_pos - get_npc_pos;
             float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-            if(dir < max_dir) {
-                max_dir   = dir;
+            if(dir > min_dir) {
+                min_dir   = dir;
                 set_obj_  = BOMS;
                 Get_obj_B = obj_boms_;
             }
@@ -99,7 +101,7 @@ void StateAI::Update()
                 return;
             }
             if(Get_obj_A) {
-                pos2 = Get_obj_A->GetTranslate();
+                // pos2 = Get_obj_A->GetTranslate();
             }
         }
         float3 pos3;
@@ -123,26 +125,133 @@ void StateAI::Update()
         }
         if(get_pickup_com->Check_Pickup() == true) {
             owner->_isholding = HOLDING;
-            mode              = SearchPlayer;
+
+            mode = SearchPlayer;
         }
     }
     if(mode == SearchPlayer) {
-        float3 pos1    = Get_pos;
-        auto   player1 = Scene::Object::Get<Game01::Player_Rise>();
-        auto   player2 = Scene::Object::Get<Game01::Player_Betty>();
-        auto   player3 = Scene::Object::Get<Game01::Player_Abigail>();
-        auto   player4 = Scene::Object::Get<Game01::Player_Sol>();
-        float3 pos3    = player1->GetTranslate();
+        auto player1 = Scene::Object::Get<Game01::Player_Rise>();
+        auto player2 = Scene::Object::Get<Game01::Player_Betty>();
+        auto player3 = Scene::Object::Get<Game01::Player_Abigail>();
+        auto player4 = Scene::Object::Get<Game01::Player_Sol>();
 
-        float3 pos2 = player1->GetTranslate();
+        if(owner->player_name == RISE) {
+            int rand = GetRand(2);
+            switch(rand) {
+            case 0:
+                pos2 = player2->GetTranslate();
+                break;
+            case 1:
+                pos2 = player3->GetTranslate();
+                break;
+            case 2:
+                pos2 = player4->GetTranslate();
+                break;
+            }
+        }
+        if(owner->player_name == BETTY) {
+            int rand = GetRand(2);
+            switch(rand) {
+            case 0:
+                pos2 = player1->GetTranslate();
+                break;
+            case 1:
+                pos2 = player3->GetTranslate();
+                break;
+            case 2:
+                pos2 = player4->GetTranslate();
+                break;
+            }
+        }
+        if(owner->player_name == ABIGAIL) {
+            int rand = GetRand(2);
+            switch(rand) {
+            case 0:
+                pos2 = player2->GetTranslate();
+                break;
+            case 1:
+                pos2 = player1->GetTranslate();
+                break;
+            case 2:
+                pos2 = player4->GetTranslate();
+                break;
+            }
+        }
+        if(owner->player_name == SOL) {
+            int rand = GetRand(2);
+            switch(rand) {
+            case 0:
+                pos2 = player2->GetTranslate();
+                break;
+            case 1:
+                pos2 = player3->GetTranslate();
+                break;
+            case 2:
+                pos2 = player1->GetTranslate();
+                break;
+            }
+        }
+        mode = MovetoPlayer;
+    }
+    if(mode == MovetoPlayer) {
+        // Get_obj_A->who_holding = owner->player_name;
+        float3 pos1    = Get_pos;
+        pos1.y         = 0.0f;
+        pos2.y         = 0.0f;
+        float x        = pos1.x - pos2.x;
+        float y        = pos1.y - pos2.y;
+        float z        = pos1.z - pos2.z;
+        float distance = sqrtf(x * x + y * y + z * z);
+        DrawFormatString(0, 100, WHITE, "%f", distance);
+        float radius = 30.0f;
+        //	１：２つのベクトルを用意
+        //	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
+        float3 front;
+        float3 rot = owner->GetRotationAxisXYZ() + 180.0f;    // X軸Y軸Z軸に対する回転が取得できます
+
+        get_pickup_com->dir = {0.0f, rot.y, 0.0f};
+        front.x             = 1.0f * sinf((get_pickup_com->dir.y * 3.14159265f / 180.0f));
+        front.z             = 1.0f * cosf((get_pickup_com->dir.y * 3.14159265f / 180.0f));
+
+        //	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
+        float3 target = pos2 - pos1;
+
+        //	ベクトルの正規化（ベクトルの長さを 1.0 に）
+
+        float length = sqrtf(target.x * target.x + target.z * target.z);
+        // float length_bom = sqrtf(target_bom.x * target_bom.x + target_bom.z * target_bom.z);
+
+        if(length > 0.0f) {
+            target.x = target.x / length;
+            target.z = target.z / length;
+        }
+        /* if(length_bom > 0.0f) {
+                target_bom.x = target_bom.x / length_bom;
+                target_bom.z = target_bom.z / length_bom;
+            }*/
+        //	２：２つのベクトルの内積を取得
+        float front_dot = front.x * target.x + front.z * target.z;
+        //float front_dot_bom = front.x * target_bom.x + front.z * target_bom.z;
+
+        /*  GetFloat2Dot(front, target);*/
+
+        //	３：求めた内積の値から角度を求める
+        //	この内積の値（ front_dot ）を acos 関数に渡すことで角度を取得できます
+        //	acosf：アークコサイン関数（ cos 関数の逆関数）← ラジアン角が返ってきます
+        float radian = acosf(front_dot);
+        //  float radian_bom = acosf(front_dot_bom);
+        //	ラジアン角を角度の「度」にします
+        float degree = radian * 180.0f / 3.14159265f;
+        // float degree_bom = radian_bom * 180.0f / 3.14159265f;
+
         if(owner->_isholding == HOLDING) {
             for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
                 if(Get_obj_A == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
-                    Get_obj_A->who_holding = owner->player_name;
                     if(Get_obj_A) {
                         Get_obj_A->Invisible_ = Game01::Animal::OFF;
                     }
                     Get_obj_A->Cone_Mode = HOLDING;
+
                     Get_obj_A->SetTranslate({Get_pos.x, Get_pos.y + 18.0f, Get_pos.z});
                     // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
                     if(auto pModel = owner->GetComponent<ComponentModel>()) {
@@ -166,60 +275,7 @@ void StateAI::Update()
                     }
                 }
             }
-        }
 
-        {
-            //float3 pos1 = Get_pos;
-            //float3 pos2 = player3->GetTranslate();
-
-            pos1.y = 0.0f;
-            pos2.y = 0.0f;
-
-            float x        = pos1.x - pos2.x;
-            float y        = pos1.y - pos2.y;
-            float z        = pos1.z - pos2.z;
-            float distance = sqrtf(x * x + y * y + z * z);
-            DrawFormatString(0, 100, WHITE, "%f", distance);
-            float radius = 30.0f;
-            //	１：２つのベクトルを用意
-            //	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
-            float3 front;
-            float3 rot = owner->GetRotationAxisXYZ() + 180.0f;    // X軸Y軸Z軸に対する回転が取得できます
-
-            get_pickup_com->dir = {0.0f, rot.y, 0.0f};
-            front.x             = 1.0f * sinf((get_pickup_com->dir.y * 3.14159265f / 180.0f));
-            front.z             = 1.0f * cosf((get_pickup_com->dir.y * 3.14159265f / 180.0f));
-
-            //	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
-            float3 target = pos2 - pos1;
-
-            //	ベクトルの正規化（ベクトルの長さを 1.0 に）
-
-            float length = sqrtf(target.x * target.x + target.z * target.z);
-            // float length_bom = sqrtf(target_bom.x * target_bom.x + target_bom.z * target_bom.z);
-
-            if(length > 0.0f) {
-                target.x = target.x / length;
-                target.z = target.z / length;
-            }
-            /* if(length_bom > 0.0f) {
-                target_bom.x = target_bom.x / length_bom;
-                target_bom.z = target_bom.z / length_bom;
-            }*/
-            //	２：２つのベクトルの内積を取得
-            float front_dot = front.x * target.x + front.z * target.z;
-            //float front_dot_bom = front.x * target_bom.x + front.z * target_bom.z;
-
-            /*  GetFloat2Dot(front, target);*/
-
-            //	３：求めた内積の値から角度を求める
-            //	この内積の値（ front_dot ）を acos 関数に渡すことで角度を取得できます
-            //	acosf：アークコサイン関数（ cos 関数の逆関数）← ラジアン角が返ってきます
-            float radian = acosf(front_dot);
-            //  float radian_bom = acosf(front_dot_bom);
-            //	ラジアン角を角度の「度」にします
-            float degree = radian * 180.0f / 3.14159265f;
-            // float degree_bom = radian_bom * 180.0f / 3.14159265f;
             if(distance <= radius && degree < 35.0f) {
                 if(owner->_isholding == HOLDING) {
                     owner->_isholding = THROWING;
@@ -229,6 +285,7 @@ void StateAI::Update()
                                 if(Get_obj_A) {
                                     Get_obj_A->Invisible_ = Game01::Animal::ON;
                                 }
+
                                 Get_obj_A->SetTranslate(owner->GetTranslate() + float3{0, 18.0f, 0});
                                 auto modelrot = owner->GetComponent<ComponentModel>();
                                 auto dir      = -modelrot->GetWorldMatrix().axisZ();
@@ -253,7 +310,7 @@ void StateAI::Update()
                 }
             }
             {
-                owner->SetRotationToPositionWithLimit(pos3, 3.0f);
+                owner->SetRotationToPositionWithLimit(pos2, 3.0f);
                 owner->AddTranslate({0, 0, -0.3f}, true);
             }
             //IDLE状態のときオブジェクトを移動するのをやめさせる

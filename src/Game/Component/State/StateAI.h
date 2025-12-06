@@ -18,12 +18,21 @@ public:
     Game01::AnimalPtr    Get_obj_A = nullptr;
     Game01::Time_bombPtr Get_obj_B = nullptr;
     int                  mode;
+    float3               pos2;
     enum
     {
         Searchobj,
         Movetoobj,
         SearchPlayer,
         MovetoPlayer,
+    };
+    enum
+    {
+        NOBODY,
+        RISE,
+        BETTY,
+        ABIGAIL,
+        SOL,
     };
     enum
     {
@@ -41,6 +50,7 @@ public:
 
 private:
     ComponentWeakPtr left_collision_;
+    int              count_pickup_cooldown = 400;
     //--------------------------------------------------------------------
     //! @name Cereal処理
     //--------------------------------------------------------------------
