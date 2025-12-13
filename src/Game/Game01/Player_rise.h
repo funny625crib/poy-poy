@@ -28,6 +28,8 @@ public:
     bool IsHealing() const { return is_healing_; }
     //怪力のアニメーションが再生しているかどうか
     bool IsPower_up() const { return ispower_up_; }
+    //威嚇のアニメーションが再生しているかどうか
+    bool IsThreatening() const { return isthreatening_; }
 
 private:
     bool is_healing_ = false;
@@ -35,6 +37,9 @@ private:
 
     bool ispower_up_     = false;
     int  power_up_frame_ = 0;
+
+    bool isthreatening_     = false;
+    int  threatening_frame_ = 0;
 };
 
 }    // namespace Game01
