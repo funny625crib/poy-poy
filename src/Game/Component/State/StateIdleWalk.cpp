@@ -23,13 +23,12 @@ void StateIdleWalk::Update()
     // 処理されるときは必ずOwnerは存在しますので基本的にnullptrチェックは必要ありません
     auto owner = GetOwner();
 
-    auto player      = Scene::Object::Get<Game01::Player_Rise>();
-    bool healing     = (player && player->IsHealing());
-    bool power_up    = (player && player->IsPower_up());
-    bool threatening = (player && player->IsThreatening());
+    auto player   = Scene::Object::Get<Game01::Player_Rise>();
+    bool healing  = (player && player->IsHealing());
+    bool power_up = (player && player->IsPower_up());
 
     // 移動方向
-    if(!healing && !power_up && !threatening) {
+    if(!healing && !power_up) {
         float3 dir{0, 0, 0};
         if(IsKey(key_up_))
             dir += {0, 0, -1};
