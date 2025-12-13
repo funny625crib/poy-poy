@@ -103,6 +103,8 @@ bool Animal::Init()
     auto col   = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(radius);
     col->SetHeight(height);
+    col->SetCollisionGroup(ComponentCollision::CollisionGroup::ETC);
+
     // col->UseGravity();
     // AddComponent<StatePhysics>();
     auto model      = AddComponent<ComponentModel>(str);

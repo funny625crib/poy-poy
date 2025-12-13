@@ -12,12 +12,16 @@ public:
 
     void Init() override;
 
-    void Update() override;
+    void      Update() override;
+    ObjectPtr hold_obj = nullptr;
 
     void                 GUI() override;
     Game01::AnimalPtr    Get_obj_A = nullptr;
     Game01::Time_bombPtr Get_obj_B = nullptr;
     int                  mode;
+    bool                 thowe_chack = false;
+    int                  thowe_time  = 0;
+    int                  lock_on_time;
     float3               pos2;
     enum
     {

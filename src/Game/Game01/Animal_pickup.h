@@ -18,11 +18,14 @@ public:
         ANIMAL,
         BOMS,
     };
-    void   Update() override;
-    void   Draw() override;
-    bool   check    = false;
-    int    set_obj_ = NOOBJ;
-    float3 dir{0, 0, 0};
+    void      Update() override;
+    void      Draw() override;
+    bool      check    = false;
+    bool      check2   = false;
+    bool      check3   = false;
+    int       set_obj_ = NOOBJ;
+    float3    dir{0, 0, 0};
+    ObjectPtr Get = nullptr;
 
     float3 pos_npc_;
 

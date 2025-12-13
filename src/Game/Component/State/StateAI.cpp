@@ -29,9 +29,7 @@ void StateAI::Update()
     __super::Update();
     auto owner = GetOwner();
     // static Game01::AnimalPtr    Get_obj_A = nullptr;
-    // static Game01::Time_bombPtr Get_obj_B = nullptr;
-
-    //  Game01::AnimalPtr    memory_animal = nullptr;
+    static Game01::Time_bombPtr Get_obj_B = nullptr;
     //Game01::Time_bombPtr memory_bom     = nullptr;
     float3 Get_pos        = owner->GetTranslate();
     auto   get_pickup_com = owner->GetComponent<Game01::Pickup>();
@@ -40,6 +38,7 @@ void StateAI::Update()
         count_pickup_cooldown = 0;
         float min_dir         = 0.0f;        //一番近くに距離のの初期値を置くを置く
         float max_dir         = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
+
         for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
             // ここに来る場合 obj がEnemyクラスということが保証されます。
             // nameは、必ず存在するため、オブジェクトの名前を取得できます。
@@ -48,7 +47,6 @@ void StateAI::Update()
             if(obj_->Invisible_ == Game01::Animal::OFF) {
                 continue;
             }
-            auto   name        = obj_->GetName();
             auto   get_obj_pos = obj_->GetTranslate();
             auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
             float3 dis         = get_obj_pos - get_npc_pos;
@@ -57,21 +55,23 @@ void StateAI::Update()
                 min_dir   = dir;
                 set_obj_  = ANIMAL;
                 Get_obj_A = obj_;
+                hold_obj  = Get_obj_A;
+                //Get_obj_B = nullptr;
             }
         }
+        // ここに来る場合 obj がEnemyクラスということが保証されます。
+        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
         for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
-            // ここに来る場合 obj がEnemyクラスということが保証されます。
-            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
             if(obj_boms_->Boms_Mode == HOLDING)
                 continue;
-            auto   name        = obj_boms_->GetName();
-            auto   get_obj_pos = obj_boms_->GetTranslate();
-            auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
-            float3 dis         = get_obj_pos - get_npc_pos;
-            float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-            if(dir > min_dir) {
-                min_dir   = dir;
+            auto   get_obj_pos2 = obj_boms_->GetTranslate();
+            auto   get_npc_pos2 = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
+            float3 dis2         = get_obj_pos2 - get_npc_pos2;
+            float  dir2         = sqrtf(dis2.x * dis2.x + dis2.y * dis2.y + dis2.z * dis2.z);
+            if(dir2 > min_dir) {
+                min_dir   = dir2;
                 set_obj_  = BOMS;
+                hold_obj  = Get_obj_B;
                 Get_obj_B = obj_boms_;
             }
         }
@@ -81,36 +81,39 @@ void StateAI::Update()
 
     if(mode == Movetoobj) {
         if(Get_obj_A) {
-            Get_obj_A->Invisible_ = Game01::Animal::OFF;
+            // Get_obj_A->Invisible_ = Game01::Animal::OFF;
         }
         if(Get_obj_A) {
             if(Get_obj_A->Cone_Mode == HOLDING) {
-                //mode = Searchobj;
+                mode = Searchobj;
             }
         }
         if(Get_obj_B) {
             if(Get_obj_B->Boms_Mode == HOLDING) {
-                //  mode = Searchobj;
+                mode = Searchobj;
             }
         }
         float3 pos1 = Get_pos;
         float3 pos2;
+        if(hold_obj)
+            pos2 = hold_obj->GetTranslate();
         if(Get_obj_A != nullptr && set_obj_ == ANIMAL) {
             if(Get_obj_A == nullptr) {
-                mode = Searchobj;
+                //mode = Searchobj;
                 return;
             }
             if(Get_obj_A) {
                 // pos2 = Get_obj_A->GetTranslate();
             }
         }
+
         float3 pos3;
         if(Get_obj_B != nullptr && set_obj_ == BOMS) {
             if(Get_obj_B == nullptr) {
-                mode = Searchobj;
+                // mode = Searchobj;
                 return;
             }
-            pos3 = Get_obj_B->GetTranslate();
+            // pos3 = Get_obj_B->GetTranslate();
         }
         if(set_obj_ == ANIMAL) {
             owner->SetRotationToPositionWithLimit(pos2, 3.0f);
@@ -124,17 +127,17 @@ void StateAI::Update()
             mdl->PlayAnimationNoSame("walk", true);
         }
         if(get_pickup_com->Check_Pickup() == true) {
-            owner->_isholding = HOLDING;
-
-            mode = SearchPlayer;
+            if(get_pickup_com->Get == hold_obj) {
+                owner->_isholding = HOLDING;
+                mode              = SearchPlayer;
+            }
         }
     }
+    auto player1 = Scene::Object::Get<Game01::Player_Rise>();
+    auto player2 = Scene::Object::Get<Game01::Player_Betty>();
+    auto player3 = Scene::Object::Get<Game01::Player_Abigail>();
+    auto player4 = Scene::Object::Get<Game01::Player_Sol>();
     if(mode == SearchPlayer) {
-        auto player1 = Scene::Object::Get<Game01::Player_Rise>();
-        auto player2 = Scene::Object::Get<Game01::Player_Betty>();
-        auto player3 = Scene::Object::Get<Game01::Player_Abigail>();
-        auto player4 = Scene::Object::Get<Game01::Player_Sol>();
-
         if(owner->player_name == RISE) {
             int rand = GetRand(2);
             switch(rand) {
@@ -193,7 +196,13 @@ void StateAI::Update()
         }
         mode = MovetoPlayer;
     }
+
     if(mode == MovetoPlayer) {
+        lock_on_time++;
+        if(lock_on_time > 300) {
+            lock_on_time = 0;
+            mode         = SearchPlayer;
+        }
         // Get_obj_A->who_holding = owner->player_name;
         float3 pos1    = Get_pos;
         pos1.y         = 0.0f;
@@ -203,7 +212,7 @@ void StateAI::Update()
         float z        = pos1.z - pos2.z;
         float distance = sqrtf(x * x + y * y + z * z);
         DrawFormatString(0, 100, WHITE, "%f", distance);
-        float radius = 30.0f;
+        float radius = 60.0f;
         //	１：２つのベクトルを用意
         //	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
         float3 front;
@@ -212,7 +221,6 @@ void StateAI::Update()
         get_pickup_com->dir = {0.0f, rot.y, 0.0f};
         front.x             = 1.0f * sinf((get_pickup_com->dir.y * 3.14159265f / 180.0f));
         front.z             = 1.0f * cosf((get_pickup_com->dir.y * 3.14159265f / 180.0f));
-
         //	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
         float3 target = pos2 - pos1;
 
@@ -275,7 +283,6 @@ void StateAI::Update()
                     }
                 }
             }
-
             if(distance <= radius && degree < 35.0f) {
                 if(owner->_isholding == HOLDING) {
                     owner->_isholding = THROWING;
@@ -290,9 +297,22 @@ void StateAI::Update()
                                 auto modelrot = owner->GetComponent<ComponentModel>();
                                 auto dir      = -modelrot->GetWorldMatrix().axisZ();
                                 Get_obj_A->SetDirectior(dir);
-                                obj_->Cone_Mode    = THROWING;
-                                obj_->who_throwing = Get_obj_A->who_holding;
+                                obj_->Cone_Mode = THROWING;
+                                if(owner->player_name == RISE) {
+                                    obj_->who_throwing = Game01::Animal::RISE;
+                                }
+                                if(owner->player_name == BETTY) {
+                                    obj_->who_throwing = Game01::Animal::BETTY;
+                                }
+                                if(owner->player_name == ABIGAIL) {
+                                    obj_->who_throwing = Game01::Animal::ABIGAIL;
+                                }
+                                if(owner->player_name == SOL) {
+                                    obj_->who_throwing = Game01::Animal::SOL;
+                                }
+                                // obj_->who_throwing = Get_obj_A->who_holding;
                                 obj_->Game01::Animal::Throw();
+                                thowe_chack = true;
                             }
                         }
                         for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
@@ -301,14 +321,28 @@ void StateAI::Update()
                                 auto modelrot = owner->GetComponent<ComponentModel>();
                                 auto dir      = -modelrot->GetWorldMatrix().axisZ();
                                 Get_obj_B->SetDirectior(dir);
-                                obj_boms_->Boms_Mode    = THROWING;
-                                obj_boms_->who_throwing = Game01::Animal::RISE;
+                                obj_boms_->Boms_Mode = THROWING;
+                                if(owner->player_name == RISE) {
+                                    obj_boms_->who_throwing = Game01::Animal::RISE;
+                                }
+                                if(owner->player_name == BETTY) {
+                                    obj_boms_->who_throwing = Game01::Animal::BETTY;
+                                }
+                                if(owner->player_name == ABIGAIL) {
+                                    obj_boms_->who_throwing = Game01::Animal::ABIGAIL;
+                                }
+                                if(owner->player_name == SOL) {
+                                    obj_boms_->who_throwing = Game01::Animal::SOL;
+                                }
                                 obj_boms_->Game01::Time_bomb::Throw();
+
+                                thowe_chack = false;
                             }
                         }
                     }
                 }
             }
+
             {
                 owner->SetRotationToPositionWithLimit(pos2, 3.0f);
                 owner->AddTranslate({0, 0, -0.3f}, true);
@@ -318,7 +352,6 @@ void StateAI::Update()
                 if(Get_obj_A->Cone_Mode == IDLE || Get_obj_A->Cone_Mode == Game01::Animal::DEATH) {
                     owner->_isholding = IDLE;
                     Get_obj_A         = nullptr;
-                    mode              = Searchobj;
                 }
             }
             if(Get_obj_B) {
@@ -328,6 +361,16 @@ void StateAI::Update()
                     mode              = Searchobj;
                 }
             }
+        }
+        if(thowe_chack == true) {
+            thowe_time++;
+        }
+        else {
+            thowe_time = 0;
+        }
+        if(thowe_time > 30) {
+            thowe_chack = false;
+            mode        = Searchobj;
         }
     }
 }
