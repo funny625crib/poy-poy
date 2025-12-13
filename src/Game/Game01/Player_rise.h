@@ -43,6 +43,11 @@ private:
     bool isthreatening_     = false;
     int  threatening_frame_ = 0;
 
+    //プレイヤーの位置を表示する矢印モデル
+    int arrow_model;
+    //矢印の座標
+    float3 arrow_pos;
+
     // スキル用カメラが有効になっているかどうか
     bool is_skill_camera_ = false;
     // スキル開始前のカメラ位置と注視点を保存しておく

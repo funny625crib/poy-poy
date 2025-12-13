@@ -32,7 +32,7 @@ bool Player_Betty::Init()
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/Betty/Betty.mv1");
-    model->Matrix() = matrix::scale(0.8f);
+    model->Matrix() = matrix::scale(1.0f);
     model->SetAnimation({
         {"idle",    "data/Sample/Player/Betty/Anim/Idle.mv1", 0, 1.0f},
         {"walk", "data/Sample/Player/Betty/Anim/Walking.mv1", 0, 1.0f},

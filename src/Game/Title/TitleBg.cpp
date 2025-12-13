@@ -5,7 +5,7 @@ namespace Title {
 bool Bg::Init()
 {
     __super::Init();
-    Bg_image = LoadGraph("data/Game/Title/TitleBg.png");
+    Bg_image = LoadGraph("data/Game/Title/Title_image (5).png");
     GetGraphSize(Bg_image, &Bg_x, &Bg_y);
     //タイトル背景のオブジェクト
     SetName("Bg");
