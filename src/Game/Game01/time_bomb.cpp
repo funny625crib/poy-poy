@@ -9,7 +9,7 @@
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Game01/Skills/Acceleration.h>
 #include <Game/Component/State/StatePhysics.h>
-
+#include "Hp.h"
 namespace Game01 {
 
 int bomb_effect;
@@ -69,7 +69,29 @@ void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
     __super::OnHit(hit_info);
 
     auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
-
+    if(Boms_Mode == THROWING) {
+        //プレイヤーに当たったらダメージを与える
+        if(hit_owner_name == "Player Abigail") {
+            auto Hp_get               = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_abigail -= 2;
+            Boms_Mode                 = HIT;
+        }
+        if(hit_owner_name == "Player Betty") {
+            auto Hp_get             = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_betty -= 2;
+            Boms_Mode               = HIT;
+        }
+        if(hit_owner_name == "Player Sol") {
+            auto Hp_get           = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_sol -= 2;
+            Boms_Mode             = HIT;
+        }
+        if(hit_owner_name == "Player rise") {
+            auto Hp_get            = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_rise -= 2;
+            Boms_Mode              = HIT;
+        }
+    }
     if(hit_owner_name == "Ground" && Boms_Mode == THROWING) {
         Boms_Mode = HIT;
     }
