@@ -37,7 +37,7 @@ bool Player_Rise::Init()
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/Rise_school/Rise.mv1");
-    model->Matrix() = matrix::scale(1.0f);
+    model->Matrix() = matrix::scale(0.9f);
     model->SetAnimation({
         {       "idle",        "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
         {       "walk",     "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},
@@ -91,7 +91,6 @@ void Player_Rise::Update()
     static int threatening = -1;    //威嚇
 
     static float3 pos;
-
     //Zキー：無敵化
     if(Input::IsKeyDown(KEY_INPUT_Z)) {
         h = PlayEffekseer3DEffect(effect);
@@ -122,6 +121,9 @@ void Player_Rise::Update()
             mdl->PlayAnimationNoSame("idle", true);
             //アクション完了後アニメーションを再生する
             heal = PlayEffekseer3DEffect(heal_effect);
+            //HPが増える
+            auto Hp_get            = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_rise += 1;
         }
     }
     pos = GetTranslate();

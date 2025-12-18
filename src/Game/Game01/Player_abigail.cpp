@@ -33,7 +33,7 @@ bool Player_Abigail::Init()
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/abigail/abigail.mv1");
-    model->Matrix() = matrix::scale(0.8f);
+    model->Matrix() = matrix::scale(1.0f);
     model->SetAnimation({
         {"idle",    "data/Sample/Player/abigail/Anim/Idle.mv1", 0, 1.0f},
         {"walk", "data/Sample/Player/abigail/Anim/Walking.mv1", 0, 1.0f},

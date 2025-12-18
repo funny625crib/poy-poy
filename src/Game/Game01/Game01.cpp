@@ -3,6 +3,7 @@
 #include "Camera.h"
 
 #include "Animal.h"
+#include "arrow.h"
 #include "TIme_bomb.h"
 #include "AnimalGenerator.h"
 #include "Player_rise.h"
@@ -92,6 +93,8 @@ bool Game01::Init()
 
     Scene::Object::Create<Time_bomb>();
 
+    Scene::Object::Create<Arrow>();
+
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④
     // -----------------------------------------------------------------------------------------
@@ -121,6 +124,11 @@ void Game01::Update()
         sky->AddRotationAxisXYZ({0, 0.1f, 0});
     }
     //--------------------------------------------------------------
+}
+
+void Game01::Draw()
+{
+    printfDx("　　Zキー：無敵化　　Xキー：回復　　Cキー：怪力　　Ⅴキー：威嚇　　");
 }
 
 }    // namespace Game01
