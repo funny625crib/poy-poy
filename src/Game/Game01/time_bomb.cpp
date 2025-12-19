@@ -9,7 +9,7 @@
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Game01/Skills/Acceleration.h>
 #include <Game/Component/State/StatePhysics.h>
-
+#include "Hp.h"
 namespace Game01 {
 
 int bomb_effect;
@@ -23,7 +23,6 @@ bool Time_bomb::Init()
     // 爆弾
     SetName("Time bomb");
     SetTranslate({-87.0f, 26.0f, 57.0f});
-
     auto col = AddComponent<ComponentCollisionCapsule>();    //
     col->SetRadius(5.53f);
     col->SetHeight(5.81f);
@@ -32,7 +31,8 @@ bool Time_bomb::Init()
     model->Matrix() = matrix::scale(0.05f);
     AddComponent<StatePhysics>();    //投げるために必要
 
-    bomb_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/fire.efkefc");
+    //bomb_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/fire.efkefc");
+    bomb_effect = LoadEffekseerEffect("data/effects/01_Pierre01/Flame.efkefc");
 
     return true;
 }
@@ -69,7 +69,29 @@ void Time_bomb::OnHit(const ComponentCollision::HitInfo& hit_info)
     __super::OnHit(hit_info);
 
     auto hit_owner_name = hit_info.hit_collision_->GetOwner()->GetNameDefault();
-
+    if(Boms_Mode == THROWING) {
+        //プレイヤーに当たったらダメージを与える
+        if(hit_owner_name == "Player Abigail") {
+            auto Hp_get               = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_abigail -= 2;
+            Boms_Mode                 = HIT;
+        }
+        if(hit_owner_name == "Player Betty") {
+            auto Hp_get             = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_betty -= 2;
+            Boms_Mode               = HIT;
+        }
+        if(hit_owner_name == "Player Sol") {
+            auto Hp_get           = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_sol -= 2;
+            Boms_Mode             = HIT;
+        }
+        if(hit_owner_name == "Player rise") {
+            auto Hp_get            = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_rise -= 2;
+            Boms_Mode              = HIT;
+        }
+    }
     if(hit_owner_name == "Ground" && Boms_Mode == THROWING) {
         Boms_Mode = HIT;
     }

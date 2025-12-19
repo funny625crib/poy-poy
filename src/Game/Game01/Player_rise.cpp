@@ -7,7 +7,6 @@
 #include <System/Component/ComponentObjectController.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/ComponentGameCamera.h>
-#include <Game/Game01/Skills/Acceleration.h>
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Game01/Animal_pickup.h>
 #include <Game/Component/State/StateJump.h>
@@ -19,8 +18,10 @@ namespace Game01 {
 //AnimalPtr Get_obj2 = nullptr;    //一番近くのオブジェクトの保管
 AnimalPtr Get_obj = nullptr;
 int       effect;
-int       heal_effect;    //回復
-int       run_effect;     //超加速
+int       heal_effect;           //回復
+int       run_effect;            //超加速
+int       power_up_effect;       //怪力
+int       threatening_effect;    //威嚇
 
 bool Player_Rise::Init()
 {
@@ -29,20 +30,23 @@ bool Player_Rise::Init()
     // プレイヤー
     SetName("Player Rise");
     SetTranslate({-87.0f, -6.0f, 47.0f});
-    AddComponent<Acceleration>();
-    auto col = AddComponent<ComponentCollisionCapsule>();    //
+    auto col = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(4.53f);
     col->SetHeight(16.81f);
     col->UseGravity();
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/Rise_school/Rise.mv1");
-    model->Matrix() = matrix::scale(0.7f);
+    model->Matrix() = matrix::scale(0.9f);
     model->SetAnimation({
-        {"idle",    "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
-        {"walk", "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},
-        {"jump",    "data/Sample/Player/Rise_school/Anim/Jump.mv1", 0, 1.0f},
-        { "run",     "data/Sample/Player/Rise_school/Anim/Run.mv1", 0, 1.0f},
+        {       "idle",        "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
+        {       "walk",     "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},
+        {       "jump",        "data/Sample/Player/Rise_school/Anim/Jump.mv1", 0, 1.0f},
+        {        "run",         "data/Sample/Player/Rise_school/Anim/Run.mv1", 0, 1.0f},
+        {       "heal",  "data/Sample/Player/Rise_school/Anim/Magic Heal.mv1", 0, 1.0f},
+        {     "defend",      "data/Sample/Player/Rise_school/Anim/defend.mv1", 0, 1.0f},
+        {"Threatening", "data/Sample/Player/Rise_school/Anim/Threatening.mv1", 0, 1.0f},
+        {   "power up",    "data/Sample/Player/Rise_school/Anim/Power Up.mv1", 0, 1.0f},
     });
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
     player_name = RISE;
@@ -55,6 +59,8 @@ bool Player_Rise::Init()
     heal_effect = LoadEffekseerEffect("data/effects/01_NextSoft01/Heal.efkefc");
 
     run_effect = LoadEffekseerEffect("data/effects/01_Pierre01/run.efkefc");
+
+    power_up_effect = LoadEffekseerEffect("data/effects/01_NextSoft01/power up.efkefc");
 
     AddComponent<ComponentGameCamera>();
     //AddComponent<Pickup>();
@@ -80,12 +86,13 @@ void Player_Rise::Update()
     static int ani_time      = 0;    //ジャンプの持続時間
     static int ani_wait_time = 0;    //ジャンプ前の待機時間
 
-    static int h    = -1;
-    static int heal = -1;    //回復
-    static int run  = -1;    //超加速
+    static int h           = -1;
+    static int heal        = -1;    //回復
+    static int run         = -1;    //超加速
+    static int power_up    = -1;    //怪力
+    static int threatening = -1;    //威嚇
 
     static float3 pos;
-
     //Zキー：無敵化
     if(Input::IsKeyDown(KEY_INPUT_Z)) {
         h = PlayEffekseer3DEffect(effect);
@@ -95,15 +102,78 @@ void Player_Rise::Update()
     SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 1.0f, pos.z);
     SetScalePlayingEffekseer3DEffect(h, 2.5f, 4.0f, 2.5f);
 
-    //Xキー：回復
-    if(Input::IsKeyDown(KEY_INPUT_X)) {
-        heal = PlayEffekseer3DEffect(heal_effect);
+    auto mdl = GetComponent<ComponentModel>();
+
+    // Xキー：回復
+    if(Input::IsKeyDown(KEY_INPUT_X) && !is_healing_ && heal_frame_ == 0) {
+        is_healing_ = true;
+        heal_frame_ = 160;
+
+        mdl->PlayAnimationNoSame("heal", false);
+    }
+
+    if(is_healing_) {
+        if(heal_frame_ > 0) {
+            --heal_frame_;
+        }
+
+        if(heal_frame_ <= 0) {
+            is_healing_ = false;
+            heal_frame_ = 0;
+            mdl->PlayAnimationNoSame("idle", true);
+            //アクション完了後アニメーションを再生する
+            heal = PlayEffekseer3DEffect(heal_effect);
+            //HPが増える
+            auto Hp_get            = Scene::Object::Get<Hp>();
+            Hp_get->Hp_count_rise += 1;
+        }
     }
     pos = GetTranslate();
     SetPosPlayingEffekseer3DEffect(heal, pos.x, pos.y + 1.0f, pos.z);
     SetScalePlayingEffekseer3DEffect(heal, 3.0f, 3.0f, 3.0f);
 
-    //Xキー：回復
+    //Cキー：怪力
+    if(Input::IsKeyDown(KEY_INPUT_C) && !ispower_up_ && power_up_frame_ == 0) {
+        ispower_up_     = true;
+        power_up_frame_ = 120;
+        mdl->PlayAnimationNoSame("power up", false);
+        power_up = PlayEffekseer3DEffect(power_up_effect);
+    }
+    pos = GetTranslate();
+    SetPosPlayingEffekseer3DEffect(power_up, pos.x, pos.y, pos.z);
+    SetScalePlayingEffekseer3DEffect(power_up, 6.0f, 6.0f, 6.0f);
+    if(ispower_up_) {
+        if(power_up_frame_ > 0) {
+            --power_up_frame_;
+        }
+
+        if(power_up_frame_ <= 0) {
+            ispower_up_     = false;
+            power_up_frame_ = 0;
+            mdl->PlayAnimationNoSame("idle", true);
+        }
+    }
+
+    //Vキー：威嚇
+    if(Input::IsKeyDown(KEY_INPUT_V) && !isthreatening_ && threatening_frame_ == 0) {
+        isthreatening_     = true;
+        threatening_frame_ = 120;
+        mdl->PlayAnimationNoSame("Threatening", false);
+    }
+
+    if(isthreatening_) {
+        if(threatening_frame_ > 0) {
+            --threatening_frame_;
+        }
+
+        if(threatening_frame_ <= 0) {
+            isthreatening_     = false;
+            threatening_frame_ = 0;
+            mdl->PlayAnimationNoSame("idle", true);
+        }
+    }
+
+    //IキーとOキー：超加速
     static int run_frame;
     if(Input::IsKeyDown(KEY_INPUT_I) && run_frame == 0 || Input::IsKeyDown(KEY_INPUT_O) && run_frame == 0) {
         run       = PlayEffekseer3DEffect(run_effect);
@@ -142,6 +212,15 @@ void Player_Rise::Update()
         }
     }
 
+    bool using_skill = is_healing_ || ispower_up_ || isthreatening_;
+
+    if(using_skill) {
+        StartSkillCamera();
+    }
+    else {
+        EndSkillCamera();
+    }
+
     //if(IsKey(KEY_INPUT_W))
     //    dir = {0, 180, -90};
 }
@@ -170,3 +249,72 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 }
 
 }    // namespace Game01
+
+void Game01::Player_Rise::StartSkillCamera()
+{
+    // すでにスキル用カメラになっている場合は何もしない
+    if(is_skill_camera_) {
+        return;
+    }
+
+    auto cam = GetComponent<ComponentGameCamera>();
+    auto mdl = GetComponent<ComponentModel>();
+    if(!cam || !mdl) {
+        return;
+    }
+
+    // スキルカメラ中フラグ ON
+    is_skill_camera_ = true;
+
+    // スキル開始前のカメラ位置と注視点を保存しておく
+    skill_cam_old_pos_    = cam->GetPosition();
+    skill_cam_old_target_ = cam->GetTarget();
+
+    // -----------------------------
+    // プレイヤーの正面から見るカメラにする
+    // -----------------------------
+    // プレイヤーの現在位置（ワールド座標）
+    float3 player_pos = GetTranslate();
+
+    // モデルのワールド行列から「前方向ベクトル」を取得
+    auto mat = mdl->GetWorldMatrix();
+    // この forward が「プレイヤーの前方向」
+    // もしカメラが後ろ側に来てしまう場合は、
+    // 下の - を消して = mat.axisZ(); にして試してみてください。
+    float3 forward = -mat.axisZ();
+
+    // カメラの距離・高さ・注視点の高さ
+    const float cam_dist       = 30.0f;    // プレイヤーからどれくらい離すか
+    const float cam_height     = 15.0f;    // カメラをどれくらい上に上げるか
+    const float look_at_height = 8.5f;     // どの高さを注視するか（顔あたり）
+
+    // カメラ位置：プレイヤーの前方向に cam_dist 離して、少し上にオフセット
+    float3 cam_pos = {
+        player_pos.x + forward.x * cam_dist,
+        player_pos.y + forward.y * cam_dist + cam_height,
+        player_pos.z + forward.z * cam_dist,
+    };
+
+    // 注視点：プレイヤーの少し上（顔のあたり）を見る
+    float3 look_at  = player_pos;
+    look_at.y      += look_at_height;
+
+    cam->SetPositionAndTarget(cam_pos, look_at);
+}
+
+void Game01::Player_Rise::EndSkillCamera()
+{
+    // スキル用カメラでない場合は何もしない
+    if(!is_skill_camera_) {
+        return;
+    }
+
+    auto cam = GetComponent<ComponentGameCamera>();
+    if(cam) {
+        // 保存しておいた位置と注視点に戻す
+        cam->SetPositionAndTarget(skill_cam_old_pos_, skill_cam_old_target_);
+    }
+
+    // 通常カメラに戻ったのでフラグ OFF
+    is_skill_camera_ = false;
+}
