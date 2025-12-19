@@ -80,6 +80,11 @@ void StateAI::Update()
     }
 
     if(mode == Movetoobj) {
+        lock_on_time++;
+        if(lock_on_time > 300) {
+            lock_on_time = 0;
+            mode         = Searchobj;
+        }
         if(Get_obj_A) {
             // Get_obj_A->Invisible_ = Game01::Animal::OFF;
         }

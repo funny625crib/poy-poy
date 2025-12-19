@@ -48,6 +48,7 @@ bool Player_Rise::Init()
     player_name = RISE;
 
     //エフェクトの初期化
+    hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
 
     effect = LoadEffekseerEffect("data/effects/00_Version16/Barrior01.efkefc");
 
@@ -156,6 +157,12 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
                     obj_->Cone_Mode        = Game01::Animal::DEATH;
                     auto Hp_get            = Scene::Object::Get<Hp>();
                     Hp_get->Hp_count_rise -= 1;
+
+                    int h = PlayEffekseer3DEffect(hit_effect);
+
+                    float3 pos = GetTranslate();
+                    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 5.0f, pos.z);
+                    SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
                 }
             }
         }

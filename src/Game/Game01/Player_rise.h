@@ -32,6 +32,7 @@ public:
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
 
 private:
+    int hit_effect;
 };
 
 }    // namespace Game01

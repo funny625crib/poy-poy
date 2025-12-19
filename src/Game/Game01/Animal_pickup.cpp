@@ -1,6 +1,7 @@
 ﻿#include "Animal_Pickup.h"
 #include "Animal.h"
 #include <Game/Game01/time_bomb.h>
+#include <Game/Component/State/StateIdleWalk.h>
 namespace Game01 {
 void Pickup::Init()
 {
@@ -77,22 +78,27 @@ void Pickup::Update()
     //
     //    }
     //}
-    /* if(IsKey(KEY_INPUT_W))
-        dir = {0, 180, -90};
+    if(auto get = owner->GetComponent<StateIdleWalk>()) {
+        if(IsKey(KEY_INPUT_W))
+            dir = {0, 180, -90};
 
-    if(IsKey(KEY_INPUT_S))
-        dir = {0, 0, 90};
+        if(IsKey(KEY_INPUT_S))
+            dir = {0, 0, 90};
 
-    if(IsKey(KEY_INPUT_D))
-        dir = {-90, 270, 0};
+        if(IsKey(KEY_INPUT_D))
+            dir = {-90, 270, 0};
 
-    if(IsKey(KEY_INPUT_A))
-        dir = {90, 90, 0};*/
-    matrix Matrix = owner->GetMatrix();    // Matrixが取得できます
-    dir           = Matrix.axisY();
-    float3 rot    = owner->GetRotationAxisXYZ() + 180;    // X軸Y軸Z軸に対する回転が取得できます
+        if(IsKey(KEY_INPUT_A))
+            dir = {90, 90, 0};
+    }
+    else {
+        matrix Matrix = owner->GetMatrix();                   // Matrixが取得できます
+        float3 rot    = owner->GetRotationAxisXYZ() + 180;    // X軸Y軸Z軸に対する回転が取得できます
 
-    dir    = {0.0f, rot.y, 0.0f};
+        dir = Matrix.axisY();
+        dir = {0.0f, rot.y, 0.0f};
+    }
+
     pos_XZ = {Get_pos.x, 0.0f, Get_pos.z};
 
     float3 pos1 = Get_pos;
