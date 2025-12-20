@@ -35,13 +35,11 @@ void StateAI::Update()
     auto   get_pickup_com = owner->GetComponent<Game01::Pickup>();
 
     if(mode == Searchobj) {
-        count_pickup_cooldown = 0;
-        float min_dir         = 0.0f;        //一番近くに距離のの初期値を置くを置く
-        float max_dir         = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
-
+        float min_dir    = 0.0f;        //一番近くに距離のの初期値を置くを置く
+        float max_dir    = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
+        int   Reward_Max = 0;
+        //for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
         for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
-            // ここに来る場合 obj がEnemyクラスということが保証されます。
-            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
             if(obj_->Cone_Mode == HOLDING)
                 continue;
             if(obj_->Invisible_ == Game01::Animal::OFF) {
@@ -51,35 +49,77 @@ void StateAI::Update()
             auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
             float3 dis         = get_obj_pos - get_npc_pos;
             float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-            if(dir > min_dir) {
-                min_dir   = dir;
-                set_obj_  = ANIMAL;
-                Get_obj_A = obj_;
-                hold_obj  = Get_obj_A;
-                //Get_obj_B = nullptr;
+            obj_->distance     = dir;
+            if(10 > obj_->distance && obj_->distance >= 0) {
+                obj_->Reward += 10;
             }
+            else if(20 > obj_->distance && obj_->distance >= 10) {
+                obj_->Reward += 20;
+            }
+            else if(30 > obj_->distance && obj_->distance >= 20) {
+                obj_->Reward += 30;
+            }
+            else if(40 > obj_->distance && obj_->distance >= 30) {
+                obj_->Reward += 40;
+            }
+            else if(50 > obj_->distance && obj_->distance >= 40) {
+                obj_->Reward += 50;
+            }
+            obj_->Reward += obj_->Size_Reward;
         }
-        // ここに来る場合 obj がEnemyクラスということが保証されます。
-        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
-        for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
-            if(obj_boms_->Boms_Mode == HOLDING)
+        /// }
+
+        for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
+            // ここに来る場合 obj がEnemyクラスということが保証されます。
+            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+            if(obj_->Cone_Mode == HOLDING)
                 continue;
-            auto   get_obj_pos2 = obj_boms_->GetTranslate();
-            auto   get_npc_pos2 = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
-            float3 dis2         = get_obj_pos2 - get_npc_pos2;
-            float  dir2         = sqrtf(dis2.x * dis2.x + dis2.y * dis2.y + dis2.z * dis2.z);
-            if(dir2 > min_dir) {
-                min_dir   = dir2;
+            if(obj_->Invisible_ == Game01::Animal::OFF) {
+                continue;
+            }
+            //}
+            //auto   get_obj_pos = obj_->GetTranslate();
+            //auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
+            //float3 dis         = get_obj_pos - get_npc_pos;
+            //float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
+
+            //if(dir > min_dir) {
+            //    min_dir   = dir;
+            //    set_obj_  = ANIMAL;
+            //    Get_obj_A = obj_;
+            //    hold_obj  = Get_obj_A;
+            //    //Get_obj_B = nullptr;
+            //}
+            if(Reward_Max < obj_->Reward) {
+                Reward_Max = obj_->Reward;
+                set_obj_   = ANIMAL;
+                hold_obj   = obj_;
+                Get_obj_A  = obj_;
+            }
+
+            // ここに来る場合 obj がEnemyクラスということが保証されます。
+            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+            for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+                if(obj_boms_->Boms_Mode == HOLDING)
+                    continue;
+                auto   get_obj_pos2 = obj_boms_->GetTranslate();
+                auto   get_npc_pos2 = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
+                float3 dis2         = get_obj_pos2 - get_npc_pos2;
+                float  dir2         = sqrtf(dis2.x * dis2.x + dis2.y * dis2.y + dis2.z * dis2.z);
+                if(dir2 > min_dir) {
+                    /*min_dir   = dir2;
                 set_obj_  = BOMS;
                 hold_obj  = Get_obj_B;
-                Get_obj_B = obj_boms_;
+                Get_obj_B = obj_boms_;*/
+                }
             }
+
+            mode = Movetoobj;
+            count_pickup_cooldown++;
         }
-
-        mode = Movetoobj;
     }
-
     if(mode == Movetoobj) {
+        count_pickup_cooldown++;
         lock_on_time++;
         if(lock_on_time > 300) {
             lock_on_time = 0;
@@ -131,10 +171,11 @@ void StateAI::Update()
         if(auto mdl = owner->GetComponent<ComponentModel>()) {
             mdl->PlayAnimationNoSame("walk", true);
         }
-        if(get_pickup_com->Check_Pickup() == true) {
+        if(get_pickup_com->Check_Pickup() == true && count_pickup_cooldown > 300) {
             if(get_pickup_com->Get == hold_obj) {
-                owner->_isholding = HOLDING;
-                mode              = SearchPlayer;
+                owner->_isholding     = HOLDING;
+                count_pickup_cooldown = 0;
+                mode                  = SearchPlayer;
             }
         }
     }
@@ -347,7 +388,14 @@ void StateAI::Update()
                     }
                 }
             }
-
+            for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
+                if(obj_->Cone_Mode == HOLDING)
+                    continue;
+                if(obj_->Invisible_ == Game01::Animal::OFF) {
+                    continue;
+                }
+                obj_->Reward = 0;
+            }
             {
                 owner->SetRotationToPositionWithLimit(pos2, 3.0f);
                 owner->AddTranslate({0, 0, -0.3f}, true);

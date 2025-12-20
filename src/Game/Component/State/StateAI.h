@@ -12,9 +12,9 @@ public:
 
     void Init() override;
 
-    void      Update() override;
-    ObjectPtr hold_obj = nullptr;
-
+    void Update() override;
+    //ObjectWeakPtr hold_obj;
+    ObjectPtr            hold_obj;
     void                 GUI() override;
     Game01::AnimalPtr    Get_obj_A = nullptr;
     Game01::Time_bombPtr Get_obj_B = nullptr;

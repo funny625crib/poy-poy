@@ -888,6 +888,7 @@ void ComponentPhysics::GUI()
                     body_->setLinearVelocity(linear);
 
                 if(ImGui::Button(u8"動作リセット")) {
+                    //ここでがんばれ
                     body_->setAngularVelocity({0, 0, 0});
                     body_->setLinearVelocity({0, -0.01f, 0});
                     body_->setPosition({0, 20, 0});

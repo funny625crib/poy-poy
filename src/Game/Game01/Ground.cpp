@@ -16,7 +16,6 @@ bool Ground::Init()
     //AddComponent<ComponentCollision>();
     auto ground = AddComponent<ComponentCollisionModel>();
     ground->AttachToModel();
-
     /* auto coll = AddComponent<ComponentCollisionCapsule>();
     coll->SetTranslate({-42, -10, 4});
     coll->SetHeight(60);

@@ -49,54 +49,65 @@ bool Animal::Init()
     float size = 0.0f;
     switch(num) {
     case 0:    //Pig
-        size   = 0.15f;
-        radius = 5.0f;
-        height = 11.0f;
+        size        = 0.15f;
+        radius      = 5.0f;
+        height      = 11.0f;
+        Size_Reward = 20;
         break;
     case 1:    //Lion
-        size   = 0.08f;
-        radius = 6.0f;
-        height = 15.0f;
+        size        = 0.08f;
+        radius      = 6.0f;
+        height      = 15.0f;
+        Size_Reward = 30;
         break;
     case 2:    //Bear
-        size   = 0.07f;
-        radius = 7.0f;
-        height = 17.0f;
+        size        = 0.07f;
+        radius      = 7.0f;
+        height      = 17.0f;
+        Size_Reward = 40;
         break;
     case 3:    //Sheep
-        size   = 0.15f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.15f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 20;
         break;
     case 4:    //Duck
-        size   = 0.15f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.15f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 20;
         break;
     case 5:    //Antelope
-        size   = 0.07f;
-        radius = 7.0f;
-        height = 17.0f;
+        size        = 0.07f;
+        radius      = 7.0f;
+        height      = 17.0f;
+        Size_Reward = 40;
         break;
     case 6:    //Buffalo
-        size   = 0.15f;
-        radius = 7.0f;
-        height = 12.0f;
+        size        = 0.15f;
+        radius      = 7.0f;
+        height      = 12.0f;
+        Size_Reward = 20;
         break;
     case 7:    //Chick
-        size   = 0.15f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.15f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 20;
+
         break;
     case 8:    //Koala
-        size   = 0.07f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.07f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 40;
         break;
     case 9:    //Turkey
-        size   = 0.07f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.07f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 40;
         break;
     }
     memory_num = num;

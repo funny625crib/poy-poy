@@ -16,6 +16,7 @@ public:
     void  SetDirectior(float3 dir);
     void  Throw();
     int   Cone_Mode;
+    int   Size_Reward;
     enum
     {
         ON,
