@@ -2,7 +2,7 @@
 #include <Game/Component/State/AnimalStateIdleWalk.h>
 #include <System/Component/ComponentSpringArm.h>
 #include <System/Component/ComponentModel.h>
-#include <Game/Game01/Animal.h>
+#include <Game/Game01/Animal/Animal.h>
 #include "StateJump.h"
 #include "StateRun.h"
 

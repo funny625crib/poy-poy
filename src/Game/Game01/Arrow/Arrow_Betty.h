@@ -2,12 +2,12 @@
 #include <System/Scene.h>
 
 namespace Game01 {
-USING_PTR(Arrow);
+USING_PTR(Arrow_Betty);
 
-class Arrow : public Object
+class Arrow_Betty : public Object
 {
 public:
-    BP_OBJECT_DECL(Arrow, u8"Game01 の Arrow");
+    BP_OBJECT_DECL(Arrow_Betty, u8"Game01 の Arrow_Betty");
 
     bool Init() override;
 

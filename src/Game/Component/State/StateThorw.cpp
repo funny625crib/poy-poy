@@ -5,8 +5,8 @@
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <DxLib.h>
-#include <Game/Game01/Animal.h>
-#include <Game/Game01/Animal_pickup.h>
+#include <Game/Game01/Animal/Animal.h>
+#include <Game/Game01/Animal/Animal_pickup.h>
 #include <Game/Game01/time_bomb.h>
 Game01::AnimalPtr    Get_obj  = nullptr;
 Game01::Time_bombPtr Get_obj2 = nullptr;

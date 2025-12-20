@@ -2,14 +2,14 @@
 #include "Ground.h"
 #include "Camera.h"
 
-#include "Animal.h"
-#include "arrow.h"
+#include "Animal/Animal.h"
+#include "Arrow/Arrow_Rise.h"
 #include "TIme_bomb.h"
-#include "AnimalGenerator.h"
-#include "Player_rise.h"
-#include "Player_sol.h"
-#include "Player_betty.h"
-#include "Player_abigail.h"
+#include "Animal/AnimalGenerator.h"
+#include "Player/Player_rise.h"
+#include "Player/Player_sol.h"
+#include "Player/Player_betty.h"
+#include "Player/Player_abigail.h"
 #include <Game/SceneFade/SceneFade.h>
 
 #include "Hp.h"
@@ -93,7 +93,7 @@ bool Game01::Init()
 
     Scene::Object::Create<Time_bomb>();
 
-    Scene::Object::Create<Arrow>();
+    Scene::Object::Create<Arrow_Rise>();
 
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④

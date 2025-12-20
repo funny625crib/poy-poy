@@ -1,5 +1,5 @@
-﻿#include "arrow.h"
-#include "Player_rise.h"
+﻿#include "Game/Game01/Arrow/Arrow_Betty.h"
+#include "Game/Game01/Player/Player_Betty.h"
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
@@ -10,11 +10,11 @@
 
 namespace Game01 {
 
-bool Arrow::Init()
+bool Arrow_Betty::Init()
 {
     Super::Init();
 
-    SetName("Arrow");
+    SetName("Arrow_Betty");
 
     auto model      = AddComponent<ComponentModel>("data/Sample/arrow/arrow.mv1");
     model->Matrix() = matrix::scale(1.0f);
@@ -22,11 +22,11 @@ bool Arrow::Init()
     return true;
 }
 
-void Arrow::Update()
+void Arrow_Betty::Update()
 {
     Super::Update();
 
-    auto player = Scene::Object::Get<Game01::Player_Rise>();
+    auto player = Scene::Object::Get<Game01::Player_Betty>();
     if(!player)
         return;
 
