@@ -14,6 +14,7 @@
 #include <Game/Component/State/SolStateIdleWalk.h>
 #include "Hp.h"
 #include "Animal_pickup.h"
+#include <Game/Component/State/StateAI.h>
 
 extern int hit_effect;
 
@@ -50,8 +51,9 @@ bool Player_Sol::Init()
     hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
 
     AddComponent<ComponentGameCamera>();
+    AddComponent<StateAI>();
     AddComponent<Game01::Pickup>();
-    AddComponent<SolStateIdleWalk>();
+    //AddComponent<SolStateIdleWalk>();
 
     return true;
 }
