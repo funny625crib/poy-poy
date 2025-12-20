@@ -11,10 +11,14 @@ public:
 
     bool Init() override;
 
-    void   Update() override;
+    void Update() override;
+
+    void Draw() override;
+
     float3 arrow_pos;
 
 private:
+    float3 name_pos;
 };
 
 }    // namespace Game01

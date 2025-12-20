@@ -22,8 +22,7 @@ int       heal_effect;           //回復
 int       run_effect;            //超加速
 int       power_up_effect;       //怪力
 int       threatening_effect;    //威嚇
-
-bool Player_Rise::Init()
+bool      Player_Rise::Init()
 {
     Super::Init();
 

@@ -44,11 +44,28 @@ void Arrow_Sol::Update()
     arrow_pos = p + float3{0.0f, head_offset + bob, 0.0f};
     SetTranslate(arrow_pos);
 
+    //3D座標を2D座標に変更する
+    VECTOR wpos;
+    wpos.x = arrow_pos.x + 8.5f;
+    wpos.y = arrow_pos.y + 15.0f;
+    wpos.z = arrow_pos.z;
+
+    VECTOR pos2d = ConvWorldPosToScreenPos(wpos);
+
+    name_pos.x = pos2d.x;
+    name_pos.y = pos2d.y;
+    name_pos.z = pos2d.z;
+
     //プレイヤーの向きに合わせたい場合（前方向ベクトルを渡す）
     if(auto pMdl = player->GetComponent<ComponentModel>()) {
         float3 forward = -pMdl->GetWorldMatrix().axisZ();
         SetRotationToVector(forward);
     }
+}
+
+void Arrow_Sol::Draw()
+{
+    DrawStringF(name_pos.x, name_pos.y, "NPC3", GetColor(0, 0, 255));
 }
 
 }    // namespace Game01

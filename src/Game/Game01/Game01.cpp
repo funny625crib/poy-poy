@@ -4,6 +4,9 @@
 
 #include "Animal/Animal.h"
 #include "Arrow/Arrow_Rise.h"
+#include "Arrow/Arrow_Abigail.h"
+#include "Arrow/Arrow_Sol.h"
+#include "Arrow/Arrow_Betty.h"
 #include "TIme_bomb.h"
 #include "Animal/AnimalGenerator.h"
 #include "Player/Player_rise.h"
@@ -64,7 +67,6 @@ void GameUpdate()
 #endif
 
 Fade fadein;    //シーンフェイドクラスの関数を使うため宣言
-
 bool Game01::Init()
 {
     GameUpdate();
@@ -82,7 +84,7 @@ bool Game01::Init()
     Scene::Object::Create<Generator>();
 
     //動物
-    for(int i = 0; i < 20; ++i) {
+    for(int i = 0; i < 15; ++i) {
         Scene::Object::Create<Animal>();
     }
 
@@ -94,6 +96,12 @@ bool Game01::Init()
     Scene::Object::Create<Time_bomb>();
 
     Scene::Object::Create<Arrow_Rise>();
+
+    Scene::Object::Create<Arrow_Abigail>();
+
+    Scene::Object::Create<Arrow_Sol>();
+
+    Scene::Object::Create<Arrow_Betty>();
 
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④
