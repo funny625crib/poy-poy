@@ -12,6 +12,7 @@
 #include <Game/SceneFade/SceneFade.h>
 
 #include "Hp.h"
+#include <Game/Ranking/Ranking.h>
 namespace Game01 {
 #if 1    // 参考用
 class GameObject
@@ -119,6 +120,11 @@ void Game01::Update()
     //--------------------------------------------------------------
     if(auto sky = Scene::Object::Get<Object>("Sky")) {
         sky->AddRotationAxisXYZ({0, 0.1f, 0});
+    }
+
+    auto hp_obj = Scene::Object::Get<Hp>();
+    if(hp_obj->Hp_death_count >= 3) {
+        Scene::Change(Scene::GetScene<Ranking::Ranking>());
     }
     //--------------------------------------------------------------
 }
