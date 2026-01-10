@@ -40,13 +40,19 @@ void Game01::Generator::Update()
         generation_time_ = 0.0f;
     }
     if(bomb_generation_time_ >= bomb_generation_interval_) {
-        auto obj                = Scene::Object::Create<Time_bomb>();
-        bomb_generation_number_ = GetRand(3);
+        auto obj = Scene::Object::Create<Time_bomb>();
+        //bomb_generation_number_ = GetRand(3);
+        while(true) {
+            bomb_generation_number_ = GetRand(3);
+            if(animal_generation_number_ != bomb_generation_number_) {
+                break;
+            }
+        }
         // while(bomb_generation_number_ == animal_generation_number_)
         // {
         //     bomb_generation_number_ = ;
         // }
-        obj->SetTranslate(spawn_positions_[animal_generation_number_]);
+        obj->SetTranslate(spawn_positions_[bomb_generation_number_]);
         auto physics = obj->GetComponent<StatePhysics>();
         physics->SetStatic(true);
 
