@@ -19,6 +19,16 @@ public:
     int  Hp_count_sol;
     int  Hp_count_rise;
     int  Hp_count_betty;
+    //abigailがやられたかどうかの変数
+    bool abigail_death_flag;
+    //solがやられたかどうかの変数
+    bool sol_death_flag;
+    //riseがやられたかどうかの変数
+    bool rise_death_flag;
+    //bettyがやられたかどうかの変数
+    bool betty_death_flag;
+    //やられた人数をカウントする変数
+    int Hp_death_count;
 
 private:
     int Hp_image;
