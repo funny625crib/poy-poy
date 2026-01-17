@@ -1,5 +1,5 @@
 ﻿#include "Player_betty.h"
-#include "Animal.h"
+#include "Game/Game01/Animal/Animal.h"
 
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
@@ -11,7 +11,7 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/BettyStateIdleWalk.h>
-#include "Hp.h"
+#include "Game/Game01/Hp.h"
 extern int hit_effect;
 
 namespace Game01 {

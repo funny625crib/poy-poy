@@ -1,5 +1,5 @@
 ﻿#include "Player_abigail.h"
-#include "Animal.h"
+#include "Game/Game01/Animal/Animal.h"
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
@@ -10,7 +10,7 @@
 #include <Game/Component/State/StateJump.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/State/AbigailStateIdleWalk.h>
-#include "Hp.h"
+#include "Game/Game01/Hp.h"
 
 int hit_effect;
 

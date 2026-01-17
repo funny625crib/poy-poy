@@ -1,6 +1,7 @@
 ﻿//#include <System/Scene.h>
 //#include <Game/Game01/Game01.h>
 #include "Hp.h"
+#include "Game/Game01/Player/Player_rise.h"
 
 namespace Game01 {
 bool Hp::Init()

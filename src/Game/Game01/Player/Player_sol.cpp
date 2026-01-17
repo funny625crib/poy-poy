@@ -1,5 +1,5 @@
 ﻿#include "Player_sol.h"
-#include "Animal.h"
+#include "Game/Game01/Animal/Animal.h"
 
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
@@ -12,7 +12,7 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/SolStateIdleWalk.h>
-#include "Hp.h"
+#include "Game/Game01/Hp.h"
 
 extern int hit_effect;
 
