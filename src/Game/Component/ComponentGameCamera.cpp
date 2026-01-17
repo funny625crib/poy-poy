@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <Game/Component/ComponentGameCamera.h>
 #include <System/Component/ComponentSpringArm.h>
+#include <System/Component/ComponentCamera.h>
 #include <System/Component/ComponentModel.h>
 
 void ComponentGameCamera::Init()
@@ -93,6 +94,33 @@ ComponentGameCameraPtr ComponentGameCamera::SetCameraKeys(int up, int down, int 
     cam_down_  = down;
     cam_left_  = left;
     cam_right_ = right;
+    return std::dynamic_pointer_cast<ComponentGameCamera>(shared_from_this());
+}
+
+float3 ComponentGameCamera::GetPosition() const
+{
+    // Scene 上で「今使っているカメラ」を取得
+    if(auto camera = Scene::GetCurrentCamera().lock()) {
+        // ComponentCamera 側のワールド座標をそのまま返す
+        return camera->GetPosition();
+    }
+    return {0.0f, 0.0f, 0.0f};
+}
+
+float3 ComponentGameCamera::GetTarget() const
+{
+    if(auto camera = Scene::GetCurrentCamera().lock()) {
+        return camera->GetTarget();
+    }
+    return {0.0f, 0.0f, 1.0f};
+}
+
+ComponentGameCameraPtr ComponentGameCamera::SetPositionAndTarget(float3 position, float3 target)
+{
+    if(auto camera = Scene::GetCurrentCamera().lock()) {
+        // ここでは「ワールド座標」として扱って OK
+        camera->SetPositionAndTarget(position, target);
+    }
     return std::dynamic_pointer_cast<ComponentGameCamera>(shared_from_this());
 }
 

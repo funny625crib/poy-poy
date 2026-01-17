@@ -13,6 +13,8 @@ public:
 
     void Update() override;
 
+    void Draw() override;
+
     float3 pos_npc_;
     float3 dis;
     enum
@@ -28,13 +30,31 @@ public:
     bool IsHealing() const { return is_healing_; }
     //怪力のアニメーションが再生しているかどうか
     bool IsPower_up() const { return ispower_up_; }
+    //威嚇のアニメーションが再生しているかどうか
+    bool IsThreatening() const { return isthreatening_; }
 
 private:
+    void StartSkillCamera();
+    void EndSkillCamera();
     bool is_healing_ = false;
     int  heal_frame_ = 0;
 
     bool ispower_up_     = false;
     int  power_up_frame_ = 0;
+
+    bool isthreatening_     = false;
+    int  threatening_frame_ = 0;
+
+    //プレイヤーの位置を表示する矢印モデル
+    int arrow_model;
+    //矢印の座標
+    float3 arrow_pos;
+
+    // スキル用カメラが有効になっているかどうか
+    bool is_skill_camera_ = false;
+    // スキル開始前のカメラ位置と注視点を保存しておく
+    float3 skill_cam_old_pos_    = {0, 0, 0};
+    float3 skill_cam_old_target_ = {0, 0, 0};
 };
 
 }    // namespace Game01
