@@ -1,6 +1,6 @@
 ﻿#include "AnimalGenerator.h"
 #include "Animal.h"
-#include "time_bomb.h"
+#include <Game/Game01/time_bomb.h>
 #include <Game/Component/State/AnimalStateIdleWalk.h>
 #include <Game/Component/State/StatePhysics.h>
 bool Game01::Generator::Init()

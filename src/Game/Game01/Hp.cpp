@@ -97,28 +97,32 @@ void Hp::Update()
     Hp_imgx4       = Hp_count_betty % 4 * 100;
     Hp_imgy4       = Hp_count_betty / 4 * 100;
     //abigailのHpが0になったらやられたカウントを1追加する
-    if(abigail_death_flag == TRUE) {
+    if(abigail_death_flag == FALSE) {
         if(Hp_count_abigail == 0) {
-            Hp_death_count   += 1;
-            Hp_count_abigail  = -1;
+            Hp_death_count     += 1;
+            abigail_death_flag  = TRUE;
         }
     }
     //solのHpが0になったらやられたカウントを1追加する
-    if(sol_death_flag) {
+    if(sol_death_flag == FALSE) {
         if(Hp_count_sol == 0) {
             Hp_death_count += 1;
-            Hp_count_sol    = -1;
+            sol_death_flag  = TRUE;
         }
     }
     //riseのHpが0になったらやられたカウントを1追加する
-    if(Hp_count_rise == 0) {
-        Hp_death_count += 1;
-        Hp_count_rise   = -1;
+    if(rise_death_flag == FALSE) {
+        if(Hp_count_rise == 0) {
+            Hp_death_count  += 1;
+            rise_death_flag  = TRUE;
+        }
     }
     //bettyのHpが0になったらやられたカウントを1追加する
-    if(Hp_count_betty == 0) {
-        Hp_death_count += 1;
-        Hp_count_betty  = -1;
+    if(betty_death_flag == FALSE) {
+        if(Hp_count_betty == 0) {
+            Hp_death_count   += 1;
+            betty_death_flag  = TRUE;
+        }
     }
 }
 

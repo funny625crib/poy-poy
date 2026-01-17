@@ -67,7 +67,7 @@ void GameUpdate()
 
 #endif
 
-Fade fadein;    //シーンフェイドクラスの関数を使うため宣言
+Fade fade;    //シーンフェイドクラスの関数を使うため宣言
 bool Game01::Init()
 {
     GameUpdate();
@@ -116,7 +116,7 @@ bool Game01::Init()
         obj->SetTranslate({0, -739.0f, 0});
     }
 
-    fadein.FadeIn();    //タイトルシーンからのフェイドイン
+    fade.FadeIn();    //タイトルシーンからのフェイドイン
 
     return true;
 }
@@ -124,7 +124,7 @@ bool Game01::Init()
 void Game01::Update()
 {
     // フェードイン中なら待つ
-    if(fadein.WaitFadeIn())
+    if(fade.WaitFadeIn())
         return;
     //--------------------------------------------------------------
     // 雲を動かすように空をY軸で少しづつ回転させます　⑤
@@ -136,6 +136,9 @@ void Game01::Update()
     auto hp_obj = Scene::Object::Get<Hp>();
     //三人が倒されたらリザルトへ
     if(hp_obj->Hp_death_count >= 3) {
+        fade.FadeOut();    //Game01シーンにフェイドアウト
+    }
+    if(!fade.WaitFadeOut()) {
         Scene::Change(Scene::GetScene<Ranking::Ranking>());
     }
     //--------------------------------------------------------------
