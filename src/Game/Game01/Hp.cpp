@@ -1,12 +1,13 @@
 ﻿//#include <System/Scene.h>
 //#include <Game/Game01/Game01.h>
 #include "Hp.h"
+#include "Game/Game01/Player/Player_rise.h"
 
 namespace Game01 {
 bool Hp::Init()
 {
     __super::Init();
-    Hp_image = LoadGraph("data/Game/Hp/memorygeeji2-2.jpg");
+    Hp_image = LoadGraph("data/Game/Hp/memorygeeji2-2.png");
 
     //  画像座標
     Hp_x = 0;
@@ -17,21 +18,21 @@ bool Hp::Init()
     Hp_imgx = Hp_count_abigail % 4 * 100;
     Hp_imgy = Hp_count_abigail / 4 * 100;
 
-    Hp_image2    = LoadGraph("data/Game/Hp/memorygeeji2-2.jpg");
+    Hp_image2    = LoadGraph("data/Game/Hp/memorygeeji2-2.png");
     Hp_x2        = 320;
     Hp_y2        = 620;
     Hp_count_sol = 10;
     Hp_imgx2     = Hp_count_sol % 4 * 100;
     Hp_imgy2     = Hp_count_sol / 4 * 100;
 
-    Hp_image3     = LoadGraph("data/Game/Hp/memorygeeji2-2.jpg");
+    Hp_image3     = LoadGraph("data/Game/Hp/memorygeeji2-2.png");
     Hp_x3         = 640;
     Hp_y3         = 620;
     Hp_count_rise = 10;
     Hp_imgx3      = Hp_count_rise % 4 * 100;
     Hp_imgy3      = Hp_count_rise / 4 * 100;
 
-    Hp_image4      = LoadGraph("data/Game/Hp/memorygeeji2-2.jpg");
+    Hp_image4      = LoadGraph("data/Game/Hp/memorygeeji2-2.png");
     Hp_x4          = 960;
     Hp_y4          = 620;
     Hp_count_betty = 10;
