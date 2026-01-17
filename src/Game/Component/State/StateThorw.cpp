@@ -81,7 +81,7 @@ void StateThorw::Update()
         for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
             if(Get_obj == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
                 obj_->Cone_Mode = HOLDING;
-                obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 18.0f, pos_npc_.z});
+                obj_->SetTranslate({pos_npc_.x, pos_npc_.y + 25.0f, pos_npc_.z});
                 // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
                 if(auto pModel = owner->GetComponent<ComponentModel>()) {
                     const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
@@ -94,7 +94,7 @@ void StateThorw::Update()
         for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
             if(Get_obj2 == obj_boms_ && get_pickup_com->set_obj_ == Game01::Pickup::BOMS) {
                 obj_boms_->Boms_Mode = HOLDING;
-                obj_boms_->SetTranslate({pos_npc_.x, pos_npc_.y + 25.0f, pos_npc_.z});
+                obj_boms_->SetTranslate({pos_npc_.x, pos_npc_.y + 30.0f, pos_npc_.z});
                 // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
                 if(auto pModel = owner->GetComponent<ComponentModel>()) {
                     const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準

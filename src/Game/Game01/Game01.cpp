@@ -13,6 +13,7 @@
 #include "Player/Player_sol.h"
 #include "Player/Player_betty.h"
 #include "Player/Player_abigail.h"
+#include "UI/UI_Image.h"
 #include <Game/SceneFade/SceneFade.h>
 
 #include "Hp.h"
@@ -84,7 +85,7 @@ bool Game01::Init()
     Scene::Object::Create<Generator>();
 
     //動物
-    for(int i = 0; i < 15; ++i) {
+    for(int i = 0; i < 5; ++i) {
         Scene::Object::Create<Animal>();
     }
 
@@ -102,6 +103,8 @@ bool Game01::Init()
     Scene::Object::Create<Arrow_Sol>();
 
     Scene::Object::Create<Arrow_Betty>();
+
+    Scene::Object::Create<UI_Image>();
 
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④

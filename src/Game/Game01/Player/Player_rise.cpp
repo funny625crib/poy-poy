@@ -30,13 +30,13 @@ bool      Player_Rise::Init()
     SetName("Player Rise");
     SetTranslate({-87.0f, -6.0f, 47.0f});
     auto col = AddComponent<ComponentCollisionCapsule>();
-    col->SetRadius(4.53f);
-    col->SetHeight(16.81f);
+    col->SetRadius(5.53f);
+    col->SetHeight(19.81f);
     col->UseGravity();
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/Rise_school/Rise.mv1");
-    model->Matrix() = matrix::scale(0.9f);
+    model->Matrix() = matrix::scale(1.2f);
     model->SetAnimation({
         {       "idle",        "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
         {       "walk",     "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},

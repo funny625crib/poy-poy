@@ -34,7 +34,7 @@ bool Player_Sol::Init()
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/sol/sol.mv1");
-    model->Matrix() = matrix::scale(1.0f);
+    model->Matrix() = matrix::scale(1.6f);
     model->SetAnimation({
         {"idle",    "data/Sample/Player/sol/Anim/Idle.mv1", 0, 1.0f},
         {"walk", "data/Sample/Player/sol/Anim/Walking.mv1", 0, 1.0f},
