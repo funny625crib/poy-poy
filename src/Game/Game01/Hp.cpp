@@ -39,6 +39,14 @@ bool Hp::Init()
     Hp_imgy4       = Hp_count_betty / 4 * 100;
 
     Hp_death_count = 0;
+
+    abigail_death_flag = false;
+
+    sol_death_flag = false;
+
+    rise_death_flag = false;
+
+    betty_death_flag = false;
     return true;
 }
 
@@ -88,14 +96,18 @@ void Hp::Update()
     Hp_imgx4       = Hp_count_betty % 4 * 100;
     Hp_imgy4       = Hp_count_betty / 4 * 100;
     //abigailのHpが0になったらやられたカウントを1追加する
-    if(Hp_count_abigail == 0) {
-        Hp_death_count   += 1;
-        Hp_count_abigail  = -1;
+    if(abigail_death_flag == TRUE) {
+        if(Hp_count_abigail == 0) {
+            Hp_death_count   += 1;
+            Hp_count_abigail  = -1;
+        }
     }
     //solのHpが0になったらやられたカウントを1追加する
-    if(Hp_count_sol == 0) {
-        Hp_death_count += 1;
-        Hp_count_sol    = -1;
+    if(sol_death_flag) {
+        if(Hp_count_sol == 0) {
+            Hp_death_count += 1;
+            Hp_count_sol    = -1;
+        }
     }
     //riseのHpが0になったらやられたカウントを1追加する
     if(Hp_count_rise == 0) {

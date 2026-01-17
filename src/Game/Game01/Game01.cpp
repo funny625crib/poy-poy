@@ -123,6 +123,7 @@ void Game01::Update()
     }
 
     auto hp_obj = Scene::Object::Get<Hp>();
+    //三人が倒されたらリザルトへ
     if(hp_obj->Hp_death_count >= 3) {
         Scene::Change(Scene::GetScene<Ranking::Ranking>());
     }
