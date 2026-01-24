@@ -7,6 +7,8 @@
 #include <System/Component/ComponentObjectController.h>
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Component/State/AnimalStateIdleWalk.h>
+#include <Game/Component/State/StateAI.h>
+#include "Animal_pickup.h"
 
 const char* Animal_name[] = {
     "data/Sample/Animal/Pig.mv1",
@@ -29,7 +31,7 @@ bool Animal::Init()
     //動物の初期座標
     float pos_x = GetRand(170.0f) - 140.0f;
     float pos_z = GetRand(200.0f) - 100.0f;
-
+    Invisible_  = ON;
     // 動物
     SetName("Animal");
     SetTranslate({pos_x, 5.0f, pos_z});
@@ -47,60 +49,73 @@ bool Animal::Init()
     float size = 0.0f;
     switch(num) {
     case 0:    //Pig
-        size   = 0.15f;
-        radius = 5.0f;
-        height = 11.0f;
+        size        = 0.15f;
+        radius      = 5.0f;
+        height      = 11.0f;
+        Size_Reward = 20;
         break;
     case 1:    //Lion
-        size   = 0.08f;
-        radius = 6.0f;
-        height = 15.0f;
+        size        = 0.08f;
+        radius      = 6.0f;
+        height      = 15.0f;
+        Size_Reward = 30;
         break;
     case 2:    //Bear
-        size   = 0.07f;
-        radius = 7.0f;
-        height = 17.0f;
+        size        = 0.07f;
+        radius      = 7.0f;
+        height      = 17.0f;
+        Size_Reward = 40;
         break;
     case 3:    //Sheep
-        size   = 0.15f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.15f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 20;
         break;
     case 4:    //Duck
-        size   = 0.15f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.15f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 20;
         break;
     case 5:    //Antelope
-        size   = 0.07f;
-        radius = 7.0f;
-        height = 17.0f;
+        size        = 0.07f;
+        radius      = 7.0f;
+        height      = 17.0f;
+        Size_Reward = 40;
         break;
     case 6:    //Buffalo
-        size   = 0.15f;
-        radius = 7.0f;
-        height = 12.0f;
+        size        = 0.15f;
+        radius      = 7.0f;
+        height      = 12.0f;
+        Size_Reward = 20;
         break;
     case 7:    //Chick
-        size   = 0.15f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.15f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 20;
+
         break;
     case 8:    //Koala
-        size   = 0.07f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.07f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 40;
         break;
     case 9:    //Turkey
-        size   = 0.07f;
-        radius = 6.0f;
-        height = 11.0f;
+        size        = 0.07f;
+        radius      = 6.0f;
+        height      = 11.0f;
+        Size_Reward = 40;
         break;
     }
-
-    auto col = AddComponent<ComponentCollisionCapsule>();
+    memory_num = num;
+    auto col   = AddComponent<ComponentCollisionCapsule>();
     col->SetRadius(radius);
     col->SetHeight(height);
+    col->SetCollisionGroup(ComponentCollision::CollisionGroup::ETC);
+
     // col->UseGravity();
     // AddComponent<StatePhysics>();
     auto model      = AddComponent<ComponentModel>(str);
@@ -124,13 +139,84 @@ bool Animal::Init()
 void Animal::Update()
 {
     Super::Update();
+    auto physics = GetComponent<StatePhysics>();
+    if(Invisible_ == OFF) {
+        physics->addForce(0.0f, StatePhysics::Impulse);
+        physics->SetStatic(false);
+        RemoveComponent<ComponentCollisionCapsule>();
+    }
+    if(Invisible_ == ON) {
+        float radius = 0;
+        float height = 0;
+
+        //動物に対して大きさ
+        float size = 0.0f;
+        switch(memory_num) {
+        case 0:    //Pig
+            size   = 0.15f;
+            radius = 5.0f;
+            height = 11.0f;
+            break;
+        case 1:    //Lion
+            size   = 0.08f;
+            radius = 6.0f;
+            height = 15.0f;
+            break;
+        case 2:    //Bear
+            size   = 0.07f;
+            radius = 7.0f;
+            height = 17.0f;
+            break;
+        case 3:    //Sheep
+            size   = 0.15f;
+            radius = 6.0f;
+            height = 11.0f;
+            break;
+        case 4:    //Duck
+            size   = 0.15f;
+            radius = 6.0f;
+            height = 11.0f;
+            break;
+        case 5:    //Antelope
+            size   = 0.07f;
+            radius = 7.0f;
+            height = 17.0f;
+            break;
+        case 6:    //Buffalo
+            size   = 0.15f;
+            radius = 7.0f;
+            height = 12.0f;
+            break;
+        case 7:    //Chick
+            size   = 0.15f;
+            radius = 6.0f;
+            height = 11.0f;
+            break;
+        case 8:    //Koala
+            size   = 0.07f;
+            radius = 6.0f;
+            height = 11.0f;
+            break;
+        case 9:    //Turkey
+            size   = 0.07f;
+            radius = 6.0f;
+            height = 11.0f;
+            break;
+        }
+        if(GetComponent<ComponentCollisionCapsule>() == nullptr) {
+            auto col = AddComponent<ComponentCollisionCapsule>();
+            col->SetRadius(radius);
+            col->SetHeight(height);
+        }
+    }
     //  float V0     = 0.5f;    //初速度
     //   direction_.y = -0.5f * 0.15f * throw_time * throw_time + V0 * throw_time * 1.1;
 
-    auto col     = GetComponent<ComponentCollisionCapsule>();
-    auto physics = GetComponent<StatePhysics>();
+    //auto physics = GetComponent<StatePhysics>();
     // throw_time  += 0.4f;
-
+    if(physics->IsStatic == false) {
+        physics->addForce(0.0f, StatePhysics::Impulse);
+    }
     if(Cone_Mode == THROWING || Cone_Mode == IDLE) {
         physics->StatePhysics::gravity_on = true;
     }

@@ -9,10 +9,15 @@
 #include "StateJump.h"
 #include "StateRun.h"
 #include <Game/Game01/Player/Player_rise.h>
+#include "StateThorw.h"
 
 void StateIdleWalk::Init()
 {
     __super::Init();
+    auto owner = GetOwner();
+    if(!(owner->GetComponent<StateThorw>())) {
+        owner->AddComponent<StateThorw>();
+    }
 }
 
 void StateIdleWalk::Update()
@@ -58,22 +63,22 @@ void StateIdleWalk::Update()
             for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
                 if(obj_->Cone_Mode == obj_->HOLDING) {
                     auto Get_positon = owner->GetTranslate();
-                    obj_->SetTranslate({Get_positon.x, Get_positon.y + 18.0f, Get_positon.z});
+                    //obj_->SetTranslate({Get_positon.x, Get_positon.y + 18.0f, Get_positon.z});
                 }
             }
 
             // モデルを移動の方向に向けます
             if(auto mdl = owner->GetComponent<ComponentModel>()) {
                 auto rot = quaternion::rotation_axis({0, 1, 0}, front_rot_ * DegToRad);    //< Y軸1度回転
-
-                mdl->SetRotationToVectorWithLimit(mul(dir, rot), rot_speed_);
+                mdl->SetRotationToVector(dir * base_speed);
+                //mdl->SetRotationToVectorWithLimit(mul(dir, rot), rot_speed_);
                 mdl->PlayAnimationNoSame("walk", true);
             }
         }
         else {
             // モデルを移動の方向に向けます
-            auto mdl = owner->GetComponent<ComponentModel>();
-            mdl->PlayAnimationNoSame("idle", true);
+            if(auto mdl = owner->GetComponent<ComponentModel>())
+                mdl->PlayAnimationNoSame("idle", true);
         }
     }
 

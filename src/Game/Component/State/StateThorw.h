@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <System/Scene.h>
 #include <System/Component/Component.h>
+#include <Game/Game01/Animal/Animal.h>
+#include <Game/Game01/time_bomb.h>
 
 USING_PTR(StateThorw);
 
@@ -20,8 +22,10 @@ public:
         HOLDING,
         THROWING,
     };
-    float3 dis_character_animal_;
-    float3 dis_character_Boms_;
+    float3               dis_character_animal_;
+    float3               dis_character_Boms_;
+    Game01::AnimalPtr    Get_obj  = nullptr;
+    Game01::Time_bombPtr Get_obj2 = nullptr;
 
 private:
     ComponentWeakPtr left_collision_;

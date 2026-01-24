@@ -16,6 +16,14 @@ public:
     void  SetDirectior(float3 dir);
     void  Throw();
     int   Cone_Mode;
+    int   Size_Reward;
+    enum
+    {
+        ON,
+        OFF,
+    };
+    int Invisible_ = ON;
+    int memory_num;
     enum
     {
         IDLE,
@@ -40,6 +48,7 @@ public:
         SOL,
     };
     int    who_throwing = 0;
+    int    who_holding  = NOBODY;
     float3 direction_;
     float  dir_xyz_ = 1.00f;
     float3 mode_direction_;

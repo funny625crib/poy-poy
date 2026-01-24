@@ -18,6 +18,7 @@
 
 #include "Hp.h"
 #include <Game/Ranking/Ranking.h>
+#include "Ground2.h"
 namespace Game01 {
 #if 1    // 参考用
 class GameObject
@@ -75,6 +76,7 @@ bool Game01::Init()
 
     // グランド
     Scene::Object::Create<Ground>();
+    Scene::Object::Create<Ground2>();
 
     // プレイヤー
     Scene::Object::Create<Player_Rise>();

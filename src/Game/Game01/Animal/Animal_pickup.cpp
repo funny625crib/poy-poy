@@ -1,17 +1,9 @@
 ﻿#include "Animal_Pickup.h"
 #include "Animal.h"
 #include <Game/Game01/time_bomb.h>
+#include <Game/Component/State/StateIdleWalk.h>
 namespace Game01 {
-float3       dir{0, 0, 0};
-AnimalPtr    Get_obj_animal = nullptr;
-Time_bombPtr Get_obj_boms   = nullptr;
-
-float3 pos_npc_;
-
-float3 pos_XZ;
-float  r     = 35.0f;
-int    color = GetColor(255, 255, 255);
-void   Pickup::Init()
+void Pickup::Init()
 {
     __super::Init();
 
@@ -22,36 +14,40 @@ void   Pickup::Init()
 void Pickup::Update()
 {
     __super::Update();
-    auto owner     = GetOwner();
+    auto         owner          = GetOwner();
+    AnimalPtr    Get_obj_animal = nullptr;
+    Time_bombPtr Get_obj_boms   = nullptr;
+
     set_obj_       = NOOBJ;
     float3 Get_pos = owner->GetTranslate();
     float  max_dir = 10000.0f;    //一番遠くに距離のの初期値を置くを置く
-    for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-        // ここに来る場合 obj がEnemyクラスということが保証されます。
-        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
-        auto   name        = obj_->GetName();
-        auto   get_obj_pos = obj_->GetTranslate();
-        auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
-        float3 dis         = get_obj_pos - get_npc_pos;
-        float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-        if(dir < max_dir) {
-            max_dir        = dir;
-            set_obj_       = ANIMAL;
-            Get_obj_animal = obj_;
-        }
-    }
     for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
-        // ここに来る場合 obj がEnemyクラスということが保証されます。
-        // nameは、必ず存在するため、オブジェクトの名前を取得できます。
-        auto   name        = obj_boms_->GetName();
-        auto   get_obj_pos = obj_boms_->GetTranslate();
-        auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
-        float3 dis         = get_obj_pos - get_npc_pos;
-        float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
-        if(dir < max_dir) {
-            max_dir      = dir;
-            set_obj_     = BOMS;
-            Get_obj_boms = obj_boms_;
+        for(auto obj_ : Scene::Object::GetArray<Animal>()) {
+            // ここに来る場合 obj がEnemyクラスということが保証されます。
+            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+            auto   get_obj_pos = obj_->GetTranslate();
+            auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
+            float3 dis         = get_obj_pos - get_npc_pos;
+            float  dir         = sqrtf(dis.x * dis.x + dis.y * dis.y + dis.z * dis.z);
+            if(dir < max_dir) {
+                max_dir        = dir;
+                set_obj_       = ANIMAL;
+                Get_obj_animal = obj_;
+                Get            = Get_obj_animal;
+            }
+
+            // ここに来る場合 obj がEnemyクラスということが保証されます。
+            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
+            auto   get_obj_pos2 = obj_boms_->GetTranslate();
+            auto   get_npc_pos2 = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
+            float3 dis2         = get_obj_pos2 - get_npc_pos2;
+            float  dir2         = sqrtf(dis2.x * dis2.x + dis2.y * dis2.y + dis2.z * dis2.z);
+            if(dir2 < max_dir) {
+                max_dir      = dir2;
+                set_obj_     = BOMS;
+                Get_obj_boms = obj_boms_;
+                Get          = Get_obj_boms;
+            }
         }
     }
 
@@ -82,17 +78,26 @@ void Pickup::Update()
     //
     //    }
     //}
-    if(IsKey(KEY_INPUT_W))
-        dir = {0, 180, -90};
+    if(auto get = owner->GetComponent<StateIdleWalk>()) {
+        if(IsKey(KEY_INPUT_W))
+            dir = {0, 180, -90};
 
-    if(IsKey(KEY_INPUT_S))
-        dir = {0, 0, 90};
+        if(IsKey(KEY_INPUT_S))
+            dir = {0, 0, 90};
 
-    if(IsKey(KEY_INPUT_D))
-        dir = {-90, 270, 0};
+        if(IsKey(KEY_INPUT_D))
+            dir = {-90, 270, 0};
 
-    if(IsKey(KEY_INPUT_A))
-        dir = {90, 90, 0};
+        if(IsKey(KEY_INPUT_A))
+            dir = {90, 90, 0};
+    }
+    else {
+        matrix Matrix = owner->GetMatrix();                   // Matrixが取得できます
+        float3 rot    = owner->GetRotationAxisXYZ() + 180;    // X軸Y軸Z軸に対する回転が取得できます
+
+        dir = Matrix.axisY();
+        dir = {0.0f, rot.y, 0.0f};
+    }
 
     pos_XZ = {Get_pos.x, 0.0f, Get_pos.z};
 
@@ -103,7 +108,9 @@ void Pickup::Update()
     float3 pos3;
     if(Get_obj_boms != nullptr && set_obj_ == BOMS)
         pos3 = Get_obj_boms->GetTranslate();
-
+    // float3 pos4;
+    // if(Get != nullptr)
+    // pos4 = Get->GetTranslate();
     pos1.y = 0.0f;
     pos2.y = 0.0f;
     pos3.y = 0.0f;
@@ -120,7 +127,11 @@ void Pickup::Update()
     float distance2 = sqrtf(x_bom * x_bom + y_bom * y_bom + z_bom * z_bom);
 
     float radius = 40.0f + 7.0f;
+    /*   float x1     = pos1.x - pos4.x;
+    float y1     = pos1.y - pos4.y;
+    float z1     = pos1.z - pos4.z;*/
 
+    // float distance3 = sqrtf(x1 * x1 + y1 * y1 + z1 * z1);
     //	１：２つのベクトルを用意
     //	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
     float3 front;
@@ -130,12 +141,12 @@ void Pickup::Update()
     //	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
     float3 target     = pos2 - pos1;
     float3 target_bom = pos3 - pos1;
-
+    //float3 target2    = pos4 - pos1;
     //	ベクトルの正規化（ベクトルの長さを 1.0 に）
 
     float length     = sqrtf(target.x * target.x + target.z * target.z);
     float length_bom = sqrtf(target_bom.x * target_bom.x + target_bom.z * target_bom.z);
-
+    //  float length2    = sqrtf(target2.x * target2.x + target2.z * target2.z);
     if(length > 0.0f) {
         target.x = target.x / length;
         target.z = target.z / length;
@@ -144,9 +155,14 @@ void Pickup::Update()
         target_bom.x = target_bom.x / length_bom;
         target_bom.z = target_bom.z / length_bom;
     }
+    /*if(length2 > 0.0f) {
+        target2.x = target2.x / length2;
+        target2.z = target2.z / length2;
+    }*/
     //	２：２つのベクトルの内積を取得
     float front_dot     = front.x * target.x + front.z * target.z;
     float front_dot_bom = front.x * target_bom.x + front.z * target_bom.z;
+    //   float front_dot2    = front.x * target2.x + front.z * target2.z;
 
     /*  GetFloat2Dot(front, target);*/
 
@@ -155,10 +171,11 @@ void Pickup::Update()
     //	acosf：アークコサイン関数（ cos 関数の逆関数）← ラジアン角が返ってきます
     float radian     = acosf(front_dot);
     float radian_bom = acosf(front_dot_bom);
+    //    float radian2    = acosf(front_dot2);
     //	ラジアン角を角度の「度」にします
     float degree     = radian * 180.0f / 3.14159265f;
     float degree_bom = radian_bom * 180.0f / 3.14159265f;
-
+    //  float degree2    = radian2 * 180.0f / 3.14159265f;
     if(set_obj_ == BOMS && distance2 <= radius && degree_bom < r) {
         color = GetColor(0, 255, 0);
         check = true;
@@ -167,6 +184,10 @@ void Pickup::Update()
         color = GetColor(0, 255, 255);
         check = true;
     }
+    /*if(distance3 <= radius  && degree2 < r) {
+        color = GetColor(0, 255, 255);
+        check = true;
+    }*/
     else {
         check = false;
         color = GetColor(255, 255, 255);

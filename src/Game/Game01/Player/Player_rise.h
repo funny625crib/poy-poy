@@ -23,7 +23,14 @@ public:
         HOLDING,
         THROWING,
     };
-
+    enum
+    {
+        NOBODY,
+        RISE,
+        BETTY,
+        ABIGAIL,
+        SOL,
+    };
     void OnHit(const ComponentCollision::HitInfo& hit_info) override;
 
     //回復のアニメーションが再生しているかどうか
@@ -34,6 +41,7 @@ public:
     bool IsThreatening() const { return isthreatening_; }
 
 private:
+    int  hit_effect;
     void StartSkillCamera();
     void EndSkillCamera();
     bool is_healing_ = false;

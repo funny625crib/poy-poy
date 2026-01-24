@@ -48,8 +48,10 @@ bool      Player_Rise::Init()
         {   "power up",    "data/Sample/Player/Rise_school/Anim/Power Up.mv1", 0, 1.0f},
     });
     //   model->SetScaleAxisXYZ( { 1, 1, 1 } );
+    player_name = RISE;
 
     //エフェクトの初期化
+    hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
 
     effect = LoadEffekseerEffect("data/effects/00_Version16/Barrior01.efkefc");
 
@@ -60,9 +62,9 @@ bool      Player_Rise::Init()
     power_up_effect = LoadEffekseerEffect("data/effects/01_NextSoft01/power up.efkefc");
 
     AddComponent<ComponentGameCamera>();
-    AddComponent<Pickup>();
+    //AddComponent<Pickup>();
     AddComponent<StateIdleWalk>();
-    AddComponent<StateThorw>();
+
     return true;
 }
 
@@ -227,16 +229,6 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
     Super::OnHit(hit_info);
     auto hit_owner_name = hit_info.hit_collision_->GetOwner();
-    //for(auto obj_ : Scene::Object::GetArray<Animal>()) {
-    //    if(obj_->GetName() == hit_owner_name->GetName()) {
-    //        if(obj_->Cone_Mode == THROWING) {
-    //            if(obj_->who_throwing != Game01::Animal::BETTY) {
-    //                //ここに当たったら
-    //            }
-    //        }
-    //    }
-    //}
-
     for(auto obj_ : Scene::Object::GetArray<Animal>()) {
         if(obj_->GetName() == hit_owner_name->GetName()) {
             if(obj_->Cone_Mode == THROWING) {
@@ -244,6 +236,12 @@ void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)
                     obj_->Cone_Mode        = Game01::Animal::DEATH;
                     auto Hp_get            = Scene::Object::Get<Hp>();
                     Hp_get->Hp_count_rise -= 1;
+
+                    int h = PlayEffekseer3DEffect(hit_effect);
+
+                    float3 pos = GetTranslate();
+                    SetPosPlayingEffekseer3DEffect(h, pos.x, pos.y + 5.0f, pos.z);
+                    SetScalePlayingEffekseer3DEffect(h, 4.0f, 4.0f, 4.0f);
                 }
             }
         }

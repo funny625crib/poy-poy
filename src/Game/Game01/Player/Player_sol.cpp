@@ -14,6 +14,9 @@
 #include <Game/Component/State/SolStateIdleWalk.h>
 #include "Game/Game01/Hp.h"
 
+#include "Game/Game01/Animal/Animal_pickup.h"
+#include <Game/Component/State/StateAI.h>
+
 extern int hit_effect;
 
 namespace Game01 {
@@ -32,6 +35,7 @@ bool Player_Sol::Init()
     col->SetHeight(16.81f);
     col->UseGravity();
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
+    player_name = SOL;
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/sol/sol.mv1");
     model->Matrix() = matrix::scale(1.6f);
@@ -48,8 +52,9 @@ bool Player_Sol::Init()
     hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
 
     AddComponent<ComponentGameCamera>();
-
-    AddComponent<SolStateIdleWalk>();
+    AddComponent<StateAI>();
+    AddComponent<Game01::Pickup>();
+    //AddComponent<SolStateIdleWalk>();
 
     return true;
 }

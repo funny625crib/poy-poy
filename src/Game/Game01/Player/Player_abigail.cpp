@@ -10,6 +10,9 @@
 #include <Game/Component/State/StateJump.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/State/AbigailStateIdleWalk.h>
+
+#include <Game/Component/State/StateAI.h>
+#include "Game/Game01/Animal/Animal_pickup.h"
 #include "Game/Game01/Hp.h"
 
 int hit_effect;
@@ -20,7 +23,7 @@ bool check = false;
 bool Player_Abigail::Init()
 {
     Super::Init();
-
+    player_name = ABIGAIL;
     // プレイヤー
     SetName("Player Abigail");
     SetTranslate({0.0f, 5.0f, 50.0f});
@@ -42,10 +45,11 @@ bool Player_Abigail::Init()
     });
     //model->SetScaleAxisXYZ( { 1, 1, 1 } );
     model->PlayAnimation("idle", true);
-
+    AddComponent<StateAI>();
     AddComponent<ComponentGameCamera>();
 
     hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
+    AddComponent<Game01::Pickup>();
 
     // AddComponent<AbigailStateIdleWalk>();
 
@@ -56,7 +60,8 @@ void Player_Abigail::Update()
 {
     Super::Update();
     pos_npc_ = GetTranslate();
-
+    auto pos = pos_npc_;
+    //printfDx("Player座標: %f, %f, %f\n", pos.x, pos.y, pos.z);
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Player_Abigail::OnHit(const ComponentCollision::HitInfo& hit_info)

@@ -11,6 +11,9 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/BettyStateIdleWalk.h>
+
+#include <Game/Component/State/StateAI.h>
+#include "Game/Game01/Animal/Animal_pickup.h"
 #include "Game/Game01/Hp.h"
 extern int hit_effect;
 
@@ -41,13 +44,14 @@ bool Player_Betty::Init()
     });
     //model->SetScaleAxisXYZ( { 1, 1, 1 } );
     model->PlayAnimation("idle", true);
-
+    player_name = BETTY;
     //当たるエフェクトの初期化
     hit_effect = LoadEffekseerEffect("data/effects/01_AndrewFM01/hit.efkefc");
+    AddComponent<Game01::Pickup>();
 
     AddComponent<ComponentGameCamera>();
-
-    AddComponent<BettyStateIdleWalk>();
+    AddComponent<StateAI>();
+    //  AddComponent<BettyStateIdleWalk>();
 
     return true;
 }
@@ -56,6 +60,7 @@ void Player_Betty::Update()
 {
     Super::Update();
     pos_npc_ = GetTranslate();
+
     // ジャンプしていて、アニメーションが一定数値以上ならば、慣性の法則にしたがって上に移動させる
 }
 void Player_Betty::OnHit(const ComponentCollision::HitInfo& hit_info)
