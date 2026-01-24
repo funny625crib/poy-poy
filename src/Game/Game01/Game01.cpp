@@ -60,7 +60,7 @@ void GameUpdate()
         int a = o->data;
         //int b = e->player_data; // ERROR
         //int c = e->enemy_data; // ERROR
-        o->Update();
+        //  o->Update();
     }
 
     delete p1;

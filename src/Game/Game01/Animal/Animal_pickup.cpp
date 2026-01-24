@@ -198,11 +198,12 @@ void Pickup::Draw()
     float3 line1;
     line1.x = pos_XZ.x + 40.0f * sinf((dir.y + r) * 3.141592f / 180.0f);
     line1.z = pos_XZ.z + 40.0f * cosf((dir.y + r) * 3.141592f / 180.0f);
-    DrawLine3D(cast(pos_XZ), cast(line1), color);
+    //   DrawLine3D(cast(pos_XZ), cast(line1), color);
+
     float3 line2;
     line2.x = pos_XZ.x + 40.0f * sinf((dir.y - r) * 3.141592f / 180.0f);
     line2.z = pos_XZ.z + 40.0f * cosf((dir.y - r) * 3.141592f / 180.0f);
-    DrawLine3D(cast(pos_XZ), cast(line2), color);
+    //  DrawLine3D(cast(pos_XZ), cast(line2), color);
 }
 bool Pickup::Check_Pickup()
 {
