@@ -17,6 +17,9 @@
 #include <Game/SceneFade/SceneFade.h>
 
 #include "Hp.h"
+
+#include "Logo.h"
+
 #include <Game/Ranking/Ranking.h>
 namespace Game01 {
 #if 1    // 参考用
@@ -92,9 +95,9 @@ bool Game01::Init()
 
     // カメラオブジェクト
     Scene::Object::Create<Camera>();
-
+    //  ＨＰ
     Scene::Object::Create<Hp>();
-
+    //  爆弾
     Scene::Object::Create<Time_bomb>();
 
     Scene::Object::Create<Arrow_Rise>();
@@ -106,6 +109,8 @@ bool Game01::Init()
     Scene::Object::Create<Arrow_Betty>();
 
     Scene::Object::Create<UI_Image>();
+    //  プレイヤーのロゴ
+    Scene::Object::Create<Logo>();
 
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④
