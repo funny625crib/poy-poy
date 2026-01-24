@@ -68,7 +68,14 @@ void StateAI::Update()
             obj_->Reward += obj_->Size_Reward;
         }
         /// }
-
+        for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+            /* if(obj_boms_->Cone_Mode == HOLDING)
+                continue;
+            if(obj_boms_->Invisible_ == Game01::Animal::OFF) {
+                continue;
+            }*/
+            obj_boms_->Reward += 10;
+        }
         for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
             // ここに来る場合 obj がEnemyクラスということが保証されます。
             // nameは、必ず存在するため、オブジェクトの名前を取得できます。
@@ -77,6 +84,7 @@ void StateAI::Update()
             if(obj_->Invisible_ == Game01::Animal::OFF) {
                 continue;
             }
+
             //}
             //auto   get_obj_pos = obj_->GetTranslate();
             //auto   get_npc_pos = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
@@ -97,22 +105,17 @@ void StateAI::Update()
                 Get_obj_A  = obj_;
             }
 
-            // ここに来る場合 obj がEnemyクラスということが保証されます。
-            // nameは、必ず存在するため、オブジェクトの名前を取得できます。
-            for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
-                if(obj_boms_->Boms_Mode == HOLDING)
-                    continue;
-                auto   get_obj_pos2 = obj_boms_->GetTranslate();
-                auto   get_npc_pos2 = float3{Get_pos.x, Get_pos.y + 18.0f, Get_pos.z};
-                float3 dis2         = get_obj_pos2 - get_npc_pos2;
-                float  dir2         = sqrtf(dis2.x * dis2.x + dis2.y * dis2.y + dis2.z * dis2.z);
-                if(dir2 > min_dir) {
-                    /*min_dir   = dir2;
-                set_obj_  = BOMS;
-                hold_obj  = Get_obj_B;
-                Get_obj_B = obj_boms_;*/
-                }
-            }
+            //// ここに来る場合 obj がEnemyクラスということが保証されます。
+            //// nameは、必ず存在するため、オブジェクトの名前を取得できます。
+            //for(auto obj_boms_ : Scene::Object::GetArray<Game01::Time_bomb>()) {
+            //
+            //    if(Reward_Max < obj_boms_->Reward) {
+            //        Reward_Max = obj_boms_->Reward;
+            //        set_obj_   = BOMS;
+            //        hold_obj   = obj_boms_;
+            //        Get_obj_B  = obj_boms_;
+            //    }
+            //}
 
             mode = Movetoobj;
             count_pickup_cooldown++;
@@ -140,8 +143,14 @@ void StateAI::Update()
         }
         float3 pos1 = Get_pos;
         float3 pos2;
-        if(hold_obj)
-            pos2 = hold_obj->GetTranslate();
+        if(&hold_obj) {
+            if(!&hold_obj) {
+                hold_obj.lock() = nullptr;
+            }
+            if(&hold_obj) {
+                pos2 = hold_obj.lock()->GetTranslate();
+            }
+        }
         if(Get_obj_A != nullptr && set_obj_ == ANIMAL) {
             if(Get_obj_A == nullptr) {
                 //mode = Searchobj;
@@ -171,8 +180,8 @@ void StateAI::Update()
         if(auto mdl = owner->GetComponent<ComponentModel>()) {
             mdl->PlayAnimationNoSame("walk", true);
         }
-        if(get_pickup_com->Check_Pickup() == true && count_pickup_cooldown > 300) {
-            if(get_pickup_com->Get == hold_obj) {
+        if(get_pickup_com->Check_Pickup() == true && count_pickup_cooldown > 120) {
+            if(get_pickup_com->Get == hold_obj.lock()) {
                 owner->_isholding     = HOLDING;
                 count_pickup_cooldown = 0;
                 mode                  = SearchPlayer;
@@ -300,13 +309,13 @@ void StateAI::Update()
 
         if(owner->_isholding == HOLDING) {
             for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
-                if(Get_obj_A == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
+                if(hold_obj.lock() == obj_ && get_pickup_com->set_obj_ == Game01::Pickup::ANIMAL) {
                     if(Get_obj_A) {
                         Get_obj_A->Invisible_ = Game01::Animal::OFF;
                     }
                     Get_obj_A->Cone_Mode = HOLDING;
 
-                    Get_obj_A->SetTranslate({Get_pos.x, Get_pos.y + 18.0f, Get_pos.z});
+                    hold_obj.lock()->SetTranslate({Get_pos.x, Get_pos.y + 18.0f, Get_pos.z});
                     // ★ 追加: プレイヤーの前方向に動物モデルの向きを一発で合わせる
                     if(auto pModel = owner->GetComponent<ComponentModel>()) {
                         const auto forward = -pModel->GetWorldMatrix().axisZ();    // 投げ処理と同じ基準
@@ -334,7 +343,7 @@ void StateAI::Update()
                     owner->_isholding = THROWING;
                     if(owner->_isholding == THROWING) {
                         for(auto obj_ : Scene::Object::GetArray<Game01::Animal>()) {
-                            if(Get_obj_A == obj_) {
+                            if(hold_obj.lock() == obj_) {
                                 if(Get_obj_A) {
                                     Get_obj_A->Invisible_ = Game01::Animal::ON;
                                 }
