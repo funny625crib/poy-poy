@@ -13,6 +13,8 @@ public:
 
     void Update() override;
 
+    void Draw() override;
+
     float3 pos_npc_;
     float3 dis;
     enum

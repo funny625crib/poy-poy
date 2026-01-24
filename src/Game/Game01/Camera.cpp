@@ -2,10 +2,10 @@
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 #include <System/Component/ComponentSpringArm.h>
-#include "Player_rise.h"
-#include "Player_betty.h"
-#include "Player_abigail.h"
-#include "Player_sol.h"
+#include "Game/Game01/Player/Player_rise.h"
+#include "Game/Game01/Player/Player_betty.h"
+#include "Game/Game01/Player/Player_abigail.h"
+#include "Game/Game01/Player/Player_sol.h"
 #include <array>
 #include <algorithm>
 #include <cmath>

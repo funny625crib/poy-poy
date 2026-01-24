@@ -1,5 +1,5 @@
 ﻿#include "Player_rise.h"
-#include "Animal.h"
+#include "Game/Game01/Animal/Animal.h"
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
@@ -8,10 +8,10 @@
 #include <System/Component/ComponentCollisionSphere.h>
 #include <Game/Component/ComponentGameCamera.h>
 #include <Game/Component/State/StateIdleWalk.h>
-#include <Game/Game01/Animal_pickup.h>
+#include <Game/Game01/Animal/Animal_pickup.h>
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/StateThorw.h>
-#include "Hp.h"
+#include "Game/Game01/Hp.h"
 
 namespace Game01 {
 //float3    dir{0, 0, 0};
@@ -22,8 +22,7 @@ int       heal_effect;           //回復
 int       run_effect;            //超加速
 int       power_up_effect;       //怪力
 int       threatening_effect;    //威嚇
-
-bool Player_Rise::Init()
+bool      Player_Rise::Init()
 {
     Super::Init();
 
@@ -31,13 +30,13 @@ bool Player_Rise::Init()
     SetName("Player Rise");
     SetTranslate({-87.0f, -6.0f, 47.0f});
     auto col = AddComponent<ComponentCollisionCapsule>();
-    col->SetRadius(4.53f);
-    col->SetHeight(16.81f);
+    col->SetRadius(5.53f);
+    col->SetHeight(19.81f);
     col->UseGravity();
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/Rise_school/Rise.mv1");
-    model->Matrix() = matrix::scale(0.9f);
+    model->Matrix() = matrix::scale(1.2f);
     model->SetAnimation({
         {       "idle",        "data/Sample/Player/Rise_school/Anim/Idle.mv1", 0, 1.0f},
         {       "walk",     "data/Sample/Player/Rise_school/Anim/Walking.mv1", 0, 1.0f},
@@ -220,9 +219,10 @@ void Player_Rise::Update()
     else {
         EndSkillCamera();
     }
+}
 
-    //if(IsKey(KEY_INPUT_W))
-    //    dir = {0, 180, -90};
+void Player_Rise::Draw()
+{
 }
 
 void Player_Rise::OnHit(const ComponentCollision::HitInfo& hit_info)

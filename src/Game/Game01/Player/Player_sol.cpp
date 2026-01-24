@@ -1,5 +1,5 @@
 ﻿#include "Player_sol.h"
-#include "Animal.h"
+#include "Game/Game01/Animal/Animal.h"
 
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
@@ -12,8 +12,9 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/SolStateIdleWalk.h>
-#include "Hp.h"
-#include "Animal_pickup.h"
+#include "Game/Game01/Hp.h"
+
+#include "Game/Game01/Animal/Animal_pickup.h"
 #include <Game/Component/State/StateAI.h>
 
 extern int hit_effect;
@@ -37,7 +38,7 @@ bool Player_Sol::Init()
     player_name = SOL;
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/sol/sol.mv1");
-    model->Matrix() = matrix::scale(1.0f);
+    model->Matrix() = matrix::scale(1.6f);
     model->SetAnimation({
         {"idle",    "data/Sample/Player/sol/Anim/Idle.mv1", 0, 1.0f},
         {"walk", "data/Sample/Player/sol/Anim/Walking.mv1", 0, 1.0f},

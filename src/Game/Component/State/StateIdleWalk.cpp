@@ -3,7 +3,7 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Game01/Skills/Acceleration.h>
 #include <Game/Game01/Skills/Ramming.h>
-#include <Game/Game01/Animal.h>
+#include <Game/Game01/Animal/Animal.h>
 #include <Game/Game01/Skills/Avoidance.h>
 #include <System/Component/ComponentSpringArm.h>
 #include "StateJump.h"

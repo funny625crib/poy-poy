@@ -1,5 +1,5 @@
 ﻿#include "Player_betty.h"
-#include "Animal.h"
+#include "Game/Game01/Animal/Animal.h"
 
 #include <DxLib.h>
 #include <System/Component/ComponentModel.h>
@@ -11,9 +11,10 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <Game/Component/State/StateJump.h>
 #include <Game/Component/State/BettyStateIdleWalk.h>
-#include "Hp.h"
+
 #include <Game/Component/State/StateAI.h>
-#include "Animal_pickup.h"
+#include "Game/Game01/Animal/Animal_pickup.h"
+#include "Game/Game01/Hp.h"
 extern int hit_effect;
 
 namespace Game01 {
@@ -34,7 +35,7 @@ bool Player_Betty::Init()
     col->SetCollisionGroup(ComponentCollision::CollisionGroup::PLAYER);
 
     auto model      = AddComponent<ComponentModel>("data/Sample/Player/Betty/Betty.mv1");
-    model->Matrix() = matrix::scale(1.0f);
+    model->Matrix() = matrix::scale(1.5f);
     model->SetAnimation({
         {"idle",    "data/Sample/Player/Betty/Anim/Idle.mv1", 0, 1.0f},
         {"walk", "data/Sample/Player/Betty/Anim/Walking.mv1", 0, 1.0f},

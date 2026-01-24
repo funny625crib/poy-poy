@@ -2,17 +2,22 @@
 #include "Ground.h"
 #include "Camera.h"
 
-#include "Animal.h"
-#include "arrow.h"
+#include "Animal/Animal.h"
+#include "Arrow/Arrow_Rise.h"
+#include "Arrow/Arrow_Abigail.h"
+#include "Arrow/Arrow_Sol.h"
+#include "Arrow/Arrow_Betty.h"
 #include "TIme_bomb.h"
-#include "AnimalGenerator.h"
-#include "Player_rise.h"
-#include "Player_sol.h"
-#include "Player_betty.h"
-#include "Player_abigail.h"
+#include "Animal/AnimalGenerator.h"
+#include "Player/Player_rise.h"
+#include "Player/Player_sol.h"
+#include "Player/Player_betty.h"
+#include "Player/Player_abigail.h"
+#include "UI/UI_Image.h"
 #include <Game/SceneFade/SceneFade.h>
 
 #include "Hp.h"
+#include <Game/Ranking/Ranking.h>
 #include "Ground2.h"
 namespace Game01 {
 #if 1    // 参考用
@@ -64,8 +69,7 @@ void GameUpdate()
 
 #endif
 
-Fade fadein;    //シーンフェイドクラスの関数を使うため宣言
-
+Fade fade;    //シーンフェイドクラスの関数を使うため宣言
 bool Game01::Init()
 {
     GameUpdate();
@@ -84,7 +88,7 @@ bool Game01::Init()
     Scene::Object::Create<Generator>();
 
     //動物
-    for(int i = 0; i < 20; ++i) {
+    for(int i = 0; i < 5; ++i) {
         Scene::Object::Create<Animal>();
     }
 
@@ -95,7 +99,15 @@ bool Game01::Init()
 
     Scene::Object::Create<Time_bomb>();
 
-    Scene::Object::Create<Arrow>();
+    Scene::Object::Create<Arrow_Rise>();
+
+    Scene::Object::Create<Arrow_Abigail>();
+
+    Scene::Object::Create<Arrow_Sol>();
+
+    Scene::Object::Create<Arrow_Betty>();
+
+    Scene::Object::Create<UI_Image>();
 
     // -----------------------------------------------------------------------------------------
     // 空オブジェクト(SkyDome)の追加 ④
@@ -109,7 +121,7 @@ bool Game01::Init()
         obj->SetTranslate({0, -739.0f, 0});
     }
 
-    fadein.FadeIn();    //タイトルシーンからのフェイドイン
+    fade.FadeIn();    //タイトルシーンからのフェイドイン
 
     return true;
 }
@@ -117,13 +129,22 @@ bool Game01::Init()
 void Game01::Update()
 {
     // フェードイン中なら待つ
-    if(fadein.WaitFadeIn())
+    if(fade.WaitFadeIn())
         return;
     //--------------------------------------------------------------
     // 雲を動かすように空をY軸で少しづつ回転させます　⑤
     //--------------------------------------------------------------
     if(auto sky = Scene::Object::Get<Object>("Sky")) {
         sky->AddRotationAxisXYZ({0, 0.1f, 0});
+    }
+
+    auto hp_obj = Scene::Object::Get<Hp>();
+    //三人が倒されたらリザルトへ
+    if(hp_obj->Hp_death_count >= 3) {
+        fade.FadeOut();    //Game01シーンにフェイドアウト
+    }
+    if(!fade.WaitFadeOut()) {
+        Scene::Change(Scene::GetScene<Ranking::Ranking>());
     }
     //--------------------------------------------------------------
 }

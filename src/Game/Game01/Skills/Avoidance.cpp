@@ -3,9 +3,9 @@
 #include <Game/Component/State/StateIdleWalk.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionSphere.h>
-#include <Game/Game01/Animal.h>
+#include <Game/Game01/Animal/Animal.h>
 #include <DxLib.h>
-#include <Game/Game01/Player_rise.h>
+#include <Game/Game01/Player/Player_rise.h>
 
 namespace Game01 {
 void Avoidance::Init()
