@@ -6,7 +6,7 @@ bool Logo::Init()
     __super::Init();
 
     Logo_abigail_image = LoadGraph("data/Game/Logo/img_abigail.png");
-    Logo_abigail.x     = 130;
+    Logo_abigail.x     = 0;
     Logo_abigail.y     = 600;
 
     Logo_betty_image = LoadGraph("data/Game/Logo/img_betty.png");
