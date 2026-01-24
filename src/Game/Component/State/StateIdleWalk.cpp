@@ -8,7 +8,7 @@
 #include <System/Component/ComponentSpringArm.h>
 #include "StateJump.h"
 #include "StateRun.h"
-#include <Game/Game01/Player_rise.h>
+#include <Game/Game01/Player/Player_rise.h>
 #include "StateThorw.h"
 
 void StateIdleWalk::Init()

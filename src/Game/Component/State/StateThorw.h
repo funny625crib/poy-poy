@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <System/Scene.h>
 #include <System/Component/Component.h>
-#include <Game/Game01/Animal.h>
+#include <Game/Game01/Animal/Animal.h>
 #include <Game/Game01/time_bomb.h>
 
 USING_PTR(StateThorw);

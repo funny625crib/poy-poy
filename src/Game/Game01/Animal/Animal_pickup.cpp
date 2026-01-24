@@ -108,9 +108,9 @@ void Pickup::Update()
     float3 pos3;
     if(Get_obj_boms != nullptr && set_obj_ == BOMS)
         pos3 = Get_obj_boms->GetTranslate();
-    float3 pos4;
-    if(Get != nullptr)
-        pos4 = Get->GetTranslate();
+    // float3 pos4;
+    // if(Get != nullptr)
+    // pos4 = Get->GetTranslate();
     pos1.y = 0.0f;
     pos2.y = 0.0f;
     pos3.y = 0.0f;
@@ -127,11 +127,11 @@ void Pickup::Update()
     float distance2 = sqrtf(x_bom * x_bom + y_bom * y_bom + z_bom * z_bom);
 
     float radius = 40.0f + 7.0f;
-    float x1     = pos1.x - pos4.x;
+    /*   float x1     = pos1.x - pos4.x;
     float y1     = pos1.y - pos4.y;
-    float z1     = pos1.z - pos4.z;
+    float z1     = pos1.z - pos4.z;*/
 
-    float distance3 = sqrtf(x1 * x1 + y1 * y1 + z1 * z1);
+    // float distance3 = sqrtf(x1 * x1 + y1 * y1 + z1 * z1);
     //	１：２つのベクトルを用意
     //	プレイヤーの前方向のベクトル（内積から角度を求めたいので長さを 1.0 に）
     float3 front;
@@ -141,12 +141,12 @@ void Pickup::Update()
     //	プレイヤーから見てＮＰＣがどの方向にいるかのベクトル
     float3 target     = pos2 - pos1;
     float3 target_bom = pos3 - pos1;
-    float3 target2    = pos4 - pos1;
+    //float3 target2    = pos4 - pos1;
     //	ベクトルの正規化（ベクトルの長さを 1.0 に）
 
     float length     = sqrtf(target.x * target.x + target.z * target.z);
     float length_bom = sqrtf(target_bom.x * target_bom.x + target_bom.z * target_bom.z);
-    float length2    = sqrtf(target2.x * target2.x + target2.z * target2.z);
+    //  float length2    = sqrtf(target2.x * target2.x + target2.z * target2.z);
     if(length > 0.0f) {
         target.x = target.x / length;
         target.z = target.z / length;
@@ -155,14 +155,14 @@ void Pickup::Update()
         target_bom.x = target_bom.x / length_bom;
         target_bom.z = target_bom.z / length_bom;
     }
-    if(length2 > 0.0f) {
+    /*if(length2 > 0.0f) {
         target2.x = target2.x / length2;
         target2.z = target2.z / length2;
-    }
+    }*/
     //	２：２つのベクトルの内積を取得
     float front_dot     = front.x * target.x + front.z * target.z;
     float front_dot_bom = front.x * target_bom.x + front.z * target_bom.z;
-    float front_dot2    = front.x * target2.x + front.z * target2.z;
+    //   float front_dot2    = front.x * target2.x + front.z * target2.z;
 
     /*  GetFloat2Dot(front, target);*/
 
@@ -171,11 +171,11 @@ void Pickup::Update()
     //	acosf：アークコサイン関数（ cos 関数の逆関数）← ラジアン角が返ってきます
     float radian     = acosf(front_dot);
     float radian_bom = acosf(front_dot_bom);
-    float radian2    = acosf(front_dot2);
+    //    float radian2    = acosf(front_dot2);
     //	ラジアン角を角度の「度」にします
     float degree     = radian * 180.0f / 3.14159265f;
     float degree_bom = radian_bom * 180.0f / 3.14159265f;
-    float degree2    = radian2 * 180.0f / 3.14159265f;
+    //  float degree2    = radian2 * 180.0f / 3.14159265f;
     if(set_obj_ == BOMS && distance2 <= radius && degree_bom < r) {
         color = GetColor(0, 255, 0);
         check = true;

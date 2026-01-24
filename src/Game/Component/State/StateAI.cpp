@@ -5,14 +5,14 @@
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionSphere.h>
 #include <DxLib.h>
-#include <Game/Game01/Animal.h>
-#include <Game/Game01/Animal_pickup.h>
+#include <Game/Game01/Animal/Animal.h>
+#include <Game/Game01/Animal/Animal_pickup.h>
 #include <Game/Game01/time_bomb.h>
 #include "StateThorw.h"
-#include <Game/Game01/Player_rise.h>
-#include <Game/Game01/Player_betty.h>
-#include <Game/Game01/Player_sol.h>
-#include <Game/Game01/Player_abigail.h>
+#include <Game/Game01/Player/Player_rise.h>
+#include <Game/Game01/Player/Player_betty.h>
+#include <Game/Game01/Player/Player_sol.h>
+#include <Game/Game01/Player/Player_abigail.h>
 void StateAI::Init()
 {
     __super::Init();
@@ -142,13 +142,14 @@ void StateAI::Update()
             }
         }
         float3 pos1 = Get_pos;
-        float3 pos2;
+        float3 pos2 = {0.0f, 0.0f, 0.0f};
         if(&hold_obj) {
-            if(!&hold_obj) {
+            if(!(&hold_obj)) {
                 hold_obj.lock() = nullptr;
             }
             if(&hold_obj) {
-                pos2 = hold_obj.lock()->GetTranslate();
+                if(hold_obj.lock()->GetComponent<ComponentTransform>())
+                    pos2 = hold_obj.lock()->GetTranslate();
             }
         }
         if(Get_obj_A != nullptr && set_obj_ == ANIMAL) {
